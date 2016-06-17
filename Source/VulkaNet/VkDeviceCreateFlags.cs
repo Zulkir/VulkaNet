@@ -3,7 +3,7 @@
 namespace VulkaNet
 {
     [Flags]
-    public enum VkInstanceCreateFlags
+    public enum VkDeviceCreateFlags
     {
         None = 0
     }

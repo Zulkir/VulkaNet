@@ -5,25 +5,31 @@ using VulkaNet.InternalHelpers;
 
 namespace VulkaNet
 {
-    public interface IVkPhysicalDevice : IVkHandledObject
+    public interface IVkPhysicalDevice : IVkInstanceChild
     {
         IVkPhysicalDeviceProperties Properties { get; }
         IReadOnlyList<IVkQueueFamilyProperties> QueueFamilyProperties { get; }
+        IVkPhysicalDeviceFeatures Features { get; }
+        VkObjectResult<IVkDevice> CreateDevice(IVkDeviceCreateInfo createInfo, IVkAllocationCallbacks allocator);
     }
 
     public unsafe class VkPhysicalDevice : IVkPhysicalDevice
     {
+        public IVkInstance Instance { get; }
         public IntPtr Handle { get; }
         public DirectFunctions Direct { get; }
         public IVkPhysicalDeviceProperties Properties { get; }
         public IReadOnlyList<IVkQueueFamilyProperties> QueueFamilyProperties { get; }
+        public IVkPhysicalDeviceFeatures Features { get; }
 
         public VkPhysicalDevice(IVkInstance instance, IntPtr handle)
         {
+            Instance = instance;
             Handle = handle;
             Direct = new DirectFunctions(instance);
             Properties = GetPhysicalDeviceProperties();
             QueueFamilyProperties = GetPhysicalDeviceQueueFamilyProperties();
+            Features = GetPhysicalDeviceFeatures();
         }
 
         public class DirectFunctions
@@ -39,12 +45,28 @@ namespace VulkaNet
                 int* pQueueFamilyPropertyCount,
                 VkQueueFamilyProperties.Raw* pQueueFamilyProperties);
 
+            public CreateDeviceDelegate CreateDevice { get; }
+            public delegate VkResult CreateDeviceDelegate(
+                IntPtr physicalDevice,
+                VkDeviceCreateInfo.Raw* pCreateInfo,
+                VkAllocationCallbacks.Raw* pAllocator,
+                IntPtr* pDevice);
+
+            public GetPhysicalDeviceFeaturesDelegate GetPhysicalDeviceFeatures { get; }
+            public delegate void GetPhysicalDeviceFeaturesDelegate(
+                IntPtr physicalDevice,
+                VkPhysicalDeviceFeatures.Raw* pFeatures);
+
             public DirectFunctions(IVkInstance instance)
             {
                 GetPhysicalDeviceProperties =
                     VkHelpers.GetDelegate<GetPhysicalDevicePropertiesDelegate>(instance, "vkGetPhysicalDeviceProperties");
                 GetPhysicalDeviceQueueFamilyProperties =
                     VkHelpers.GetDelegate<GetPhysicalDeviceQueueFamilyPropertiesDelegate>(instance, "vkGetPhysicalDeviceQueueFamilyProperties");
+                CreateDevice = 
+                    VkHelpers.GetDelegate<CreateDeviceDelegate>(instance, "vkCreateDevice");
+                GetPhysicalDeviceFeatures =
+                    VkHelpers.GetDelegate<GetPhysicalDeviceFeaturesDelegate>(instance, "vkGetPhysicalDeviceFeatures");
             }
         }
 
@@ -65,6 +87,32 @@ namespace VulkaNet
                 Direct.GetPhysicalDeviceQueueFamilyProperties(Handle, &count, pRawArray);
                 return rawArray.Select(x => new VkQueueFamilyProperties(&x)).ToArray();
             }
+        }
+
+        public VkObjectResult<IVkDevice> CreateDevice(IVkDeviceCreateInfo createInfo, IVkAllocationCallbacks allocator)
+        {
+            var size =
+                createInfo.SafeMarshalSize() +
+                allocator.SafeMarshalSize();
+            return VkHelpers.RunWithUnamangedData(size, u => CreateDevice(u, createInfo, allocator));
+        }
+
+        private VkObjectResult<IVkDevice> CreateDevice(IntPtr data, IVkDeviceCreateInfo createInfo, IVkAllocationCallbacks allocator)
+        {
+            var unmanaged = (byte*)data;
+            var pCreateInfo = createInfo.SafeMarshalTo(ref unmanaged);
+            var pAllocator = allocator.SafeMarshalTo(ref unmanaged);
+            IntPtr handle;
+            var result = Direct.CreateDevice(Handle, pCreateInfo, pAllocator, &handle);
+            var device = result == VkResult.Success ? new VkDevice(handle, allocator, this) : null;
+            return new VkObjectResult<IVkDevice>(result, device);
+        }
+
+        private IVkPhysicalDeviceFeatures GetPhysicalDeviceFeatures()
+        {
+            VkPhysicalDeviceFeatures.Raw raw;
+            Direct.GetPhysicalDeviceFeatures(Handle, &raw);
+            return new VkPhysicalDeviceFeatures(&raw);
         }
     }
 }

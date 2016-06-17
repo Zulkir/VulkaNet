@@ -45,8 +45,14 @@
     <Compile Include="InternalHelpers\VkBlob16.cs" />
     <Compile Include="InternalHelpers\VkBlob256.cs" />
     <Compile Include="InternalHelpers\VkBlob64.cs" />
+    <Compile Include="IVkInstanceChild.cs" />
     <Compile Include="ReadOnlyListExtensions.cs" />
     <Compile Include="VkBool32.cs" />
+    <Compile Include="VkDevice.cs" />
+    <Compile Include="VkDeviceCreateFlags.cs" />
+    <Compile Include="VkDeviceCreateInfo.cs" />
+    <Compile Include="VkDeviceQueueCreateFlags.cs" />
+    <Compile Include="VkDeviceQueueCreateInfo.cs" />
     <Compile Include="VkGlobal.cs" />
     <Compile Include="IVkHandledObject.cs" />
     <Compile Include="IVkStructWrapper.cs" />
@@ -71,10 +77,13 @@
     <Compile Include="VkOffset2D.cs" />
     <Compile Include="VkOffset3D.cs" />
     <Compile Include="VkPhysicalDevice.cs" />
+    <Compile Include="VkPhysicalDeviceFeatures.cs" />
     <Compile Include="VkPhysicalDeviceLimits.cs" />
     <Compile Include="VkPhysicalDeviceProperties.cs" />
     <Compile Include="VkPhysicalDeviceSparseProperties.cs" />
     <Compile Include="VkPhysicalDeviceType.cs" />
+    <Compile Include="VkQueueFamilyProperties.cs" />
+    <Compile Include="VkQueueFlags.cs" />
     <Compile Include="VkRect2D.cs" />
     <Compile Include="VkResult.cs" />
     <Compile Include="VkResultExtensions.cs" />
@@ -86,7 +95,9 @@
     <Compile Include="VkUuid.cs" />
     <Compile Include="VkVector2.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Todo.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

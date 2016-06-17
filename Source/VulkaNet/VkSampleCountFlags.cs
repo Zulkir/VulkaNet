@@ -2,12 +2,12 @@
 {
     public enum VkSampleCountFlags
     {
-        OneBit = 0x00000001,
-        TwoBits = 0x00000002,
-        FourBits = 0x00000004,
-        EightBits = 0x00000008,
-        SixteenBits = 0x00000010,
-        ThirtyTwoBits = 0x00000020,
-        SixtyFourBits = 0x00000040,
+        One = 0x00000001,
+        Two = 0x00000002,
+        Four = 0x00000004,
+        Eight = 0x00000008,
+        Sixteen = 0x00000010,
+        ThirtyTwo = 0x00000020,
+        SixtyFour = 0x00000040,
     }
 }

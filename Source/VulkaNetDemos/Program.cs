@@ -20,16 +20,34 @@ namespace VulkaNetDemos
         public static void Run()
         {
             var global = new VkGlobal();
-            var instance = global.CreateInstance(new VkInstanceCreateInfo
+            var instanceCreateInfo = new VkInstanceCreateInfo
             {
                 ApplicationInfo = new VkApplicationInfo
                 {
                     ApplicationName = "VulkaNetDemos",
                     EngineName = "VulkaNetDemosEngine",
                 }
-            }, null).Object;
-            var physicalDevices = instance.PhysicalDevices;
-            
+            };
+            using (var instance = global.CreateInstance(instanceCreateInfo, null).Object)
+            {
+                var physicalDevices = instance.PhysicalDevices;
+                var deviceCreateInfo = new VkDeviceCreateInfo
+                {
+                    QueueCreateInfos = new[]
+                    {
+                        new VkDeviceQueueCreateInfo
+                        {
+                            QueueFamilyIndex = 0,
+                            QueuePriorities = new[]{ 1.0f }
+                        }
+                    }
+                };
+                using (var device = physicalDevices[0].CreateDevice(deviceCreateInfo, null).Object)
+                {
+                    device.WaitIdle();
+                }
+            }
+
             Application.Run(new Form1());
         }
     }

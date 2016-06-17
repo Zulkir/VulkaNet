@@ -20,9 +20,12 @@ namespace VulkaNet.InternalHelpers
                 VkBlob256 blob;
                 func((IntPtr)(&blob));
             }
-            var data = new byte[size];
-            fixed (byte* pData = data)
-                func((IntPtr)pData);
+            else
+            {
+                var data = new byte[size];
+                fixed (byte* pData = data)
+                    func((IntPtr)pData);
+            }
         }
 
         public static unsafe TResult RunWithUnamangedData<TResult>(int size, Func<IntPtr, TResult> func)
@@ -32,9 +35,12 @@ namespace VulkaNet.InternalHelpers
                 VkBlob256 blob;
                 return func((IntPtr)(&blob));
             }
-            var data = new byte[size];
-            fixed (byte* pData = data)
-                return func((IntPtr)pData);
+            else
+            {
+                var data = new byte[size];
+                fixed (byte* pData = data)
+                    return func((IntPtr)pData);
+            }
         }
     }
 }

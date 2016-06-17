@@ -44,12 +44,12 @@ namespace VulkaNet
 
     public static class VkAllocationCallbacksExtensions
     {
-        public static int SafeMarshalSize(this VkAllocationCallbacks s)
+        public static int SafeMarshalSize(this IVkAllocationCallbacks s)
             => s != null
                 ? VkAllocationCallbacks.Raw.SizeInBytes
                 : 0;
 
-        public static unsafe VkAllocationCallbacks.Raw* SafeMarshalTo(this VkAllocationCallbacks s, ref byte* unmanaged)
+        public static unsafe VkAllocationCallbacks.Raw* SafeMarshalTo(this IVkAllocationCallbacks s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkAllocationCallbacks.Raw*)0;

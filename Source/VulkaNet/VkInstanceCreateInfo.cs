@@ -3,7 +3,16 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public class VkInstanceCreateInfo
+    public interface IVkInstanceCreateInfo
+    {
+        IVkStructWrapper Next { get; }
+        VkInstanceCreateFlags Flags { get; }
+        VkApplicationInfo ApplicationInfo { get; }
+        IReadOnlyList<string> EnabledLayerNames { get; }
+        IReadOnlyList<string> EnabledExtensionNames { get; }
+    }
+
+    public class VkInstanceCreateInfo : IVkInstanceCreateInfo
     {
         public IVkStructWrapper Next { get; set; }
         public VkInstanceCreateFlags Flags { get; set; }

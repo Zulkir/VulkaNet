@@ -14,9 +14,11 @@ namespace VulkaNetGenerator
 
             if (!Directory.Exists("GeneratedSource"))
                 Directory.CreateDirectory("GeneratedSource");
+
             using (var stream = File.Open($"GeneratedSource/Vk{name}.cs", FileMode.Create))
             using (var writer = new CodeWriter(stream))
             {
+                writer.WriteLine("using System.Collections.Generic;");
                 writer.WriteLine("using System.Runtime.InteropServices;");
                 writer.WriteLine();
 
@@ -26,7 +28,15 @@ namespace VulkaNetGenerator
                     var rawFields = BuildRawFields(type);
                     var wrapperProperties = BuildWrapperProps(rawFields);
 
-                    writer.WriteLine($"public unsafe class Vk{name}");
+                    writer.WriteLine($"public interface IVk{name}");
+                    using (writer.Curly())
+                    {
+                        foreach (var prop in wrapperProperties)
+                            writer.WriteLine($"{prop.TypeStr} {prop.Name} {{ get; }}");
+                    }
+                    writer.WriteLine();
+
+                    writer.WriteLine($"public unsafe class Vk{name} : IVk{name}");
                     using (writer.Curly())
                     {
                         foreach (var prop in wrapperProperties)
@@ -49,19 +59,19 @@ namespace VulkaNetGenerator
                     writer.WriteLine($"public static unsafe class Vk{name}Extensions");
                     using (writer.Curly())
                     {
-                        writer.WriteLine($"public static int SafeMarshalSize(this Vk{name} s)");
+                        writer.WriteLine($"public static int SafeMarshalSize(this IVk{name} s)");
                         writer.Tab();
                         writer.WriteLine("=> s != null ?");
                         writer.Tab();
                         foreach (var prop in wrapperProperties.Where(x => x.MarshalledAsUnmanaged))
                             writer.WriteLine($"s.{prop.Name}.SafeMarshalSize() +");
-                        writer.WriteLine("VkApplicationInfo.Raw.SizeInBytes");
+                        writer.WriteLine($"Vk{name}.Raw.SizeInBytes");
                         writer.UnTab();
                         writer.WriteLine(": 0;");
                         writer.UnTab();
                         writer.WriteLine();
 
-                        writer.WriteLine($"public static Vk{name}.Raw* SafeMarshalTo(this Vk{name} s, ref byte* unmanaged)");
+                        writer.WriteLine($"public static Vk{name}.Raw* SafeMarshalTo(this IVk{name} s, ref byte* unmanaged)");
                         using (writer.Curly())
                         {
                             writer.WriteLine("if (s == null)");
@@ -80,6 +90,7 @@ namespace VulkaNetGenerator
                             {
                                 var rval = field.Name == "sType" ? $"VkStructureType.{name}" :
                                            field.IsUnmanagedPtr ? $"{field.Name}" :
+                                           field.IsCountFor != null ? $"s.{field.IsCountFor}?.Count ?? 0" :
                                            $"s.{wrapperProperties.Single(x => x.RawField == field).Name}";
                                 writer.WriteLine($"result->{field.Name} = {rval};");
                             }

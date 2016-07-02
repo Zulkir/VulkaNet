@@ -22,11 +22,18 @@
         {
             if (rawField.Name == "pNext")
                 return "IVkStructWrapper";
-            //if (rawField.Type.Name.StartsWith("Gen"))
-            //    return "Vk" + rawField.Type.Name.Substring(3);
-            if (rawField.TypeStr == "byte*")
+            return DeriveTypeInternal(rawField.TypeStr);
+        }
+
+        private static string DeriveTypeInternal(string rawTypeStr)
+        {
+            if (rawTypeStr.EndsWith("**"))
+                return $"IReadOnlyList<{DeriveTypeInternal(rawTypeStr.Substring(0, rawTypeStr.Length - 1))}>";
+            if (rawTypeStr.EndsWith(".Raw*"))
+                return "I" + rawTypeStr.Substring(0, rawTypeStr.Length - 5);
+            if (rawTypeStr == "byte*")
                 return "string";
-            return rawField.TypeStr;
+            return rawTypeStr;
         }
 
         private static string DeriveName(RawField rawField)

@@ -6,6 +6,7 @@
         {
             var inStructGenerator = new InStructGenerator();
             inStructGenerator.Generate<GenApplicationInfo>();
+            inStructGenerator.Generate<GenInstanceCreateInfo>();
         }
     }
 }

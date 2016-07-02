@@ -1,8 +1,19 @@
-﻿using System.Runtime.InteropServices;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public unsafe class VkApplicationInfo
+    public interface IVkApplicationInfo
+    {
+        IVkStructWrapper Next { get; }
+        string ApplicationName { get; }
+        uint ApplicationVersion { get; }
+        string EngineName { get; }
+        uint EngineVersion { get; }
+        VkApiVersion ApiVersion { get; }
+    }
+
+    public unsafe class VkApplicationInfo : IVkApplicationInfo
     {
         public IVkStructWrapper Next { get; set; }
         public string ApplicationName { get; set; }
@@ -28,7 +39,7 @@ namespace VulkaNet
 
     public static unsafe class VkApplicationInfoExtensions
     {
-        public static int SafeMarshalSize(this VkApplicationInfo s)
+        public static int SafeMarshalSize(this IVkApplicationInfo s)
             => s != null ?
                 s.Next.SafeMarshalSize() +
                 s.ApplicationName.SafeMarshalSize() +
@@ -36,7 +47,7 @@ namespace VulkaNet
                 VkApplicationInfo.Raw.SizeInBytes
             : 0;
 
-        public static VkApplicationInfo.Raw* SafeMarshalTo(this VkApplicationInfo s, ref byte* unmanaged)
+        public static VkApplicationInfo.Raw* SafeMarshalTo(this IVkApplicationInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkApplicationInfo.Raw*)0;

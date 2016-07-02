@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CodeWriter.cs" />
+    <Compile Include="CountForAttribute.cs" />
     <Compile Include="DummyTypes.cs" />
     <Compile Include="GenApplicationInfo.cs" />
     <Compile Include="GenInstanceCreateInfo.cs" />

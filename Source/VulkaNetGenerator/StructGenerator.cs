@@ -29,9 +29,9 @@ using System.Linq;
 
 namespace VulkaNetGenerator
 {
-    public class InStructGenerator
+    public class StructGenerator
     {
-        public void Generate<T>()
+        public void Generate<T>(bool input, bool output)
         {
             var type = typeof(T);
             var name = type.Name.Substring(3);
@@ -75,53 +75,82 @@ namespace VulkaNetGenerator
                         using (writer.Curly())
                         {
                             foreach (var field in rawFields)
-                                writer.WriteLine($"public {field.TypeStr} {field.Name};");
+                                if (field.FixedArraySize != null)
+                                    writer.WriteLine($"public fixed {field.TypeStr} {field.Name}[{field.FixedArraySize}];");
+                                else
+                                    writer.WriteLine($"public {field.TypeStr} {field.Name};");
                             writer.WriteLine();
 
                             writer.WriteLine("public static int SizeInBytes { get; } = Marshal.SizeOf<Raw>();");
                         }
-                    }
-                    writer.WriteLine();
+                        if (output)
+                        {
+                            writer.WriteLine();
 
-                    writer.WriteLine($"public static unsafe class Vk{name}Extensions");
-                    using (writer.Curly())
+                            writer.WriteLine($"public Vk{name}() {{ }}");
+                            writer.WriteLine();
+
+                            writer.WriteLine($"public Vk{name}(Raw* raw)");
+                            using (writer.Curly())
+                            {
+                                foreach (var prop in wrapperProperties)
+                                {
+                                    var fieldVal = $"raw->{prop.RawField.Name}";
+                                    var prefix = prop.CreatorFuncTakesPtr ? "&" : "";
+                                    if (prop.CreatorFunc != null)
+                                        writer.WriteLine($"{prop.Name} = {prop.CreatorFunc}({prefix}{fieldVal});");
+                                    else if (prop.NeedsCast)
+                                        writer.WriteLine($"{prop.Name} = ({prop.TypeStr}){fieldVal};");
+                                    else
+                                        writer.WriteLine($"{prop.Name} = {fieldVal};");
+                                }
+                            }
+                        }
+                    }
+                    if (input)
                     {
-                        writer.WriteLine($"public static int SafeMarshalSize(this IVk{name} s)");
-                        writer.Tab();
-                        writer.WriteLine("=> s != null ?");
-                        writer.Tab();
-                        foreach (var prop in wrapperProperties.Where(x => x.MarshalledAsUnmanaged))
-                            writer.WriteLine($"s.{prop.Name}.SafeMarshalSize() +");
-                        writer.WriteLine($"Vk{name}.Raw.SizeInBytes");
-                        writer.UnTab();
-                        writer.WriteLine(": 0;");
-                        writer.UnTab();
                         writer.WriteLine();
 
-                        writer.WriteLine($"public static Vk{name}.Raw* SafeMarshalTo(this IVk{name} s, ref byte* unmanaged)");
+                        writer.WriteLine($"public static unsafe class Vk{name}Extensions");
                         using (writer.Curly())
                         {
-                            writer.WriteLine("if (s == null)");
+                            writer.WriteLine($"public static int SafeMarshalSize(this IVk{name} s)");
                             writer.Tab();
-                            writer.WriteLine($"return (Vk{name}.Raw*)0;");
+                            writer.WriteLine("=> s != null ?");
+                            writer.Tab();
+                            foreach (var prop in wrapperProperties.Where(x => x.MarshalledAsUnmanaged))
+                                writer.WriteLine($"s.{prop.Name}.SafeMarshalSize() +");
+                            writer.WriteLine($"Vk{name}.Raw.SizeInBytes");
+                            writer.UnTab();
+                            writer.WriteLine(": 0;");
                             writer.UnTab();
                             writer.WriteLine();
 
-                            foreach (var prop in wrapperProperties.Where(x => x.MarshalledAsUnmanaged))
-                                writer.WriteLine($"var {prop.RawField.Name} = s.{prop.Name}.SafeMarshalTo(ref unmanaged);");
-                            writer.WriteLine();
-
-                            writer.WriteLine($"var result = (Vk{name}.Raw*)unmanaged;");
-                            writer.WriteLine($"unmanaged += Vk{name}.Raw.SizeInBytes;");
-                            foreach (var field in rawFields)
+                            writer.WriteLine($"public static Vk{name}.Raw* SafeMarshalTo(this IVk{name} s, ref byte* unmanaged)");
+                            using (writer.Curly())
                             {
-                                var rval = field.Name == "sType" ? $"VkStructureType.{name}" :
-                                           field.IsUnmanagedPtr ? $"{field.Name}" :
-                                           field.IsCountFor != null ? $"s.{field.IsCountFor}?.Count ?? 0" :
-                                           $"s.{wrapperProperties.Single(x => x.RawField == field).Name}";
-                                writer.WriteLine($"result->{field.Name} = {rval};");
+                                writer.WriteLine("if (s == null)");
+                                writer.Tab();
+                                writer.WriteLine($"return (Vk{name}.Raw*)0;");
+                                writer.UnTab();
+                                writer.WriteLine();
+
+                                foreach (var prop in wrapperProperties.Where(x => x.MarshalledAsUnmanaged))
+                                    writer.WriteLine($"var {prop.RawField.Name} = s.{prop.Name}.SafeMarshalTo(ref unmanaged);");
+                                writer.WriteLine();
+
+                                writer.WriteLine($"var result = (Vk{name}.Raw*)unmanaged;");
+                                writer.WriteLine($"unmanaged += Vk{name}.Raw.SizeInBytes;");
+                                foreach (var field in rawFields)
+                                {
+                                    var rval = field.Name == "sType" ? $"VkStructureType.{name}" :
+                                               field.IsUnmanagedPtr ? $"{field.Name}" :
+                                               field.IsCountFor != null ? $"s.{field.IsCountFor}?.Count ?? 0" :
+                                               $"s.{wrapperProperties.Single(x => x.RawField == field).Name}";
+                                    writer.WriteLine($"result->{field.Name} = {rval};");
+                                }
+                                writer.WriteLine("return result;");
                             }
-                            writer.WriteLine("return result;");
                         }
                     }
                 }

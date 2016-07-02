@@ -47,17 +47,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AsTypeAttribute.cs" />
     <Compile Include="CodeWriter.cs" />
     <Compile Include="CountForAttribute.cs" />
     <Compile Include="DummyTypes.cs" />
+    <Compile Include="FixedArrayAttribute.cs" />
     <Compile Include="GenApplicationInfo.cs" />
     <Compile Include="GenInstanceCreateInfo.cs" />
-    <Compile Include="InStructGenerator.cs" />
+    <Compile Include="GenPhysicalDeviceLimits.cs" />
+    <Compile Include="GenPhysicalDeviceProperties.cs" />
+    <Compile Include="GenPhysicalDeviceSparseProperties.cs" />
+    <Compile Include="StructGenerator.cs" />
     <Compile Include="MainGenerator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RawField.cs" />
-    <Compile Include="StructField.cs" />
     <Compile Include="WrapperProperty.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

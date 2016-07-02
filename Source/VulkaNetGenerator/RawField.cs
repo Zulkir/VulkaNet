@@ -36,40 +36,55 @@ namespace VulkaNetGenerator
         public bool IgnoreInWrapper { get; }
         public bool IsUnmanagedPtr { get; }
         public string IsCountFor { get; }
+        public string ExplicitWrapperType { get; }
+        public string FixedArraySize { get; }
 
         public RawField(FieldInfo fieldInfo)
         {
-            //Type = fieldInfo.FieldType;
-            TypeStr = DeriveTypeStr(fieldInfo.FieldType);
+            FixedArraySize = GetAttrValue<FixedArrayAttribute>(fieldInfo);
+            TypeStr = DeriveTypeStr(fieldInfo.FieldType, FixedArraySize);
             Name = fieldInfo.Name;
             
             IsUnmanagedPtr = fieldInfo.FieldType.IsPointer;
-            var attr = fieldInfo.CustomAttributes.FirstOrDefault(x => x.AttributeType == typeof(CountForAttribute));
-            IsCountFor = attr?.ConstructorArguments[0].Value as string;
+            IsCountFor = GetAttrValue<CountForAttribute>(fieldInfo);
             IgnoreInWrapper = Name == "sType" || IsCountFor != null;
+            ExplicitWrapperType = GetAttrValue<AsTypeAttribute>(fieldInfo);
         }
 
-        private static string DeriveTypeStr(Type type)
+        private static string DeriveTypeStr(Type type, string fixedBufferSize)
         {
+            if (fixedBufferSize != null)
+                return DeriveTypeStr(type.GetElementType(), null);
             if (type.Name.StartsWith("Gen"))
                 if (type.IsPointer)
                     return $"Vk{type.Name.Substring(3, type.Name.Length - 4)}.Raw*";
                 else
-                    return $"Vk{type.Name.Substring(3)}";
+                    return $"Vk{type.Name.Substring(3, type.Name.Length - 4)}.Raw";
             switch (type.Name)
             {
                 case "Void*": return "void*";
                 case "Byte": return "byte";
                 case "Byte*": return "byte*";
                 case "Byte**": return "byte**";
+                case "Single": return "float";
+                case "Single*": return "float*";
+                case "Single**": return "float**";
                 case "Int32": return "int";
                 case "Int32*": return "int*";
                 case "Int32**": return "int**";
                 case "UInt32": return "uint";
                 case "UInt32*": return "uint*";
                 case "UInt32**": return "uint**";
+                case "UInt64": return "ulong";
+                case "UInt64*": return "ulong*";
+                case "UInt64**": return "ulong**";
             }
             return type.Name;
+        }
+
+        private static string GetAttrValue<T>(FieldInfo fieldInfo)
+        {
+            return fieldInfo.CustomAttributes.FirstOrDefault(x => x.AttributeType == typeof(T))?.ConstructorArguments[0].Value as string;
         }
     }
 }

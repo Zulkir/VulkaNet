@@ -26,9 +26,9 @@ namespace VulkaNetGenerator
 {
     public unsafe struct GenInstanceCreateInfo
     {
-        public GenStructureType sType;
+        public VkStructureType sType;
         public void* pNext;
-        public GenInstanceCreateFlags flags;
+        public VkInstanceCreateFlags flags;
         public GenApplicationInfo* pApplicationInfo;
         [CountFor("EnabledLayerNames")]
         public int enabledLayerCount;

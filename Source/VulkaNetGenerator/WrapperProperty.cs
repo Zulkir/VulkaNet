@@ -31,6 +31,9 @@ namespace VulkaNetGenerator
         public string TypeStr { get; }
         public string Name { get; }
         public bool MarshalledAsUnmanaged { get; }
+        public bool NeedsCast { get; }
+        public string CreatorFunc { get; }
+        public bool CreatorFuncTakesPtr { get; }
 
         public WrapperProperty(RawField rawField, RawField countField)
         {
@@ -40,10 +43,15 @@ namespace VulkaNetGenerator
             TypeStr = DeriveTypeStr(rawField);
             Name = DeriveName(rawField);
             MarshalledAsUnmanaged = IsMarshalledAsUnamanaged(rawField);
+            NeedsCast = DeriveNeedsCast(rawField);
+            CreatorFunc = DeriveCreatorFunc(rawField, TypeStr);
+            CreatorFuncTakesPtr = DeriveCreatorFuncTakesPtr(rawField);
         }
 
         private static string DeriveTypeStr(RawField rawField)
         {
+            if (rawField.ExplicitWrapperType != null)
+                return rawField.ExplicitWrapperType;
             if (rawField.Name == "pNext")
                 return "IVkStructWrapper";
             return DeriveTypeInternal(rawField.TypeStr);
@@ -55,8 +63,10 @@ namespace VulkaNetGenerator
                 return $"IReadOnlyList<{DeriveTypeInternal(rawTypeStr.Substring(0, rawTypeStr.Length - 1))}>";
             if (rawTypeStr.EndsWith(".Raw*"))
                 return "I" + rawTypeStr.Substring(0, rawTypeStr.Length - 5);
-            if (rawTypeStr == "byte*")
-                return "string";
+            if (rawTypeStr.EndsWith(".Raw"))
+                return "I" + rawTypeStr.Substring(0, rawTypeStr.Length - 4);
+            if (rawTypeStr == "VkBool32")
+                return "bool";
             return rawTypeStr;
         }
 
@@ -67,6 +77,29 @@ namespace VulkaNetGenerator
             if (IsSinglePointerName(rawField.Name))
                 return rawField.Name.Substring(1);
             return "" + char.ToUpper(rawField.Name[0]) + rawField.Name.Substring(1);
+        }
+
+        private static string DeriveCreatorFunc(RawField rawField, string wrapperTypeStr)
+        {
+            if (rawField.TypeStr == wrapperTypeStr)
+                return null;
+            if (wrapperTypeStr == "string")
+                return "VkHelpers.ToString";
+            if (wrapperTypeStr.StartsWith("IVk"))
+                return "new " + wrapperTypeStr.Substring(1);
+            if (wrapperTypeStr.StartsWith("Vk"))
+                return "new " + wrapperTypeStr;
+            return null;
+        }
+
+        private static bool DeriveCreatorFuncTakesPtr(RawField rawField) => 
+            !rawField.TypeStr.EndsWith("*") && rawField.FixedArraySize == null;
+
+        private static bool DeriveNeedsCast(RawField rawField)
+        {
+            if (rawField.TypeStr == "VkBool32")
+                return true;
+            return false;
         }
 
         private static bool IsDoublePointerName(string name) =>

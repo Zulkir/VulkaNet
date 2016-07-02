@@ -24,7 +24,11 @@ THE SOFTWARE.
 
 namespace VulkaNetGenerator
 {
-    public struct GenApiVersion { }
-    public enum GenStructureType { }
-    public enum GenInstanceCreateFlags { }
+    public struct VkApiVersion { }
+    public struct VkBool32 { }
+    
+    public enum VkStructureType { }
+    public enum VkInstanceCreateFlags { }
+    public enum VkPhysicalDeviceType { }
+    public enum VkSampleCountFlags { }
 }

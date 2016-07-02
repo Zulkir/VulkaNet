@@ -28,9 +28,13 @@ namespace VulkaNetGenerator
     {
         static void Main(string[] args)
         {
-            var inStructGenerator = new InStructGenerator();
-            inStructGenerator.Generate<GenApplicationInfo>();
-            inStructGenerator.Generate<GenInstanceCreateInfo>();
+            var structGenerator = new StructGenerator();
+            structGenerator.Generate<GenApplicationInfo>(true, false);
+            structGenerator.Generate<GenInstanceCreateInfo>(true, false);
+            structGenerator.Generate<GenPhysicalDeviceSparseProperties>(false, true);
+            structGenerator.Generate<GenPhysicalDeviceLimits>(false, true);
+            structGenerator.Generate<GenPhysicalDeviceProperties>(false, true);
+
         }
     }
 }

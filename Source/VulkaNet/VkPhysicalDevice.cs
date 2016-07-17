@@ -83,13 +83,13 @@ namespace VulkaNet
             public DirectFunctions(IVkInstance instance)
             {
                 GetPhysicalDeviceProperties =
-                    VkHelpers.GetDelegate<GetPhysicalDevicePropertiesDelegate>(instance, "vkGetPhysicalDeviceProperties");
+                    VkHelpers.GetInstanceDelegate<GetPhysicalDevicePropertiesDelegate>(instance, "vkGetPhysicalDeviceProperties");
                 GetPhysicalDeviceQueueFamilyProperties =
-                    VkHelpers.GetDelegate<GetPhysicalDeviceQueueFamilyPropertiesDelegate>(instance, "vkGetPhysicalDeviceQueueFamilyProperties");
+                    VkHelpers.GetInstanceDelegate<GetPhysicalDeviceQueueFamilyPropertiesDelegate>(instance, "vkGetPhysicalDeviceQueueFamilyProperties");
                 CreateDevice = 
-                    VkHelpers.GetDelegate<CreateDeviceDelegate>(instance, "vkCreateDevice");
+                    VkHelpers.GetInstanceDelegate<CreateDeviceDelegate>(instance, "vkCreateDevice");
                 GetPhysicalDeviceFeatures =
-                    VkHelpers.GetDelegate<GetPhysicalDeviceFeaturesDelegate>(instance, "vkGetPhysicalDeviceFeatures");
+                    VkHelpers.GetInstanceDelegate<GetPhysicalDeviceFeaturesDelegate>(instance, "vkGetPhysicalDeviceFeatures");
             }
         }
 

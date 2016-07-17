@@ -23,12 +23,17 @@ THE SOFTWARE.
 #endregion
 
 using System;
+using System.Collections.Concurrent;
+using System.Runtime.InteropServices;
+using VulkaNet.InternalHelpers;
 
 namespace VulkaNet
 {
     public interface IVkDevice : IVkInstanceChild, IDisposable
     {
+        TDelegate GetDeviceDelegate<TDelegate>(string name);
         VkResult WaitIdle();
+        IVkQueue GetDeviceQueue(int queueFamilyIndex, int queueIndex);
     }
 
     public unsafe class VkDevice : IVkDevice
@@ -38,16 +43,26 @@ namespace VulkaNet
         public IVkInstance Instance { get; }
         public DirectFunctions Direct { get; }
 
+        private readonly ConcurrentDictionary<ValuePair<int, int>, IVkQueue> queues;
+
         public VkDevice(IntPtr handle, IVkAllocationCallbacks allocator, IVkPhysicalDevice physicalDevice)
         {
             Handle = handle;
             Allocator = allocator;
             Instance = physicalDevice.Instance;
-            Direct = new DirectFunctions(Instance);
+            Direct = new DirectFunctions(this);
+            queues = new ConcurrentDictionary<ValuePair<int, int>, IVkQueue>();
         }
 
         public class DirectFunctions
         {
+            private readonly IVkDevice device;
+
+            public GetDeviceProcAddrDelegate GetDeviceProcAddr { get; }
+            public delegate IntPtr GetDeviceProcAddrDelegate(
+                IntPtr device,
+                byte* pName);
+
             public DestroyDeviceDelegate DestroyDevice { get; }
             public delegate void DestroyDeviceDelegate(
                 IntPtr device,
@@ -57,12 +72,33 @@ namespace VulkaNet
             public delegate VkResult DeviceWaitIdleDelegate(
                 IntPtr device);
 
-            public DirectFunctions(IVkInstance instance)
+            public GetDeviceQueueDelegate GetDeviceQueue { get; }
+            public delegate VkResult GetDeviceQueueDelegate(
+                IntPtr device,
+                uint queueFamilyIndex,
+                uint queueIndex,
+                IntPtr* pQueue);
+
+            public DirectFunctions(IVkDevice device)
             {
+                this.device = device;
+
+                GetDeviceProcAddr =
+                    VkHelpers.GetInstanceDelegate<GetDeviceProcAddrDelegate>(device.Instance, "vkGetDeviceProcAddr");
                 DeviceWaitIdle =
-                    VkHelpers.GetDelegate<DeviceWaitIdleDelegate>(instance, "vkDeviceWaitIdle");
-                DestroyDevice = 
-                    VkHelpers.GetDelegate<DestroyDeviceDelegate>(instance, "vkDestroyDevice");
+                    GetDeviceDelegate<DeviceWaitIdleDelegate>("vkDeviceWaitIdle");
+                DestroyDevice =
+                    GetDeviceDelegate<DestroyDeviceDelegate>("vkDestroyDevice");
+                GetDeviceQueue =
+                    GetDeviceDelegate<GetDeviceQueueDelegate>("vkGetDeviceQueue");
+            }
+
+            public TDelegate GetDeviceDelegate<TDelegate>(string name)
+            {
+                IntPtr funPtr;
+                fixed (byte* pName = name.ToAnsiArray())
+                    funPtr = GetDeviceProcAddr(device.Handle, pName);
+                return Marshal.GetDelegateForFunctionPointer<TDelegate>(funPtr);
             }
         }
 
@@ -79,7 +115,20 @@ namespace VulkaNet
             Direct.DestroyDevice(Handle, pAllocator);
         }
 
-        public VkResult WaitIdle() 
-            => Direct.DeviceWaitIdle(Handle);
+        public TDelegate GetDeviceDelegate<TDelegate>(string name) =>
+            Direct.GetDeviceDelegate<TDelegate>(name);
+
+        public VkResult WaitIdle() => 
+            Direct.DeviceWaitIdle(Handle);
+
+        public IVkQueue GetDeviceQueue(int queueFamilyIndex, int queueIndex) => 
+            queues.GetOrAdd(new ValuePair<int, int>(queueFamilyIndex, queueIndex), DoGetDeviceQueue);
+
+        private IVkQueue DoGetDeviceQueue(ValuePair<int, int> key)
+        {
+            IntPtr handle;
+            Direct.GetDeviceQueue(Handle, (uint)key.First, (uint)key.Second, &handle).CheckSuccess();
+            return new VkQueue(handle, this);
+        }
     }
 }

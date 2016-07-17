@@ -79,11 +79,11 @@ namespace VulkaNet
             public DirectFunctions()
             {
                 EnumerateInstanceLayerProperties =
-                    VkHelpers.GetDelegate<EnumerateInstanceLayerPropertiesDelegate>(null, "vkEnumerateInstanceLayerProperties");
+                    VkHelpers.GetInstanceDelegate<EnumerateInstanceLayerPropertiesDelegate>(null, "vkEnumerateInstanceLayerProperties");
                 EnumerateInstanceExtensionProperties =
-                    VkHelpers.GetDelegate<EnumerateInstanceExtensionPropertiesDelegate>(null, "vkEnumerateInstanceExtensionProperties");
+                    VkHelpers.GetInstanceDelegate<EnumerateInstanceExtensionPropertiesDelegate>(null, "vkEnumerateInstanceExtensionProperties");
                 CreateInstance =
-                    VkHelpers.GetDelegate<CreateInstanceDelegate>(null, "vkCreateInstance");
+                    VkHelpers.GetInstanceDelegate<CreateInstanceDelegate>(null, "vkCreateInstance");
             }
         }
         

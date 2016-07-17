@@ -30,7 +30,7 @@ namespace VulkaNet
 {
     public static class VkHelpers
     {
-        public static TDelegate GetDelegate<TDelegate>(IVkInstance instance, string name)
+        public static TDelegate GetInstanceDelegate<TDelegate>(IVkInstance instance, string name)
         {
             var funPtr = VkGlobal.GetInstanceProcAddr(instance, name);
             return Marshal.GetDelegateForFunctionPointer<TDelegate>(funPtr);

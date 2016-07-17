@@ -46,6 +46,7 @@
     <Compile Include="InternalHelpers\VkBlob256.cs" />
     <Compile Include="InternalHelpers\VkBlob64.cs" />
     <Compile Include="IVkInstanceChild.cs" />
+    <Compile Include="VkQueue.cs" />
     <Compile Include="ReadOnlyListExtensions.cs" />
     <Compile Include="VkBool32.cs" />
     <Compile Include="VkDevice.cs" />

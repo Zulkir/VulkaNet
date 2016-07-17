@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 /*
 Copyright (c) 2016 VulkaNet Project - Daniil Rodin
 
@@ -120,7 +120,7 @@ namespace VulkaNet
         VkSampleCountFlags SampledImageStencilSampleCounts { get; }
         VkSampleCountFlags StorageImageSampleCounts { get; }
         uint MaxSampleMaskWords { get; }
-        VkBool32 TimestampComputeAndGraphics { get; }
+        bool TimestampComputeAndGraphics { get; }
         float TimestampPeriod { get; }
         uint MaxClipDistances { get; }
         uint MaxCullDistances { get; }
@@ -130,17 +130,15 @@ namespace VulkaNet
         VkVector2 LineWidthRange { get; }
         float PointSizeGranularity { get; }
         float LineWidthGranularity { get; }
-        VkBool32 StrictLines { get; }
-        VkBool32 StandardSampleLocations { get; }
+        bool StrictLines { get; }
+        bool StandardSampleLocations { get; }
         ulong OptimalBufferCopyOffsetAlignment { get; }
         ulong OptimalBufferCopyRowPitchAlignment { get; }
         ulong NonCoherentAtomSize { get; }
     }
 
-    public class VkPhysicalDeviceLimits : IVkPhysicalDeviceLimits
+    public unsafe class VkPhysicalDeviceLimits : IVkPhysicalDeviceLimits
     {
-        public VkPhysicalDeviceLimits() { }
-
         public uint MaxImageDimension1D { get; set; }
         public uint MaxImageDimension2D { get; set; }
         public uint MaxImageDimension3D { get; set; }
@@ -232,7 +230,7 @@ namespace VulkaNet
         public VkSampleCountFlags SampledImageStencilSampleCounts { get; set; }
         public VkSampleCountFlags StorageImageSampleCounts { get; set; }
         public uint MaxSampleMaskWords { get; set; }
-        public VkBool32 TimestampComputeAndGraphics { get; set; }
+        public bool TimestampComputeAndGraphics { get; set; }
         public float TimestampPeriod { get; set; }
         public uint MaxClipDistances { get; set; }
         public uint MaxCullDistances { get; set; }
@@ -242,14 +240,14 @@ namespace VulkaNet
         public VkVector2 LineWidthRange { get; set; }
         public float PointSizeGranularity { get; set; }
         public float LineWidthGranularity { get; set; }
-        public VkBool32 StrictLines { get; set; }
-        public VkBool32 StandardSampleLocations { get; set; }
+        public bool StrictLines { get; set; }
+        public bool StandardSampleLocations { get; set; }
         public ulong OptimalBufferCopyOffsetAlignment { get; set; }
         public ulong OptimalBufferCopyRowPitchAlignment { get; set; }
         public ulong NonCoherentAtomSize { get; set; }
-        
+
         [StructLayout(LayoutKind.Sequential)]
-        public unsafe struct Raw
+        public struct Raw
         {
             public uint maxImageDimension1D;
             public uint maxImageDimension2D;
@@ -357,9 +355,13 @@ namespace VulkaNet
             public ulong optimalBufferCopyOffsetAlignment;
             public ulong optimalBufferCopyRowPitchAlignment;
             public ulong nonCoherentAtomSize;
+
+            public static int SizeInBytes { get; } = Marshal.SizeOf<Raw>();
         }
 
-        public unsafe VkPhysicalDeviceLimits(Raw* raw)
+        public VkPhysicalDeviceLimits() { }
+
+        public VkPhysicalDeviceLimits(Raw* raw)
         {
             MaxImageDimension1D = raw->maxImageDimension1D;
             MaxImageDimension2D = raw->maxImageDimension2D;
@@ -452,7 +454,7 @@ namespace VulkaNet
             SampledImageStencilSampleCounts = raw->sampledImageStencilSampleCounts;
             StorageImageSampleCounts = raw->storageImageSampleCounts;
             MaxSampleMaskWords = raw->maxSampleMaskWords;
-            TimestampComputeAndGraphics = raw->timestampComputeAndGraphics;
+            TimestampComputeAndGraphics = (bool)raw->timestampComputeAndGraphics;
             TimestampPeriod = raw->timestampPeriod;
             MaxClipDistances = raw->maxClipDistances;
             MaxCullDistances = raw->maxCullDistances;
@@ -462,8 +464,8 @@ namespace VulkaNet
             LineWidthRange = new VkVector2(raw->lineWidthRange);
             PointSizeGranularity = raw->pointSizeGranularity;
             LineWidthGranularity = raw->lineWidthGranularity;
-            StrictLines = raw->strictLines;
-            StandardSampleLocations = raw->standardSampleLocations;
+            StrictLines = (bool)raw->strictLines;
+            StandardSampleLocations = (bool)raw->standardSampleLocations;
             OptimalBufferCopyOffsetAlignment = raw->optimalBufferCopyOffsetAlignment;
             OptimalBufferCopyRowPitchAlignment = raw->optimalBufferCopyRowPitchAlignment;
             NonCoherentAtomSize = raw->nonCoherentAtomSize;

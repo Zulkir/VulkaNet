@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 /*
 Copyright (c) 2016 VulkaNet Project - Daniil Rodin
 
@@ -27,7 +27,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkInstanceCreateInfo
+    public interface IVkInstanceCreateInfo : IVkStructWrapper
     {
         IVkStructWrapper Next { get; }
         VkInstanceCreateFlags Flags { get; }
@@ -58,40 +58,44 @@ namespace VulkaNet
 
             public static int SizeInBytes { get; } = Marshal.SizeOf<Raw>();
         }
+
+        public int MarshalSize() =>
+            Next.SafeMarshalSize() +
+            ApplicationInfo.SafeMarshalSize() +
+            EnabledLayerNames.SafeMarshalSize() +
+            EnabledExtensionNames.SafeMarshalSize() +
+            Raw.SizeInBytes;
+
+        public Raw* MarshalTo(ref byte* unmanaged)
+        {
+            var pNext = Next.SafeMarshalTo(ref unmanaged);
+            var pApplicationInfo = ApplicationInfo.SafeMarshalTo(ref unmanaged);
+            var ppEnabledLayerNames = EnabledLayerNames.SafeMarshalTo(ref unmanaged);
+            var ppEnabledExtensionNames = EnabledExtensionNames.SafeMarshalTo(ref unmanaged);
+
+            var result = (Raw*)unmanaged;
+            unmanaged += Raw.SizeInBytes;
+            result->sType = VkStructureType.InstanceCreateInfo;
+            result->pNext = pNext;
+            result->flags = Flags;
+            result->pApplicationInfo = pApplicationInfo;
+            result->enabledLayerCount = EnabledLayerNames?.Count ?? 0;
+            result->ppEnabledLayerNames = ppEnabledLayerNames;
+            result->enabledExtensionCount = EnabledExtensionNames?.Count ?? 0;
+            result->ppEnabledExtensionNames = ppEnabledExtensionNames;
+            return result;
+        }
+
+        void* IVkStructWrapper.MarshalTo(ref byte* unmanaged) =>
+            MarshalTo(ref unmanaged);
     }
 
     public static unsafe class VkInstanceCreateInfoExtensions
     {
-        public static int SafeMarshalSize(this IVkInstanceCreateInfo s)
-            => s != null ?
-                s.Next.SafeMarshalSize() +
-                s.ApplicationInfo.SafeMarshalSize() +
-                s.EnabledLayerNames.SafeMarshalSize() +
-                s.EnabledExtensionNames.SafeMarshalSize() +
-                VkInstanceCreateInfo.Raw.SizeInBytes
-            : 0;
+        public static int SafeMarshalSize(this IVkInstanceCreateInfo s) =>
+            s?.MarshalSize() ?? 0;
 
-        public static VkInstanceCreateInfo.Raw* SafeMarshalTo(this IVkInstanceCreateInfo s, ref byte* unmanaged)
-        {
-            if (s == null)
-                return (VkInstanceCreateInfo.Raw*)0;
-
-            var pNext = s.Next.SafeMarshalTo(ref unmanaged);
-            var pApplicationInfo = s.ApplicationInfo.SafeMarshalTo(ref unmanaged);
-            var ppEnabledLayerNames = s.EnabledLayerNames.SafeMarshalTo(ref unmanaged);
-            var ppEnabledExtensionNames = s.EnabledExtensionNames.SafeMarshalTo(ref unmanaged);
-
-            var result = (VkInstanceCreateInfo.Raw*)unmanaged;
-            unmanaged += VkInstanceCreateInfo.Raw.SizeInBytes;
-            result->sType = VkStructureType.InstanceCreateInfo;
-            result->pNext = pNext;
-            result->flags = s.Flags;
-            result->pApplicationInfo = pApplicationInfo;
-            result->enabledLayerCount = s.EnabledLayerNames?.Count ?? 0;
-            result->ppEnabledLayerNames = ppEnabledLayerNames;
-            result->enabledExtensionCount = s.EnabledExtensionNames?.Count ?? 0;
-            result->ppEnabledExtensionNames = ppEnabledExtensionNames;
-            return result;
-        }
+        public static VkInstanceCreateInfo.Raw* SafeMarshalTo(this IVkInstanceCreateInfo s, ref byte* unmanaged) =>
+            (VkInstanceCreateInfo.Raw*)(s != null ? s.MarshalTo(ref unmanaged) : (void*)0);
     }
 }

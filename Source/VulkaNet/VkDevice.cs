@@ -23,7 +23,6 @@ THE SOFTWARE.
 #endregion
 
 using System;
-using VulkaNet.InternalHelpers;
 
 namespace VulkaNet
 {

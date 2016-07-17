@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 /*
 Copyright (c) 2016 VulkaNet Project - Daniil Rodin
 
@@ -55,10 +55,10 @@ namespace VulkaNet
             public static int SizeInBytes { get; } = Marshal.SizeOf<Raw>();
         }
 
-        public int MarshalSize()
-            => Next.SafeMarshalSize() +
-               QueuePriorities.SafeMarshalSize() +
-               Raw.SizeInBytes;
+        public int MarshalSize() =>
+            Next.SafeMarshalSize() +
+            QueuePriorities.SafeMarshalSize() +
+            Raw.SizeInBytes;
 
         public Raw* MarshalTo(ref byte* unmanaged)
         {
@@ -76,16 +76,16 @@ namespace VulkaNet
             return result;
         }
 
-        void* IVkStructWrapper.MarshalTo(ref byte* unmanaged)
-            => MarshalTo(ref unmanaged);
+        void* IVkStructWrapper.MarshalTo(ref byte* unmanaged) =>
+            MarshalTo(ref unmanaged);
     }
 
-    public static class VkDeviceQueueCreateInfoExtensions
+    public static unsafe class VkDeviceQueueCreateInfoExtensions
     {
-        public static int SafeMarshalSize(this VkDeviceQueueCreateInfo s)
-            => s?.MarshalSize() ?? 0;
+        public static int SafeMarshalSize(this IVkDeviceQueueCreateInfo s) =>
+            s?.MarshalSize() ?? 0;
 
-        public static unsafe VkDeviceQueueCreateInfo.Raw* SafeMarshalTo(this VkDeviceQueueCreateInfo s, ref byte* unmanaged) 
-            => s != null ? s.MarshalTo(ref unmanaged) : (VkDeviceQueueCreateInfo.Raw*)0;
+        public static VkDeviceQueueCreateInfo.Raw* SafeMarshalTo(this IVkDeviceQueueCreateInfo s, ref byte* unmanaged) =>
+            (VkDeviceQueueCreateInfo.Raw*)(s != null ? s.MarshalTo(ref unmanaged) : (void*)0);
     }
 }

@@ -53,10 +53,12 @@
     <Compile Include="DummyTypes.cs" />
     <Compile Include="FixedArrayAttribute.cs" />
     <Compile Include="GenApplicationInfo.cs" />
+    <Compile Include="GenDeviceQueueCreateInfo.cs" />
     <Compile Include="GenInstanceCreateInfo.cs" />
     <Compile Include="GenPhysicalDeviceLimits.cs" />
     <Compile Include="GenPhysicalDeviceProperties.cs" />
     <Compile Include="GenPhysicalDeviceSparseProperties.cs" />
+    <Compile Include="StrByte.cs" />
     <Compile Include="StructGenerator.cs" />
     <Compile Include="MainGenerator.cs" />
     <Compile Include="Program.cs" />

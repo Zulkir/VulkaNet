@@ -24,8 +24,9 @@ THE SOFTWARE.
 
 using System;
 using System.Runtime.InteropServices;
+using VulkaNet.InternalHelpers;
 
-namespace VulkaNet.InternalHelpers
+namespace VulkaNet
 {
     public static class VkHelpers
     {

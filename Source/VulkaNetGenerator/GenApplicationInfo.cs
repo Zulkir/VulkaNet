@@ -28,9 +28,9 @@ namespace VulkaNetGenerator
     {
         public VkStructureType sType;
         public void* pNext;
-        public byte* pApplicationName;
+        public StrByte* pApplicationName;
         public uint applicationVersion;
-        public byte* pEngineName;
+        public StrByte* pEngineName;
         public uint engineVersion;
         public VkApiVersion apiVersion;
     }

@@ -59,12 +59,12 @@ namespace VulkaNetGenerator
 
         private static string DeriveTypeInternal(string rawTypeStr)
         {
-            if (rawTypeStr.EndsWith("**"))
-                return $"IReadOnlyList<{DeriveTypeInternal(rawTypeStr.Substring(0, rawTypeStr.Length - 1))}>";
             if (rawTypeStr.EndsWith(".Raw*"))
                 return "I" + rawTypeStr.Substring(0, rawTypeStr.Length - 5);
             if (rawTypeStr.EndsWith(".Raw"))
                 return "I" + rawTypeStr.Substring(0, rawTypeStr.Length - 4);
+            if (rawTypeStr.EndsWith("*"))
+                return $"IReadOnlyList<{DeriveTypeInternal(rawTypeStr.Substring(0, rawTypeStr.Length - 1))}>";
             if (rawTypeStr == "VkBool32")
                 return "bool";
             return rawTypeStr;

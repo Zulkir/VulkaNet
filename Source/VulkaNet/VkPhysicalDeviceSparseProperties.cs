@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 /*
 Copyright (c) 2016 VulkaNet Project - Daniil Rodin
 
@@ -35,10 +35,8 @@ namespace VulkaNet
         bool ResidencyNonResidentStrict { get; }
     }
 
-    public class VkPhysicalDeviceSparseProperties : IVkPhysicalDeviceSparseProperties
+    public unsafe class VkPhysicalDeviceSparseProperties : IVkPhysicalDeviceSparseProperties
     {
-        public VkPhysicalDeviceSparseProperties() { }
-
         public bool ResidencyStandard2DBlockShape { get; set; }
         public bool ResidencyStandard2DMultisampleBlockShape { get; set; }
         public bool ResidencyStandard3DBlockShape { get; set; }
@@ -53,15 +51,19 @@ namespace VulkaNet
             public VkBool32 residencyStandard3DBlockShape;
             public VkBool32 residencyAlignedMipSize;
             public VkBool32 residencyNonResidentStrict;
+
+            public static int SizeInBytes { get; } = Marshal.SizeOf<Raw>();
         }
 
-        public unsafe VkPhysicalDeviceSparseProperties(Raw* raw)
+        public VkPhysicalDeviceSparseProperties() { }
+
+        public VkPhysicalDeviceSparseProperties(Raw* raw)
         {
-            ResidencyStandard2DBlockShape = raw->residencyStandard2DBlockShape.Value;
-            ResidencyStandard2DMultisampleBlockShape = raw->residencyStandard2DMultisampleBlockShape.Value;
-            ResidencyStandard3DBlockShape = raw->residencyStandard3DBlockShape.Value;
-            ResidencyAlignedMipSize = raw->residencyAlignedMipSize.Value;
-            ResidencyNonResidentStrict = raw->residencyNonResidentStrict.Value;
+            ResidencyStandard2DBlockShape = (bool)raw->residencyStandard2DBlockShape;
+            ResidencyStandard2DMultisampleBlockShape = (bool)raw->residencyStandard2DMultisampleBlockShape;
+            ResidencyStandard3DBlockShape = (bool)raw->residencyStandard3DBlockShape;
+            ResidencyAlignedMipSize = (bool)raw->residencyAlignedMipSize;
+            ResidencyNonResidentStrict = (bool)raw->residencyNonResidentStrict;
         }
     }
 }

@@ -26,7 +26,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkApplicationInfo
+    public interface IVkApplicationInfo : IVkStructWrapper
     {
         IVkStructWrapper Next { get; }
         string ApplicationName { get; }
@@ -58,37 +58,41 @@ namespace VulkaNet
 
             public static int SizeInBytes { get; } = Marshal.SizeOf<Raw>();
         }
+
+        public int MarshalSize() =>
+            Next.SafeMarshalSize() +
+            ApplicationName.SafeMarshalSize() +
+            EngineName.SafeMarshalSize() +
+            Raw.SizeInBytes;
+
+        public Raw* MarshalTo(ref byte* unmanaged)
+        {
+            var pNext = Next.SafeMarshalTo(ref unmanaged);
+            var pApplicationName = ApplicationName.SafeMarshalTo(ref unmanaged);
+            var pEngineName = EngineName.SafeMarshalTo(ref unmanaged);
+
+            var result = (Raw*)unmanaged;
+            unmanaged += Raw.SizeInBytes;
+            result->sType = VkStructureType.ApplicationInfo;
+            result->pNext = pNext;
+            result->pApplicationName = pApplicationName;
+            result->applicationVersion = ApplicationVersion;
+            result->pEngineName = pEngineName;
+            result->engineVersion = EngineVersion;
+            result->apiVersion = ApiVersion;
+            return result;
+        }
+
+        void* IVkStructWrapper.MarshalTo(ref byte* unmanaged) =>
+            MarshalTo(ref unmanaged);
     }
 
     public static unsafe class VkApplicationInfoExtensions
     {
-        public static int SafeMarshalSize(this IVkApplicationInfo s)
-            => s != null ?
-                s.Next.SafeMarshalSize() +
-                s.ApplicationName.SafeMarshalSize() +
-                s.EngineName.SafeMarshalSize() +
-                VkApplicationInfo.Raw.SizeInBytes
-            : 0;
+        public static int SafeMarshalSize(this IVkApplicationInfo s) =>
+            s?.MarshalSize() ?? 0;
 
-        public static VkApplicationInfo.Raw* SafeMarshalTo(this IVkApplicationInfo s, ref byte* unmanaged)
-        {
-            if (s == null)
-                return (VkApplicationInfo.Raw*)0;
-
-            var pNext = s.Next.SafeMarshalTo(ref unmanaged);
-            var pApplicationName = s.ApplicationName.SafeMarshalTo(ref unmanaged);
-            var pEngineName = s.EngineName.SafeMarshalTo(ref unmanaged);
-
-            var result = (VkApplicationInfo.Raw*)unmanaged;
-            unmanaged += VkApplicationInfo.Raw.SizeInBytes;
-            result->sType = VkStructureType.ApplicationInfo;
-            result->pNext = pNext;
-            result->pApplicationName = pApplicationName;
-            result->applicationVersion = s.ApplicationVersion;
-            result->pEngineName = pEngineName;
-            result->engineVersion = s.EngineVersion;
-            result->apiVersion = s.ApiVersion;
-            return result;
-        }
+        public static VkApplicationInfo.Raw* SafeMarshalTo(this IVkApplicationInfo s, ref byte* unmanaged) =>
+            (VkApplicationInfo.Raw*)(s != null ? s.MarshalTo(ref unmanaged) : (void*)0);
     }
 }

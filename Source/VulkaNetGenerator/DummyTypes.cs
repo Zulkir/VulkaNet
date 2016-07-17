@@ -27,8 +27,10 @@ namespace VulkaNetGenerator
     public struct VkApiVersion { }
     public struct VkBool32 { }
     
+    public enum VkResult { }
     public enum VkStructureType { }
     public enum VkInstanceCreateFlags { }
     public enum VkPhysicalDeviceType { }
     public enum VkSampleCountFlags { }
+    public enum VkDeviceQueueCreateFlags { }
 }

@@ -48,7 +48,7 @@ namespace VulkaNetGenerator
             IsUnmanagedPtr = fieldInfo.FieldType.IsPointer;
             IsCountFor = GetAttrValue<CountForAttribute>(fieldInfo);
             IgnoreInWrapper = Name == "sType" || IsCountFor != null;
-            ExplicitWrapperType = GetAttrValue<AsTypeAttribute>(fieldInfo);
+            ExplicitWrapperType = DeriveExplicitWrapperType(fieldInfo);
         }
 
         private static string DeriveTypeStr(Type type, string fixedBufferSize)
@@ -59,9 +59,13 @@ namespace VulkaNetGenerator
                 if (type.IsPointer)
                     return $"Vk{type.Name.Substring(3, type.Name.Length - 4)}.Raw*";
                 else
-                    return $"Vk{type.Name.Substring(3, type.Name.Length - 4)}.Raw";
+                    return $"Vk{type.Name.Substring(3, type.Name.Length - 3)}.Raw";
             switch (type.Name)
             {
+                case "StrByte": return "byte";
+                case "StrByte*": return "byte*";
+                case "StrByte**": return "byte**";
+
                 case "Void*": return "void*";
                 case "Byte": return "byte";
                 case "Byte*": return "byte*";
@@ -80,6 +84,19 @@ namespace VulkaNetGenerator
                 case "UInt64**": return "ulong**";
             }
             return type.Name;
+        }
+
+        private static string DeriveExplicitWrapperType(FieldInfo fieldInfo)
+        {
+            var attrValue = GetAttrValue<AsTypeAttribute>(fieldInfo);
+            if (attrValue != null)
+                return attrValue;
+            switch (fieldInfo.FieldType.Name)
+            {
+                case "StrByte*": return "string";
+                case "StrByte**": return "IReadOnlyList<string>";
+            }
+            return null;
         }
 
         private static string GetAttrValue<T>(FieldInfo fieldInfo)

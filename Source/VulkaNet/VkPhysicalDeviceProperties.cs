@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 /*
 Copyright (c) 2016 VulkaNet Project - Daniil Rodin
 
@@ -23,39 +23,36 @@ THE SOFTWARE.
 #endregion
 
 using System.Runtime.InteropServices;
-using VulkaNet.InternalHelpers;
 
 namespace VulkaNet
 {
     public interface IVkPhysicalDeviceProperties
     {
-        VkApiVersion ApiVersion { get; }
+        uint ApiVersion { get; }
         uint DriverVersion { get; }
-        uint VendorId { get; }
-        uint DeviceId { get; }
+        uint VendorID { get; }
+        uint DeviceID { get; }
         VkPhysicalDeviceType DeviceType { get; }
         string DeviceName { get; }
-        VkUuid PipelineCacheUuid { get; }
+        VkUuid PipelineCacheUUID { get; }
         IVkPhysicalDeviceLimits Limits { get; }
-        VkPhysicalDeviceSparseProperties SparseProperties { get; }
+        IVkPhysicalDeviceSparseProperties SparseProperties { get; }
     }
 
-    public class VkPhysicalDeviceProperties : IVkPhysicalDeviceProperties
+    public unsafe class VkPhysicalDeviceProperties : IVkPhysicalDeviceProperties
     {
-        public VkPhysicalDeviceProperties() { }
-
-        public VkApiVersion ApiVersion { get; set; }
+        public uint ApiVersion { get; set; }
         public uint DriverVersion { get; set; }
-        public uint VendorId { get; set; }
-        public uint DeviceId { get; set; }
+        public uint VendorID { get; set; }
+        public uint DeviceID { get; set; }
         public VkPhysicalDeviceType DeviceType { get; set; }
         public string DeviceName { get; set; }
-        public VkUuid PipelineCacheUuid { get; set; }
+        public VkUuid PipelineCacheUUID { get; set; }
         public IVkPhysicalDeviceLimits Limits { get; set; }
-        public VkPhysicalDeviceSparseProperties SparseProperties { get; set; }
+        public IVkPhysicalDeviceSparseProperties SparseProperties { get; set; }
 
         [StructLayout(LayoutKind.Sequential)]
-        public unsafe struct Raw
+        public struct Raw
         {
             public uint apiVersion;
             public uint driverVersion;
@@ -66,17 +63,21 @@ namespace VulkaNet
             public fixed byte pipelineCacheUUID[VkConstants.UuidSize];
             public VkPhysicalDeviceLimits.Raw limits;
             public VkPhysicalDeviceSparseProperties.Raw sparseProperties;
+
+            public static int SizeInBytes { get; } = Marshal.SizeOf<Raw>();
         }
 
-        public unsafe VkPhysicalDeviceProperties(Raw* raw)
+        public VkPhysicalDeviceProperties() { }
+
+        public VkPhysicalDeviceProperties(Raw* raw)
         {
-            ApiVersion = new VkApiVersion(raw->apiVersion);
+            ApiVersion = raw->apiVersion;
             DriverVersion = raw->driverVersion;
-            VendorId = raw->vendorID;
-            DeviceId = raw->deviceID;
+            VendorID = raw->vendorID;
+            DeviceID = raw->deviceID;
             DeviceType = raw->deviceType;
             DeviceName = VkHelpers.ToString(raw->deviceName);
-            PipelineCacheUuid = new VkUuid(raw->pipelineCacheUUID);
+            PipelineCacheUUID = new VkUuid(raw->pipelineCacheUUID);
             Limits = new VkPhysicalDeviceLimits(&raw->limits);
             SparseProperties = new VkPhysicalDeviceSparseProperties(&raw->sparseProperties);
         }

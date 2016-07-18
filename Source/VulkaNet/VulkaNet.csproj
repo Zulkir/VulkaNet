@@ -42,10 +42,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="InternalHelpers\ValuePair.cs" />
     <Compile Include="InternalHelpers\VkBlob16.cs" />
     <Compile Include="InternalHelpers\VkBlob256.cs" />
     <Compile Include="InternalHelpers\VkBlob64.cs" />
+    <Compile Include="IVkDeviceChild.cs" />
     <Compile Include="IVkInstanceChild.cs" />
+    <Compile Include="IVkNonDisptatchableHandledObject.cs" />
+    <Compile Include="VkCommandBuffer.cs" />
+    <Compile Include="VkCommandPool.cs" />
+    <Compile Include="VkCommandPoolCreateFlags.cs" />
+    <Compile Include="VkCommandPoolCreateInfo.cs" />
     <Compile Include="VkQueue.cs" />
     <Compile Include="ReadOnlyListExtensions.cs" />
     <Compile Include="VkBool32.cs" />

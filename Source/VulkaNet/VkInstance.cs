@@ -65,9 +65,9 @@ namespace VulkaNet
             public DirectFunctions(IVkInstance instance)
             {
                 DestroyInstance =
-                    VkHelpers.GetDelegate<DestroyInstanceDelegate>(instance, "vkDestroyInstance");
+                    VkHelpers.GetInstanceDelegate<DestroyInstanceDelegate>(instance, "vkDestroyInstance");
                 EnumeratePhysicalDevices =
-                    VkHelpers.GetDelegate<EnumeratePhysicalDevicesDelegate>(instance, "vkEnumeratePhysicalDevices");
+                    VkHelpers.GetInstanceDelegate<EnumeratePhysicalDevicesDelegate>(instance, "vkEnumeratePhysicalDevices");
             }
         }
 

@@ -33,4 +33,5 @@ namespace VulkaNetGenerator
     public enum VkPhysicalDeviceType { }
     public enum VkSampleCountFlags { }
     public enum VkDeviceQueueCreateFlags { }
+    public enum VkCommandPoolCreateFlags { }
 }

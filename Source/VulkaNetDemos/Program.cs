@@ -69,6 +69,11 @@ namespace VulkaNetDemos
                 using (var device = physicalDevices[0].CreateDevice(deviceCreateInfo, null).Object)
                 {
                     device.WaitIdle();
+                    var commandPool = device.CreateCommandPool(new VkCommandPoolCreateInfo
+                    {
+                        Flags = VkCommandPoolCreateFlags.Transient | VkCommandPoolCreateFlags.ResetCommandBuffer,
+                        QueueFamilyIndex = 0
+                    }, null);
                 }
             }
 

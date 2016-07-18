@@ -31,21 +31,23 @@ namespace VulkaNet
 {
     public interface IVkDevice : IVkInstanceChild, IDisposable
     {
+        VkDevice.HandleType Handle { get; }
         TDelegate GetDeviceDelegate<TDelegate>(string name);
         VkResult WaitIdle();
         IVkQueue GetDeviceQueue(int queueFamilyIndex, int queueIndex);
+        VkObjectResult<IVkCommandPool> CreateCommandPool(IVkCommandPoolCreateInfo createInfo, IVkAllocationCallbacks allocator);
     }
 
     public unsafe class VkDevice : IVkDevice
     {
-        public IntPtr Handle { get; }
+        public HandleType Handle { get; }
         public IVkAllocationCallbacks Allocator { get; }
         public IVkInstance Instance { get; }
         public DirectFunctions Direct { get; }
 
         private readonly ConcurrentDictionary<ValuePair<int, int>, IVkQueue> queues;
 
-        public VkDevice(IntPtr handle, IVkAllocationCallbacks allocator, IVkPhysicalDevice physicalDevice)
+        public VkDevice(HandleType handle, IVkAllocationCallbacks allocator, IVkPhysicalDevice physicalDevice)
         {
             Handle = handle;
             Allocator = allocator;
@@ -54,43 +56,54 @@ namespace VulkaNet
             queues = new ConcurrentDictionary<ValuePair<int, int>, IVkQueue>();
         }
 
+        public struct HandleType
+        {
+            public IntPtr InternalHandle;
+            public HandleType(IntPtr internalHandle) { InternalHandle = internalHandle; }
+            public override string ToString() => InternalHandle.ToString();
+        }
+
         public class DirectFunctions
         {
             private readonly IVkDevice device;
 
             public GetDeviceProcAddrDelegate GetDeviceProcAddr { get; }
             public delegate IntPtr GetDeviceProcAddrDelegate(
-                IntPtr device,
+                HandleType device,
                 byte* pName);
 
             public DestroyDeviceDelegate DestroyDevice { get; }
             public delegate void DestroyDeviceDelegate(
-                IntPtr device,
+                HandleType device,
                 VkAllocationCallbacks.Raw* pAllocator);
 
             public DeviceWaitIdleDelegate DeviceWaitIdle { get; }
             public delegate VkResult DeviceWaitIdleDelegate(
-                IntPtr device);
+                HandleType device);
 
             public GetDeviceQueueDelegate GetDeviceQueue { get; }
             public delegate VkResult GetDeviceQueueDelegate(
-                IntPtr device,
+                HandleType device,
                 uint queueFamilyIndex,
                 uint queueIndex,
                 IntPtr* pQueue);
+
+            public CreateCommandPoolDelegate CreateCommandPool { get; }
+            public delegate VkResult CreateCommandPoolDelegate(
+                HandleType device,
+                VkCommandPoolCreateInfo.Raw* pCreateInfo,
+                VkAllocationCallbacks.Raw* pAllocator,
+                VkCommandPool.HandleType* pCommandPool);
 
             public DirectFunctions(IVkDevice device)
             {
                 this.device = device;
 
-                GetDeviceProcAddr =
-                    VkHelpers.GetInstanceDelegate<GetDeviceProcAddrDelegate>(device.Instance, "vkGetDeviceProcAddr");
-                DeviceWaitIdle =
-                    GetDeviceDelegate<DeviceWaitIdleDelegate>("vkDeviceWaitIdle");
-                DestroyDevice =
-                    GetDeviceDelegate<DestroyDeviceDelegate>("vkDestroyDevice");
-                GetDeviceQueue =
-                    GetDeviceDelegate<GetDeviceQueueDelegate>("vkGetDeviceQueue");
+                GetDeviceProcAddr = VkHelpers.GetInstanceDelegate<GetDeviceProcAddrDelegate>(device.Instance, "vkGetDeviceProcAddr");
+                DeviceWaitIdle = GetDeviceDelegate<DeviceWaitIdleDelegate>("vkDeviceWaitIdle");
+                DestroyDevice = GetDeviceDelegate<DestroyDeviceDelegate>("vkDestroyDevice");
+                GetDeviceQueue = GetDeviceDelegate<GetDeviceQueueDelegate>("vkGetDeviceQueue");
+                CreateCommandPool = GetDeviceDelegate<CreateCommandPoolDelegate>("vkCreateCommandPool");
             }
 
             public TDelegate GetDeviceDelegate<TDelegate>(string name)
@@ -129,6 +142,24 @@ namespace VulkaNet
             IntPtr handle;
             Direct.GetDeviceQueue(Handle, (uint)key.First, (uint)key.Second, &handle).CheckSuccess();
             return new VkQueue(handle, this);
+        }
+
+        public VkObjectResult<IVkCommandPool> CreateCommandPool(IVkCommandPoolCreateInfo createInfo, IVkAllocationCallbacks allocator)
+        {
+            var unmanagedSize = 
+                createInfo.SafeMarshalSize() + 
+                allocator.SafeMarshalSize();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var pCreateInfo = createInfo.SafeMarshalTo(ref unmanaged);
+                var pAllocator = allocator.SafeMarshalTo(ref unmanaged);
+                VkCommandPool.HandleType handle;
+                var result = Direct.CreateCommandPool(Handle, pCreateInfo, pAllocator, &handle);
+                var instance = result == VkResult.Success ? new VkCommandPool(handle, this) : null;
+                return new VkObjectResult<IVkCommandPool>(result, instance);
+            }
         }
     }
 }

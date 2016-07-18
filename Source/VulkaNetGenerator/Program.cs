@@ -35,6 +35,7 @@ namespace VulkaNetGenerator
             structGenerator.Generate<GenPhysicalDeviceLimits>(false, true);
             structGenerator.Generate<GenPhysicalDeviceProperties>(false, true);
             structGenerator.Generate<GenDeviceQueueCreateInfo>(true, false);
+            structGenerator.Generate<GenCommandPoolCreateInfo>(true, false);
         }
     }
 }

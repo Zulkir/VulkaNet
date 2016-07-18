@@ -26,16 +26,20 @@ using System;
 
 namespace VulkaNet
 {
-    public interface IVkQueue
+    public interface IVkQueue : IVkDeviceChild
     {
         
     }
 
     public class VkQueue : IVkQueue
     {
+        public IntPtr Handle { get; }
+        public IVkDevice Device { get; }
+
         public VkQueue(IntPtr handle, IVkDevice device)
         {
-            
+            Handle = handle;
+            Device = device;
         }
     }
 }

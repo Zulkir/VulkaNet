@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright (c) 2016 VulkaNet Project - Daniil Rodin
 
@@ -22,14 +22,24 @@ THE SOFTWARE.
 */
 #endregion
 
-namespace VulkaNetGenerator
+using System;
+
+namespace VulkaNet
 {
-    public unsafe struct GenPhysicalDeviceSparseProperties
+    public interface IVkCommandBuffer : IVkDeviceChild, IVkHandledObject
     {
-        public VkBool32 residencyStandard2DBlockShape;
-        public VkBool32 residencyStandard2DMultisampleBlockShape;
-        public VkBool32 residencyStandard3DBlockShape;
-        public VkBool32 residencyAlignedMipSize;
-        public VkBool32 residencyNonResidentStrict;
+        
+    }
+
+    public class VkCommandBuffer : IVkCommandBuffer
+    {
+        public IntPtr Handle { get; }
+        public IVkDevice Device { get; }
+
+        public VkCommandBuffer(IntPtr handle, IVkDevice device)
+        {
+            Handle = handle;
+            Device = device;
+        }
     }
 }

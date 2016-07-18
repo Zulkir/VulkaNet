@@ -73,7 +73,7 @@ namespace VulkaNet
                 IntPtr physicalDevice,
                 VkDeviceCreateInfo.Raw* pCreateInfo,
                 VkAllocationCallbacks.Raw* pAllocator,
-                IntPtr* pDevice);
+                VkDevice.HandleType* pDevice);
 
             public GetPhysicalDeviceFeaturesDelegate GetPhysicalDeviceFeatures { get; }
             public delegate void GetPhysicalDeviceFeaturesDelegate(
@@ -125,7 +125,7 @@ namespace VulkaNet
             var unmanaged = (byte*)data;
             var pCreateInfo = createInfo.SafeMarshalTo(ref unmanaged);
             var pAllocator = allocator.SafeMarshalTo(ref unmanaged);
-            IntPtr handle;
+            VkDevice.HandleType handle;
             var result = Direct.CreateDevice(Handle, pCreateInfo, pAllocator, &handle);
             var device = result == VkResult.Success ? new VkDevice(handle, allocator, this) : null;
             return new VkObjectResult<IVkDevice>(result, device);

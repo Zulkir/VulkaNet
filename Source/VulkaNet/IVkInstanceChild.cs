@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 namespace VulkaNet
 {
-    public interface IVkInstanceChild : IVkHandledObject
+    public interface IVkInstanceChild
     {
         IVkInstance Instance { get; }
     }

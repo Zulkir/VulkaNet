@@ -73,7 +73,10 @@ namespace VulkaNetDemos
                     {
                         Flags = VkCommandPoolCreateFlags.Transient | VkCommandPoolCreateFlags.ResetCommandBuffer,
                         QueueFamilyIndex = 0
-                    }, null);
+                    }, null).Object;
+
+
+                    commandPool.Dispose();
                 }
             }
 

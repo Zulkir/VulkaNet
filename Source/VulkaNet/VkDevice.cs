@@ -157,7 +157,7 @@ namespace VulkaNet
                 var pAllocator = allocator.SafeMarshalTo(ref unmanaged);
                 VkCommandPool.HandleType handle;
                 var result = Direct.CreateCommandPool(Handle, pCreateInfo, pAllocator, &handle);
-                var instance = result == VkResult.Success ? new VkCommandPool(handle, this) : null;
+                var instance = result == VkResult.Success ? new VkCommandPool(handle, this, allocator) : null;
                 return new VkObjectResult<IVkCommandPool>(result, instance);
             }
         }

@@ -53,6 +53,7 @@
     <Compile Include="VkCommandPool.cs" />
     <Compile Include="VkCommandPoolCreateFlags.cs" />
     <Compile Include="VkCommandPoolCreateInfo.cs" />
+    <Compile Include="VkCommandPoolResetFlags.cs" />
     <Compile Include="VkQueue.cs" />
     <Compile Include="ReadOnlyListExtensions.cs" />
     <Compile Include="VkBool32.cs" />

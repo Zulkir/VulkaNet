@@ -22,22 +22,32 @@ THE SOFTWARE.
 */
 #endregion
 
+using System;
+
 namespace VulkaNet
 {
-    public interface IVkCommandPool : IVkDeviceChild
+    public interface IVkCommandPool : IVkDeviceChild, IDisposable
     {
         VkCommandPool.HandleType Handle { get; }
+        IVkAllocationCallbacks Allocator { get; }
+        VkCommandPool.DirectFunctions Direct { get; }
+
+        VkResult Reset(VkCommandPoolResetFlags flags);
     }
 
-    public class VkCommandPool : IVkCommandPool
+    public unsafe class VkCommandPool : IVkCommandPool
     {
         public HandleType Handle { get; }
         public IVkDevice Device { get; }
-
-        public VkCommandPool(HandleType handle, IVkDevice device)
+        public IVkAllocationCallbacks Allocator { get; }
+        public DirectFunctions Direct { get; }
+        
+        public VkCommandPool(HandleType handle, IVkDevice device, IVkAllocationCallbacks allocator)
         {
             Handle = handle;
             Device = device;
+            Allocator = allocator;
+            Direct = new DirectFunctions(device);
         }
 
         public struct HandleType
@@ -45,6 +55,46 @@ namespace VulkaNet
             public readonly ulong InternalHandle;
             public HandleType(ulong internalHandle) { InternalHandle = internalHandle; }
             public override string ToString() => InternalHandle.ToString();
+        }
+
+        public class DirectFunctions
+        {
+            private readonly IVkDevice device;
+
+            public ResetCommandPoolDelegate ResetCommandPool { get; }
+            public delegate VkResult ResetCommandPoolDelegate(
+                VkDevice.HandleType device,
+                HandleType commandPool,
+                VkCommandPoolResetFlags flags);
+
+            public DestroyCommandPoolDelegate DestroyCommandPool { get; }
+            public delegate void DestroyCommandPoolDelegate(
+                VkDevice.HandleType device,
+                HandleType commandPool,
+                VkAllocationCallbacks.Raw* pAllocator);
+
+            public DirectFunctions(IVkDevice device)
+            {
+                this.device = device;
+
+                ResetCommandPool = device.GetDeviceDelegate<ResetCommandPoolDelegate>("vkResetCommandPool");
+                DestroyCommandPool = device.GetDeviceDelegate<DestroyCommandPoolDelegate>("vkDestroyCommandPool");
+            }
+        }
+
+        public VkResult Reset(VkCommandPoolResetFlags flags) => 
+            Direct.ResetCommandPool(Device.Handle, Handle, flags);
+
+        public void Dispose()
+        {
+            var unmanagedSize = Allocator.SafeMarshalSize();
+            var unamangedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unamangedArray)
+            {
+                var unamanged = unmanagedStart;
+                var pAllocator = Allocator.SafeMarshalTo(ref unamanged);
+                Direct.DestroyCommandPool(Device.Handle, Handle, pAllocator);
+            }
         }
     }
 }

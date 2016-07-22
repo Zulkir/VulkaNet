@@ -63,8 +63,6 @@ namespace VulkaNet
 
         public class DirectFunctions
         {
-            private readonly IVkDevice device;
-
             public ResetCommandPoolDelegate ResetCommandPool { get; }
             public delegate VkResult ResetCommandPoolDelegate(
                 VkDevice.HandleType device,
@@ -92,8 +90,6 @@ namespace VulkaNet
 
             public DirectFunctions(IVkDevice device)
             {
-                this.device = device;
-
                 ResetCommandPool = device.GetDeviceDelegate<ResetCommandPoolDelegate>("vkResetCommandPool");
                 DestroyCommandPool = device.GetDeviceDelegate<DestroyCommandPoolDelegate>("vkDestroyCommandPool");
                 AllocateCommandBuffers = device.GetDeviceDelegate<AllocateCommandBuffersDelegate>("vkAllocateCommandBuffers");

@@ -51,11 +51,17 @@
     <Compile Include="IVkNonDisptatchableHandledObject.cs" />
     <Compile Include="VkCommandBuffer.cs" />
     <Compile Include="VkCommandBufferAllocateInfo.cs" />
+    <Compile Include="VkCommandBufferBeginInfo.cs" />
+    <Compile Include="VkCommandBufferInheritanceInfo.cs" />
     <Compile Include="VkCommandBufferLevel.cs" />
+    <Compile Include="VkCommandBufferUsageFlags.cs" />
     <Compile Include="VkCommandPool.cs" />
     <Compile Include="VkCommandPoolCreateFlags.cs" />
     <Compile Include="VkCommandPoolCreateInfo.cs" />
     <Compile Include="VkCommandPoolResetFlags.cs" />
+    <Compile Include="VkFramebuffer.cs" />
+    <Compile Include="VkQueryControlFlags.cs" />
+    <Compile Include="VkQueryPipelineStatisticFlags.cs" />
     <Compile Include="VkQueue.cs" />
     <Compile Include="ReadOnlyListExtensions.cs" />
     <Compile Include="VkBool32.cs" />
@@ -96,6 +102,7 @@
     <Compile Include="VkQueueFamilyProperties.cs" />
     <Compile Include="VkQueueFlags.cs" />
     <Compile Include="VkRect2D.cs" />
+    <Compile Include="VkRenderPass.cs" />
     <Compile Include="VkResult.cs" />
     <Compile Include="VkResultExtensions.cs" />
     <Compile Include="VkSampleCountFlags.cs" />

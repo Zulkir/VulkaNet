@@ -134,10 +134,12 @@ namespace VulkaNetGenerator
                                 writer.WriteLine("unmanaged += Raw.SizeInBytes;");
                                 foreach (var field in rawFields)
                                 {
+                                    var prop = wrapperProperties.SingleOrDefault(x => x.RawField == field);
                                     var rval = field.Name == "sType" ? $"VkStructureType.{name}" :
                                                field.IsUnmanagedPtr ? $"{field.Name}" :
                                                field.IsCountFor != null ? $"{field.IsCountFor}?.Count ?? 0" :
-                                               $"{wrapperProperties.Single(x => x.RawField == field).Name}";
+                                               field.TypeStr == "VkBool32" ? $"new VkBool32({prop?.Name})" :
+                                               $"{prop?.Name}";
                                     writer.WriteLine($"result->{field.Name} = {rval};");
                                 }
                                 writer.WriteLine("return result;");

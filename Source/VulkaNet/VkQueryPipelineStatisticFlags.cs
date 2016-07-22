@@ -22,24 +22,24 @@ THE SOFTWARE.
 */
 #endregion
 
-namespace VulkaNetGenerator
-{
-    public struct VkApiVersion { }
-    public struct VkBool32 { }
-    
-    public enum VkResult { }
-    public enum VkStructureType { }
-    public enum VkInstanceCreateFlags { }
-    public enum VkPhysicalDeviceType { }
-    public enum VkSampleCountFlags { }
-    public enum VkDeviceQueueCreateFlags { }
-    public enum VkCommandPoolCreateFlags { }
-    public enum VkCommandBufferLevel { }
-    public enum VkCommandBufferUsageFlags { }
-    public enum VkQueryControlFlags { }
-    public enum VkQueryPipelineStatisticFlags { }
+using System;
 
-    public struct HndCommandPool { }
-    public struct HndRenderPass { }
-    public struct HndFramebuffer { }
+namespace VulkaNet
+{
+    [Flags]
+    public enum VkQueryPipelineStatisticFlags
+    {
+        Nonde = 0,
+        InputAssemblyVertices = 0x00000001,
+        InputAssemblyPrimitives = 0x00000002,
+        VertexShaderInvocations = 0x00000004,
+        GeometryShaderInvocations = 0x00000008,
+        GeometryShaderPrimitives = 0x00000010,
+        ClippingInvocations = 0x00000020,
+        ClippingPrimitives = 0x00000040,
+        FragmentShaderInvocations = 0x00000080,
+        TesselationControlShaderPatches = 0x00000100,
+        TesselationEvaluationShaderInvocations = 0x00000200,
+        ComputeShaderInvocations = 0x00000400,
+    }
 }

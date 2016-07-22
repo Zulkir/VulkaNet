@@ -29,17 +29,21 @@ namespace VulkaNet
     public interface IVkCommandBuffer : IVkDeviceChild
     {
         VkCommandBuffer.HandleType Handle { get; }
+        VkResult Begin(IVkCommandBufferBeginInfo beginInfo);
+        VkResult End();
     }
 
-    public class VkCommandBuffer : IVkCommandBuffer
+    public unsafe class VkCommandBuffer : IVkCommandBuffer
     {
         public HandleType Handle { get; }
         public IVkDevice Device { get; }
+        public DirectFunctions Direct { get; }
 
         public VkCommandBuffer(HandleType handle, IVkDevice device)
         {
             Handle = handle;
             Device = device;
+            Direct = new DirectFunctions(device);
         }
 
         public struct HandleType
@@ -48,5 +52,38 @@ namespace VulkaNet
             public HandleType(IntPtr internalHandle) { InternalHandle = internalHandle; }
             public override string ToString() => InternalHandle.ToString();
         }
+
+        public class DirectFunctions
+        {
+            public BeginCommandBufferDelegate BeginCommandBuffer { get; }
+            public delegate VkResult BeginCommandBufferDelegate(
+                HandleType commandBuffer,
+                VkCommandBufferBeginInfo.Raw* pBeginInfo);
+
+            public EndCommandBufferDelegate EndCommandBuffer { get; }
+            public delegate VkResult EndCommandBufferDelegate(
+                HandleType commandBuffer);
+
+            public DirectFunctions(IVkDevice device)
+            {
+                BeginCommandBuffer = device.GetDeviceDelegate<BeginCommandBufferDelegate>("vkBeginCommandBuffer");
+                EndCommandBuffer = device.GetDeviceDelegate<EndCommandBufferDelegate>("vkEndCommandBuffer");
+            }
+        }
+
+        public VkResult Begin(IVkCommandBufferBeginInfo beginInfo)
+        {
+            var unmanagedSize = beginInfo.SafeMarshalSize();
+            var unamangedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unamangedArray)
+            {
+                var unamanged = unmanagedStart;
+                var pBeginInfo = beginInfo.SafeMarshalTo(ref unamanged);
+                return Direct.BeginCommandBuffer(Handle, pBeginInfo);
+            }
+        }
+
+        public VkResult End() => 
+            Direct.EndCommandBuffer(Handle);
     }
 }

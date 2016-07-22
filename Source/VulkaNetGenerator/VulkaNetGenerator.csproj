@@ -54,6 +54,8 @@
     <Compile Include="FixedArrayAttribute.cs" />
     <Compile Include="GenApplicationInfo.cs" />
     <Compile Include="GenCommandBufferAllocateInfo.cs" />
+    <Compile Include="GenCommandBufferBeginInfo.cs" />
+    <Compile Include="GenCommandBufferInheritanceInfo.cs" />
     <Compile Include="GenCommandPoolCreateInfo.cs" />
     <Compile Include="GenDeviceQueueCreateInfo.cs" />
     <Compile Include="GenInstanceCreateInfo.cs" />

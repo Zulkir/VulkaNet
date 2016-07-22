@@ -37,6 +37,8 @@ namespace VulkaNetGenerator
             structGenerator.Generate<GenDeviceQueueCreateInfo>(true, false);
             structGenerator.Generate<GenCommandPoolCreateInfo>(true, false);
             //structGenerator.Generate<GenCommandBufferAllocateInfo>(true, false);
+            structGenerator.Generate<GenCommandBufferBeginInfo>(true, false);
+            structGenerator.Generate<GenCommandBufferInheritanceInfo>(true, false);
         }
     }
 }

@@ -22,24 +22,15 @@ THE SOFTWARE.
 */
 #endregion
 
-namespace VulkaNetGenerator
+namespace VulkaNet
 {
-    public struct VkApiVersion { }
-    public struct VkBool32 { }
-    
-    public enum VkResult { }
-    public enum VkStructureType { }
-    public enum VkInstanceCreateFlags { }
-    public enum VkPhysicalDeviceType { }
-    public enum VkSampleCountFlags { }
-    public enum VkDeviceQueueCreateFlags { }
-    public enum VkCommandPoolCreateFlags { }
-    public enum VkCommandBufferLevel { }
-    public enum VkCommandBufferUsageFlags { }
-    public enum VkQueryControlFlags { }
-    public enum VkQueryPipelineStatisticFlags { }
-
-    public struct HndCommandPool { }
-    public struct HndRenderPass { }
-    public struct HndFramebuffer { }
+    public class VkFramebuffer
+    {
+        public struct HandleType
+        {
+            public readonly ulong InternalHandle;
+            public HandleType(ulong internalHandle) { InternalHandle = internalHandle; }
+            public override string ToString() => InternalHandle.ToString();
+        }
+    }
 }

@@ -26,6 +26,7 @@ namespace VulkaNet
 {
     public enum VkSampleCountFlags
     {
+        None = 0,
         One = 0x00000001,
         Two = 0x00000002,
         Four = 0x00000004,

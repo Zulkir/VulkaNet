@@ -29,6 +29,7 @@ namespace VulkaNet
     [Flags]
     public enum VkCommandPoolResetFlags
     {
+        None = 0,
         ReleaseResources = 0x00000001,
     }
 }

@@ -60,6 +60,12 @@ namespace VulkaNetGenerator
                     return $"Vk{type.Name.Substring(3, type.Name.Length - 4)}.Raw*";
                 else
                     return $"Vk{type.Name.Substring(3, type.Name.Length - 3)}.Raw";
+            if (type.Name.StartsWith("Hnd"))
+                if (type.IsPointer)
+                    return $"Vk{type.Name.Substring(3, type.Name.Length - 4)}.HandleType*";
+                else
+                    return $"Vk{type.Name.Substring(3, type.Name.Length - 3)}.HandleType";
+
             switch (type.Name)
             {
                 case "StrByte": return "byte";

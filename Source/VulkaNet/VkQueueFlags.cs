@@ -29,6 +29,7 @@ namespace VulkaNet
     [Flags]
     public enum VkQueueFlags
     {
+        None = 0,
         Graphics = 0x00000001,
         Compute = 0x00000002,
         Transfer = 0x00000004,

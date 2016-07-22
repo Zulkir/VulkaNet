@@ -34,4 +34,7 @@ namespace VulkaNetGenerator
     public enum VkSampleCountFlags { }
     public enum VkDeviceQueueCreateFlags { }
     public enum VkCommandPoolCreateFlags { }
+    public enum VkCommandBufferLevel { }
+
+    public class HndCommandPool { }
 }

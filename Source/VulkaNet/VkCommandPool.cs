@@ -23,6 +23,8 @@ THE SOFTWARE.
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace VulkaNet
 {
@@ -33,6 +35,8 @@ namespace VulkaNet
         VkCommandPool.DirectFunctions Direct { get; }
 
         VkResult Reset(VkCommandPoolResetFlags flags);
+        VkObjectResult<IVkCommandBuffer[]> AllocateCommandBuffers(IVkCommandBufferAllocateInfo allocateInfo);
+        void FreeCommandBuffers(IReadOnlyList<IVkCommandBuffer> commandBuffers);
     }
 
     public unsafe class VkCommandPool : IVkCommandPool
@@ -73,12 +77,27 @@ namespace VulkaNet
                 HandleType commandPool,
                 VkAllocationCallbacks.Raw* pAllocator);
 
+            public AllocateCommandBuffersDelegate AllocateCommandBuffers { get; }
+            public delegate VkResult AllocateCommandBuffersDelegate(
+                VkDevice.HandleType device,
+                VkCommandBufferAllocateInfo.Raw* pAllocateInfo,
+                VkCommandBuffer.HandleType* pCommandBuffers);
+
+            public FreeCommandBuffersDelegate FreeCommandBuffers { get; }
+            public delegate void FreeCommandBuffersDelegate(
+                VkDevice.HandleType device,
+                HandleType commandPool,
+                int commandBufferCount,
+                VkCommandBuffer.HandleType* pCommandBuffers);
+
             public DirectFunctions(IVkDevice device)
             {
                 this.device = device;
 
                 ResetCommandPool = device.GetDeviceDelegate<ResetCommandPoolDelegate>("vkResetCommandPool");
                 DestroyCommandPool = device.GetDeviceDelegate<DestroyCommandPoolDelegate>("vkDestroyCommandPool");
+                AllocateCommandBuffers = device.GetDeviceDelegate<AllocateCommandBuffersDelegate>("vkAllocateCommandBuffers");
+                FreeCommandBuffers = device.GetDeviceDelegate<FreeCommandBuffersDelegate>("vkFreeCommandBuffers");
             }
         }
 
@@ -95,6 +114,33 @@ namespace VulkaNet
                 var pAllocator = Allocator.SafeMarshalTo(ref unamanged);
                 Direct.DestroyCommandPool(Device.Handle, Handle, pAllocator);
             }
+        }
+
+        public VkObjectResult<IVkCommandBuffer[]> AllocateCommandBuffers(IVkCommandBufferAllocateInfo allocateInfo)
+        {
+            var unmanagedSize = allocateInfo.SafeMarshalSize();
+            var unamangedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unamangedArray)
+            {
+                var unamanged = unmanagedStart;
+                var pAllocateInfo = allocateInfo.SafeMarshalTo(ref unamanged, this);
+                var commandBufferHandles = new VkCommandBuffer.HandleType[allocateInfo.CommandBufferCount];
+                fixed (VkCommandBuffer.HandleType* pCommandBuffers = commandBufferHandles)
+                {
+                    var result = Direct.AllocateCommandBuffers(Device.Handle, pAllocateInfo, pCommandBuffers);
+                    if (result != VkResult.Success)
+                        return new VkObjectResult<IVkCommandBuffer[]>(result, null);
+                    var commandBuffers = commandBufferHandles.Select(x => (IVkCommandBuffer)new VkCommandBuffer(x, Device)).ToArray();
+                    return new VkObjectResult<IVkCommandBuffer[]>(result, commandBuffers);
+                }
+            }
+        }
+
+        public void FreeCommandBuffers(IReadOnlyList<IVkCommandBuffer> commandBuffers)
+        {
+            var commandBufferHandles = commandBuffers.Select(x => x.Handle).ToArray();
+            fixed (VkCommandBuffer.HandleType* pCommandBuffers = commandBufferHandles)
+                Direct.FreeCommandBuffers(Device.Handle, Handle, commandBuffers.Count, pCommandBuffers);
         }
     }
 }

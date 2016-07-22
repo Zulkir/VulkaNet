@@ -29,6 +29,7 @@ namespace VulkaNet
     [Flags]
     public enum VkCommandPoolCreateFlags
     {
+        None = 0,
         Transient = 0x00000001,
         ResetCommandBuffer = 0x00000002,
     }

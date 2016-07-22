@@ -26,20 +26,27 @@ using System;
 
 namespace VulkaNet
 {
-    public interface IVkCommandBuffer : IVkDeviceChild, IVkHandledObject
+    public interface IVkCommandBuffer : IVkDeviceChild
     {
-        
+        VkCommandBuffer.HandleType Handle { get; }
     }
 
     public class VkCommandBuffer : IVkCommandBuffer
     {
-        public IntPtr Handle { get; }
+        public HandleType Handle { get; }
         public IVkDevice Device { get; }
 
-        public VkCommandBuffer(IntPtr handle, IVkDevice device)
+        public VkCommandBuffer(HandleType handle, IVkDevice device)
         {
             Handle = handle;
             Device = device;
+        }
+
+        public struct HandleType
+        {
+            public readonly IntPtr InternalHandle;
+            public HandleType(IntPtr internalHandle) { InternalHandle = internalHandle; }
+            public override string ToString() => InternalHandle.ToString();
         }
     }
 }

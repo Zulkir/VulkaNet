@@ -50,6 +50,8 @@
     <Compile Include="IVkInstanceChild.cs" />
     <Compile Include="IVkNonDisptatchableHandledObject.cs" />
     <Compile Include="VkCommandBuffer.cs" />
+    <Compile Include="VkCommandBufferAllocateInfo.cs" />
+    <Compile Include="VkCommandBufferLevel.cs" />
     <Compile Include="VkCommandPool.cs" />
     <Compile Include="VkCommandPoolCreateFlags.cs" />
     <Compile Include="VkCommandPoolCreateInfo.cs" />

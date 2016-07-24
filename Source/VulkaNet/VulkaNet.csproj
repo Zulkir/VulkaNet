@@ -59,7 +59,9 @@
     <Compile Include="VkCommandPoolCreateFlags.cs" />
     <Compile Include="VkCommandPoolCreateInfo.cs" />
     <Compile Include="VkCommandPoolResetFlags.cs" />
+    <Compile Include="VkFence.cs" />
     <Compile Include="VkFramebuffer.cs" />
+    <Compile Include="VkPipelineStageFlags.cs" />
     <Compile Include="VkQueryControlFlags.cs" />
     <Compile Include="VkQueryPipelineStatisticFlags.cs" />
     <Compile Include="VkQueue.cs" />
@@ -106,7 +108,9 @@
     <Compile Include="VkResult.cs" />
     <Compile Include="VkResultExtensions.cs" />
     <Compile Include="VkSampleCountFlags.cs" />
+    <Compile Include="VkSemaphore.cs" />
     <Compile Include="VkStructureType.cs" />
+    <Compile Include="VkSubmitInfo.cs" />
     <Compile Include="VkSystemAllocationScope.cs" />
     <Compile Include="VkUintVector2.cs" />
     <Compile Include="VkUintVector3.cs" />

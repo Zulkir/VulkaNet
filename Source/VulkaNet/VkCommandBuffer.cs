@@ -26,7 +26,7 @@ using System;
 
 namespace VulkaNet
 {
-    public interface IVkCommandBuffer : IVkDeviceChild
+    public interface IVkCommandBuffer : IVkHandledObject, IVkDeviceChild
     {
         VkCommandBuffer.HandleType Handle { get; }
         VkResult Begin(IVkCommandBufferBeginInfo beginInfo);
@@ -38,6 +38,8 @@ namespace VulkaNet
         public HandleType Handle { get; }
         public IVkDevice Device { get; }
         public DirectFunctions Direct { get; }
+
+        public IntPtr RawHandle => Handle.InternalHandle;
 
         public VkCommandBuffer(HandleType handle, IVkDevice device)
         {
@@ -51,6 +53,7 @@ namespace VulkaNet
             public readonly IntPtr InternalHandle;
             public HandleType(IntPtr internalHandle) { InternalHandle = internalHandle; }
             public override string ToString() => InternalHandle.ToString();
+            public static int SizeInBytes { get; } = IntPtr.Size;
         }
 
         public class DirectFunctions

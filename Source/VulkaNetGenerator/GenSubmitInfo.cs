@@ -24,18 +24,19 @@ THE SOFTWARE.
 
 namespace VulkaNetGenerator
 {
-    public unsafe struct GenPhysicalDeviceProperties
+    public unsafe struct GenSubmitInfo
     {
-        public uint apiVersion;
-        public uint driverVersion;
-        public uint vendorID;
-        public uint deviceID;
-        public VkPhysicalDeviceType deviceType;
-        [FixedArray("VkConstants.MaxPhysicalDeviceNameSize")]
-        public StrByte* deviceName;
-        [AsType("VkUuid"), FixedArray("VkConstants.UuidSize")]
-        public byte* pipelineCacheUUID;
-        public GenPhysicalDeviceLimits limits;
-        public GenPhysicalDeviceSparseProperties sparseProperties;
+        public VkStructureType sType;
+        public void* pNext;
+        [CountFor("WaitSemaphores")]
+        public int waitSemaphoreCount;
+        public HndSemaphore* pWaitSemaphores;
+        public VkPipelineStageFlags* pWaitDstStageMask;
+        [CountFor("CommandBuffers")]
+        public int commandBufferCount;
+        public HndCommandBuffer* pCommandBuffers;
+        [CountFor("SignalSemaphores")]
+        public int signalSemaphoreCount;
+        public HndSemaphore* pSignalSemaphores;
     }
 }

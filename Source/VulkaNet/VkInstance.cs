@@ -36,14 +36,14 @@ namespace VulkaNet
 
     public class VkInstance : IVkInstance
     {
-        public IntPtr Handle { get; }
+        public IntPtr RawHandle { get; }
         private VkAllocationCallbacks Allocator { get; }
         public DirectFunctions Direct { get; }
         public IReadOnlyList<IVkPhysicalDevice> PhysicalDevices { get; }
 
         public VkInstance(IntPtr handle, VkAllocationCallbacks allocator)
         {
-            Handle = handle;
+            RawHandle = handle;
             Allocator = allocator;
             Direct = new DirectFunctions(this);
             PhysicalDevices = EnumeratePhysicalDevices();
@@ -81,17 +81,17 @@ namespace VulkaNet
         {
             var unmanaged = (byte*)data;
             var pAllocator = Allocator.SafeMarshalTo(ref unmanaged);
-            Direct.DestroyInstance(Handle, pAllocator);
+            Direct.DestroyInstance(RawHandle, pAllocator);
         }
 
         private unsafe IReadOnlyList<IVkPhysicalDevice> EnumeratePhysicalDevices()
         {
             int count;
-            Direct.EnumeratePhysicalDevices(Handle, &count, (IntPtr*)0).CheckSuccess();
+            Direct.EnumeratePhysicalDevices(RawHandle, &count, (IntPtr*)0).CheckSuccess();
             var rawArray = new IntPtr[count];
             fixed (IntPtr* pRawArray = rawArray)
             {
-                Direct.EnumeratePhysicalDevices(Handle, &count, pRawArray).CheckSuccess();
+                Direct.EnumeratePhysicalDevices(RawHandle, &count, pRawArray).CheckSuccess();
             }
             return rawArray.Select(x => new VkPhysicalDevice(this, x)).ToArray();
         }

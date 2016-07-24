@@ -36,14 +36,21 @@ namespace VulkaNet
             => SafeMarshalReferenceSize(list, x => x.SafeMarshalSize());
         public static int SafeMarshalReferenceSize<T>(this IReadOnlyList<T> list, Func<T, int> marshalElemSize) 
             => list != null ? list.Sum(marshalElemSize) + IntPtr.Size * list.Count : 0;
-
-        public static int SafeMarshalSize(this IReadOnlyList<float> list)
-            => SafeMarshalStructSize(list, sizeof(float));
+        
         public static int SafeMarshalStructSize<T>(this IReadOnlyList<T> list, int elemSize)
             => list?.Count * elemSize ?? 0;
+        public static int SafeMarshalSize(this IReadOnlyList<float> list)
+            => SafeMarshalStructSize(list, sizeof(float));
+        public static int SafeMarshalSize(this IReadOnlyList<VkPipelineStageFlags> list) =>
+            SafeMarshalStructSize(list, sizeof(VkPipelineStageFlags));
+        public static int SafeMarshalSize(this IReadOnlyList<IVkSemaphore> list) =>
+            SafeMarshalStructSize(list, VkSemaphore.HandleType.SizeInBytes);
+        public static int SafeMarshalSize(this IReadOnlyList<IVkCommandBuffer> list) =>
+            SafeMarshalStructSize(list, VkCommandBuffer.HandleType.SizeInBytes);
+
 
         public unsafe delegate IntPtr MarshalElemDelegate<T>(T elem, ref byte* unmanaged);
-
+        
         private static unsafe IntPtr SafeMarshalStringTo(string elem, ref byte* unmanaged) 
             => (IntPtr)elem.SafeMarshalTo(ref unmanaged);
         public static unsafe byte** SafeMarshalTo(this IReadOnlyList<string> list, ref byte* unamanged) 
@@ -69,25 +76,46 @@ namespace VulkaNet
             return result;
         }
 
-        private static unsafe IntPtr MarshalFloatTo(float elem, ref byte* unmanaged)
-        {
-            var result = (float*)unmanaged;
-            *result = elem;
-            unmanaged += sizeof(float);
-            return (IntPtr)result;
-        }
-        public static unsafe float* SafeMarshalTo(this IReadOnlyList<float> list, ref byte* unamanged)
-            => (float*)SafeMarshalStructsTo(list, ref unamanged, MarshalFloatTo);
+        
+        public unsafe delegate void StoreElemDelegate<T>(T elem, ref byte* unmanaged);
 
-        public static unsafe IntPtr SafeMarshalStructsTo<T>(this IReadOnlyList<T> list, ref byte* unamanged, MarshalElemDelegate<T> marshalElem)
-            where T : struct
+        private static unsafe IntPtr SafeMarshalStructsTo<T>(this IReadOnlyList<T> list, ref byte* unamanged, StoreElemDelegate<T> storeElem, int elemSize)
         {
             if (list == null)
                 return (IntPtr)0;
             var result = (IntPtr)unamanged;
             foreach (var elem in list)
-                marshalElem(elem, ref unamanged);
+            {
+                storeElem(elem, ref unamanged);
+                unamanged += elemSize;
+            }
             return result;
         }
+
+        private static unsafe void StoreFloat(float elem, ref byte* unmanaged) => 
+            *(float*)unmanaged = elem;
+        public static unsafe float* SafeMarshalTo(this IReadOnlyList<float> list, ref byte* unamanged) => 
+            (float*)SafeMarshalStructsTo(list, ref unamanged, StoreFloat, sizeof(float));
+
+        private static unsafe void StoreFloat(VkPipelineStageFlags elem, ref byte* unmanaged) =>
+            *(VkPipelineStageFlags*)unmanaged = elem;
+        public static unsafe VkPipelineStageFlags* SafeMarshalTo(this IReadOnlyList<VkPipelineStageFlags> list, ref byte* unamanged) =>
+            (VkPipelineStageFlags*)SafeMarshalStructsTo(list, ref unamanged, StoreFloat, sizeof(VkPipelineStageFlags));
+
+        private static unsafe void StoreHandled<T>(T elem, ref byte* unmanaged)
+            where T : IVkHandledObject
+            =>
+            *(IntPtr*)unmanaged = elem.RawHandle;
+
+        public static unsafe VkCommandBuffer.HandleType* SafeMarshalTo(this IReadOnlyList<IVkCommandBuffer> list, ref byte* unamanged) =>
+            (VkCommandBuffer.HandleType*)SafeMarshalStructsTo(list, ref unamanged, StoreHandled, VkCommandBuffer.HandleType.SizeInBytes);
+
+        private static unsafe void StoreNonDispatchableHandled<T>(T elem, ref byte* unmanaged)
+            where T : IVkNonDisptatchableHandledObject
+            =>
+            *(ulong*)unmanaged = elem.RawHandle;
+        
+        public static unsafe VkSemaphore.HandleType* SafeMarshalTo(this IReadOnlyList<IVkSemaphore> list, ref byte* unamanged) =>
+            (VkSemaphore.HandleType*)SafeMarshalStructsTo(list, ref unamanged, StoreNonDispatchableHandled, VkSemaphore.HandleType.SizeInBytes);
     }
 }

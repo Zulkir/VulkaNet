@@ -28,6 +28,6 @@ namespace VulkaNet
 {
     public interface IVkHandledObject
     {
-        IntPtr Handle { get; }
+        IntPtr RawHandle { get; }
     }
 }

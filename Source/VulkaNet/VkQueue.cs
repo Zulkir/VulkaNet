@@ -23,23 +23,62 @@ THE SOFTWARE.
 #endregion
 
 using System;
+using System.Collections.Generic;
 
 namespace VulkaNet
 {
     public interface IVkQueue : IVkDeviceChild
     {
-        
+        VkResult Submit(IReadOnlyList<IVkSubmitInfo> submits, IVkFence fence);
     }
 
-    public class VkQueue : IVkQueue
+    public unsafe class VkQueue : IVkQueue
     {
-        public IntPtr Handle { get; }
+        public HandleType Handle { get; }
         public IVkDevice Device { get; }
+        public DirectFunctions Direct { get; }
 
-        public VkQueue(IntPtr handle, IVkDevice device)
+        public VkQueue(HandleType handle, IVkDevice device)
         {
             Handle = handle;
             Device = device;
+            Direct = new DirectFunctions(device);
+        }
+
+        public struct HandleType
+        {
+            public readonly IntPtr InternalHandle;
+            public HandleType(IntPtr internalHandle) { InternalHandle = internalHandle; }
+            public override string ToString() => InternalHandle.ToString();
+            public static int SizeInBytes { get; } = sizeof(IntPtr);
+        }
+
+        public class DirectFunctions
+        {
+            public QueueSubmitDelegate QueueSubmit { get; }
+            public delegate VkResult QueueSubmitDelegate(
+                HandleType queue,
+                int submitCount,
+                VkSubmitInfo.Raw* pSubmits,
+                VkFence.HandleType fence);
+            
+            public DirectFunctions(IVkDevice device)
+            {
+                QueueSubmit = device.GetDeviceDelegate<QueueSubmitDelegate>("vkQueueSubmit");
+            }
+        }
+
+        public VkResult Submit(IReadOnlyList<IVkSubmitInfo> submits, IVkFence fence)
+        {
+            var unmanagedSize =
+                submits.SafeSizeOfMarshalDirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var pSubmits = submits.SafeMarshalDirect(ref unmanaged);
+                return Direct.QueueSubmit(Handle, submits?.Count ?? 0, pSubmits, fence.Handle);
+            }
         }
     }
 }

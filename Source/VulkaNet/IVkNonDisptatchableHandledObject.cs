@@ -26,6 +26,6 @@ namespace VulkaNet
 {
     public interface IVkNonDisptatchableHandledObject
     {
-        ulong Handle { get; }
+        ulong RawHandle { get; }
     }
 }

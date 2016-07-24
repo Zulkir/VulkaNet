@@ -22,20 +22,32 @@ THE SOFTWARE.
 */
 #endregion
 
-namespace VulkaNetGenerator
+namespace VulkaNet
 {
-    public unsafe struct GenPhysicalDeviceProperties
+    public interface IVkFence : IVkNonDisptatchableHandledObject, IVkDeviceChild
     {
-        public uint apiVersion;
-        public uint driverVersion;
-        public uint vendorID;
-        public uint deviceID;
-        public VkPhysicalDeviceType deviceType;
-        [FixedArray("VkConstants.MaxPhysicalDeviceNameSize")]
-        public StrByte* deviceName;
-        [AsType("VkUuid"), FixedArray("VkConstants.UuidSize")]
-        public byte* pipelineCacheUUID;
-        public GenPhysicalDeviceLimits limits;
-        public GenPhysicalDeviceSparseProperties sparseProperties;
+        VkFence.HandleType Handle { get; }
+    }
+
+    public class VkFence : IVkFence
+    {
+        public HandleType Handle { get; }
+        public IVkDevice Device { get; }
+
+        public ulong RawHandle => Handle.InternalHandle;
+
+        public VkFence(HandleType handle, IVkDevice device)
+        {
+            Handle = handle;
+            Device = device;
+        }
+
+        public struct HandleType
+        {
+            public readonly ulong InternalHandle;
+            public HandleType(ulong internalHandle) { InternalHandle = internalHandle; }
+            public override string ToString() => InternalHandle.ToString();
+            public static int SizeInBytes { get; } = sizeof(ulong);
+        }
     }
 }

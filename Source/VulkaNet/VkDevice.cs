@@ -86,7 +86,7 @@ namespace VulkaNet
                 HandleType device,
                 uint queueFamilyIndex,
                 uint queueIndex,
-                IntPtr* pQueue);
+                VkQueue.HandleType* pQueue);
 
             public CreateCommandPoolDelegate CreateCommandPool { get; }
             public delegate VkResult CreateCommandPoolDelegate(
@@ -139,7 +139,7 @@ namespace VulkaNet
 
         private IVkQueue DoGetDeviceQueue(ValuePair<int, int> key)
         {
-            IntPtr handle;
+            VkQueue.HandleType handle;
             Direct.GetDeviceQueue(Handle, (uint)key.First, (uint)key.Second, &handle).CheckSuccess();
             return new VkQueue(handle, this);
         }

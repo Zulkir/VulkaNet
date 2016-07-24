@@ -39,6 +39,7 @@ namespace VulkaNetGenerator
             //structGenerator.Generate<GenCommandBufferAllocateInfo>(true, false);
             structGenerator.Generate<GenCommandBufferBeginInfo>(true, false);
             structGenerator.Generate<GenCommandBufferInheritanceInfo>(true, false);
+            structGenerator.Generate<GenSubmitInfo>(true, false);
         }
     }
 }

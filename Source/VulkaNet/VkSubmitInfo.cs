@@ -1,0 +1,196 @@
+#region License
+/*
+Copyright (c) 2016 VulkaNet Project - Daniil Rodin
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
+#endregion
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices;
+
+namespace VulkaNet
+{
+    public unsafe interface IVkSubmitInfo
+    {
+        IVkStructWrapper Next { get; }
+        IReadOnlyList<IVkSemaphore> WaitSemaphores { get; }
+        IReadOnlyList<VkPipelineStageFlags> WaitDstStageMask { get; }
+        IReadOnlyList<IVkCommandBuffer> CommandBuffers { get; }
+        IReadOnlyList<IVkSemaphore> SignalSemaphores { get; }
+    }
+
+    public unsafe class VkSubmitInfo : IVkSubmitInfo
+    {
+        public IVkStructWrapper Next { get; set; }
+        public IReadOnlyList<IVkSemaphore> WaitSemaphores { get; set; }
+        public IReadOnlyList<VkPipelineStageFlags> WaitDstStageMask { get; set; }
+        public IReadOnlyList<IVkCommandBuffer> CommandBuffers { get; set; }
+        public IReadOnlyList<IVkSemaphore> SignalSemaphores { get; set; }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct Raw
+        {
+            public VkStructureType sType;
+            public void* pNext;
+            public int waitSemaphoreCount;
+            public VkSemaphore.HandleType* pWaitSemaphores;
+            public VkPipelineStageFlags* pWaitDstStageMask;
+            public int commandBufferCount;
+            public VkCommandBuffer.HandleType* pCommandBuffers;
+            public int signalSemaphoreCount;
+            public VkSemaphore.HandleType* pSignalSemaphores;
+
+            public static int SizeInBytes { get; } = Marshal.SizeOf<Raw>();
+        }
+        /*
+        public int SizeOfMarshalDirect()
+        {
+            return Next.SafeMarshalSize() +
+                   WaitSemaphores.SafeMarshalSize() +
+                   WaitDstStageMask.SafeMarshalSize() +
+                   CommandBuffers.SafeMarshalSize() +
+                   SignalSemaphores.SafeMarshalSize();
+        }
+
+        public int MarshalSizeIndirect() =>
+            SizeOfMarshalDirect() + Raw.SizeInBytes;
+
+        public Raw MarshalDirect(ref byte* unmanaged)
+        {
+            var pNext = Next.SafeMarshalTo(ref unmanaged);
+            var pWaitSemaphores = WaitSemaphores.SafeMarshalTo(ref unmanaged);
+            var pWaitDstStageMask = WaitDstStageMask.SafeMarshalTo(ref unmanaged);
+            var pCommandBuffers = CommandBuffers.SafeMarshalTo(ref unmanaged);
+            var pSignalSemaphores = SignalSemaphores.SafeMarshalTo(ref unmanaged);
+            
+            Raw result;
+            result.sType = VkStructureType.SubmitInfo;
+            result.pNext = pNext;
+            result.waitSemaphoreCount = WaitSemaphores?.Count ?? 0;
+            result.pWaitSemaphores = pWaitSemaphores;
+            result.pWaitDstStageMask = pWaitDstStageMask;
+            result.commandBufferCount = CommandBuffers?.Count ?? 0;
+            result.pCommandBuffers = pCommandBuffers;
+            result.signalSemaphoreCount = SignalSemaphores?.Count ?? 0;
+            result.pSignalSemaphores = pSignalSemaphores;
+            return result;
+        }
+
+        public Raw* MarshalIndirect(ref byte* unmanaged)
+        {
+            var result = (Raw*)unmanaged;
+            unmanaged += Raw.SizeInBytes;
+            *result = MarshalDirect(ref unmanaged);
+            return result;
+        }*/
+    }
+
+    public static unsafe class VkSubmitInfoExtensions
+    {
+        public static int SizeOfMarshalDirect(this IVkSubmitInfo s)
+        {
+            if (s == null)
+                throw new InvalidOperationException("Trying to directly marshal a null.");
+            return
+                s.Next.SafeMarshalSize() +
+                s.WaitSemaphores.SafeMarshalSize() +
+                s.WaitDstStageMask.SafeMarshalSize() +
+                s.CommandBuffers.SafeMarshalSize() +
+                s.SignalSemaphores.SafeMarshalSize();
+        }
+
+        public static VkSubmitInfo.Raw MarshalDirect(this IVkSubmitInfo s, ref byte* unmanaged)
+        {
+            if (s == null)
+                throw new InvalidOperationException("Trying to directly marshal a null.");
+
+            var pNext = s.Next.SafeMarshalTo(ref unmanaged);
+            var pWaitSemaphores = s.WaitSemaphores.SafeMarshalTo(ref unmanaged);
+            var pWaitDstStageMask = s.WaitDstStageMask.SafeMarshalTo(ref unmanaged);
+            var pCommandBuffers = s.CommandBuffers.SafeMarshalTo(ref unmanaged);
+            var pSignalSemaphores = s.SignalSemaphores.SafeMarshalTo(ref unmanaged);
+
+            VkSubmitInfo.Raw result;
+            result.sType = VkStructureType.SubmitInfo;
+            result.pNext = pNext;
+            result.waitSemaphoreCount = s.WaitSemaphores?.Count ?? 0;
+            result.pWaitSemaphores = pWaitSemaphores;
+            result.pWaitDstStageMask = pWaitDstStageMask;
+            result.commandBufferCount = s.CommandBuffers?.Count ?? 0;
+            result.pCommandBuffers = pCommandBuffers;
+            result.signalSemaphoreCount = s.SignalSemaphores?.Count ?? 0;
+            result.pSignalSemaphores = pSignalSemaphores;
+            return result;
+        }
+
+        public static int SafeSizeOfMarshalIndirect(this IVkSubmitInfo s)
+        {
+            if (s == null)
+                return 0;
+            return s.SizeOfMarshalDirect() + VkSubmitInfo.Raw.SizeInBytes;
+        }
+
+        public static VkSubmitInfo.Raw* SafeMarshalIndirect(this IVkSubmitInfo s, ref byte* unmanaged)
+        {
+            var result = (VkSubmitInfo.Raw*)unmanaged;
+            unmanaged += VkSubmitInfo.Raw.SizeInBytes;
+            *result = s.MarshalDirect(ref unmanaged);
+            return result;
+        }
+
+        public static int SafeSizeOfMarshalDirect(this IReadOnlyList<IVkSubmitInfo> list)
+        {
+            if (list == null || list.Count == 0)
+                return 0;
+            return sizeof(VkSubmitInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
+        }
+
+        public static VkSubmitInfo.Raw* SafeMarshalDirect(this IReadOnlyList<IVkSubmitInfo> list, ref byte* unmanaged)
+        {
+            if (list == null || list.Count == 0)
+                return (VkSubmitInfo.Raw*)0;
+            var result = (VkSubmitInfo.Raw*)unmanaged;
+            unmanaged += sizeof(VkSubmitInfo.Raw) * list.Count;
+            for (int i = 0; i < list.Count; i++)
+                result[i] = list[i].MarshalDirect(ref unmanaged);
+            return result;
+        }
+
+        public static int SafeSizeOfMarshalIndirect(this IReadOnlyList<IVkSubmitInfo> list)
+        {
+            if (list == null || list.Count == 0)
+                return 0;
+            return sizeof(VkSubmitInfo.Raw*) * list.Count + list.Sum(x => x.SafeSizeOfMarshalIndirect());
+        }
+
+        public static VkSubmitInfo.Raw** SafeMarshalIndirect(this IReadOnlyList<IVkSubmitInfo> list, ref byte* unmanaged)
+        {
+            if (list == null || list.Count == 0)
+                return (VkSubmitInfo.Raw**)0;
+            var ptrArrayPtr = (VkSubmitInfo.Raw**)unmanaged;
+            unmanaged += sizeof(VkSubmitInfo.Raw*) * list.Count;
+            for (int i = 0; i < list.Count; i++)
+                ptrArrayPtr[i] = list[i].SafeMarshalIndirect(ref unmanaged);
+            return ptrArrayPtr;
+        }
+    }
+}

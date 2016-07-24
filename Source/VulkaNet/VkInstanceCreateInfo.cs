@@ -58,44 +58,85 @@ namespace VulkaNet
 
             public static int SizeInBytes { get; } = Marshal.SizeOf<Raw>();
         }
-
-        public int MarshalSize() =>
-            Next.SafeMarshalSize() +
-            ApplicationInfo.SafeMarshalSize() +
-            EnabledLayerNames.SafeMarshalSize() +
-            EnabledExtensionNames.SafeMarshalSize() +
-            Raw.SizeInBytes;
-
-        public Raw* MarshalTo(ref byte* unmanaged)
-        {
-            var pNext = Next.SafeMarshalTo(ref unmanaged);
-            var pApplicationInfo = ApplicationInfo.SafeMarshalTo(ref unmanaged);
-            var ppEnabledLayerNames = EnabledLayerNames.SafeMarshalTo(ref unmanaged);
-            var ppEnabledExtensionNames = EnabledExtensionNames.SafeMarshalTo(ref unmanaged);
-
-            var result = (Raw*)unmanaged;
-            unmanaged += Raw.SizeInBytes;
-            result->sType = VkStructureType.InstanceCreateInfo;
-            result->pNext = pNext;
-            result->flags = Flags;
-            result->pApplicationInfo = pApplicationInfo;
-            result->enabledLayerCount = EnabledLayerNames?.Count ?? 0;
-            result->ppEnabledLayerNames = ppEnabledLayerNames;
-            result->enabledExtensionCount = EnabledExtensionNames?.Count ?? 0;
-            result->ppEnabledExtensionNames = ppEnabledExtensionNames;
-            return result;
-        }
-
-        void* IVkStructWrapper.MarshalTo(ref byte* unmanaged) =>
-            MarshalTo(ref unmanaged);
     }
 
     public static unsafe class VkInstanceCreateInfoExtensions
     {
-        public static int SafeMarshalSize(this IVkInstanceCreateInfo s) =>
-            s?.MarshalSize() ?? 0;
+        public int SizeOfMarshalDirect(this IInstanceCreateInfo s)
+        {
+            if (s == null)
+                throw new InvalidOperationException("Trying to directly marshal a null.");
 
-        public static VkInstanceCreateInfo.Raw* SafeMarshalTo(this IVkInstanceCreateInfo s, ref byte* unmanaged) =>
-            (VkInstanceCreateInfo.Raw*)(s != null ? s.MarshalTo(ref unmanaged) : (void*)0);
+            return
+                Next.SizeOfMarshalIndirect() +
+                ApplicationInfo.SizeOfMarshalIndirect() +
+                EnabledLayerNames.SizeOfMarshalIndirect() +
+                EnabledExtensionNames.SizeOfMarshalIndirect();
+        }
+
+        public Raw* MarshalDirect(this IVkInstanceCreateInfo s, ref byte* unmanaged)
+        {
+            if (s == null)
+                throw new InvalidOperationException("Trying to directly marshal a null.");
+
+            var pNext = s.Next.MarshalIndirect(ref unmanaged);
+            var pApplicationInfo = s.ApplicationInfo.MarshalIndirect(ref unmanaged);
+            var ppEnabledLayerNames = s.EnabledLayerNames.MarshalIndirect(ref unmanaged);
+            var ppEnabledExtensionNames = s.EnabledExtensionNames.MarshalIndirect(ref unmanaged);
+
+            VkInstanceCreateInfo.Raw result;
+            result.sType = VkStructureType.InstanceCreateInfo;
+            result.pNext = pNext;
+            result.flags = s.Flags;
+            result.pApplicationInfo = pApplicationInfo;
+            result.enabledLayerCount = s.EnabledLayerNames?.Count ?? 0;
+            result.ppEnabledLayerNames = ppEnabledLayerNames;
+            result.enabledExtensionCount = s.EnabledExtensionNames?.Count ?? 0;
+            result.ppEnabledExtensionNames = ppEnabledExtensionNames;
+            return result;
+        }
+
+        public static int SizeOfMarshalIndirect(this IVkInstanceCreateInfo s) =>
+            s == null ? 0 : s.SizeOfMarshalDirect() + VkInstanceCreateInfo.Raw.SizeInBytes;
+
+        public static VkInstanceCreateInfo.Raw* MarshalIndirect(this IVkInstanceCreateInfo s, ref byte* unmanaged)
+        {
+            var result = (VkInstanceCreateInfo.Raw*)unmanaged;
+            unmanaged += VkInstanceCreateInfo.Raw.SizeInBytes;
+            *result = s.MarshalDirect(ref unmanaged);
+            return result;
+        }
+
+        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkInstanceCreateInfo> list) => 
+            list == null || list.Count == 0 
+                ? 0
+                : sizeof(VkInstanceCreateInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
+
+        public static VkInstanceCreateInfo.Raw* MarshalDirect(this IReadOnlyList<IVkInstanceCreateInfo> list, ref byte* unmanaged)
+        {
+            if (list == null || list.Count == 0)
+                return (VkInstanceCreateInfo.Raw*)0;
+            var result = (VkInstanceCreateInfo.Raw*)unmanaged;
+            unmanaged += sizeof(VkInstanceCreateInfo.Raw) * list.Count;
+            for (int i = 0; i < list.Count; i++)
+                result[i] = list[i].MarshalDirect(ref unmanaged);
+            return result;
+        }
+
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkInstanceCreateInfo> list)
+            list == null || list.Count == 0
+                ? 0
+                : sizeof(VkInstanceCreateInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
+
+        public static VkInstanceCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkInstanceCreateInfo> list, ref byte* unmanaged)
+        {
+            if (list == null || list.Count == 0)
+                return (VkInstanceCreateInfo.Raw**)0;
+            var result = (VkInstanceCreateInfo.Raw**)unmanaged;
+            unmanaged += sizeof(VkInstanceCreateInfo.Raw*) * list.Count;
+            for (int i = 0; i < list.Count; i++)
+                result[i] = list[i].MarshalIndirect(ref unmanaged);
+            return result;
+        }
     }
 }

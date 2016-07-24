@@ -29,9 +29,9 @@ namespace VulkaNet
     public interface IVkCommandBufferInheritanceInfo : IVkStructWrapper
     {
         IVkStructWrapper Next { get; }
-        VkRenderPass.HandleType RenderPass { get; }
+        IVkRenderPass RenderPass { get; }
         int Subpass { get; }
-        VkFramebuffer.HandleType Framebuffer { get; }
+        IVkFramebuffer Framebuffer { get; }
         bool OcclusionQueryEnable { get; }
         VkQueryControlFlags QueryFlags { get; }
         VkQueryPipelineStatisticFlags PipelineStatistics { get; }
@@ -40,9 +40,9 @@ namespace VulkaNet
     public unsafe class VkCommandBufferInheritanceInfo : IVkCommandBufferInheritanceInfo
     {
         public IVkStructWrapper Next { get; set; }
-        public VkRenderPass.HandleType RenderPass { get; set; }
+        public IVkRenderPass RenderPass { get; set; }
         public int Subpass { get; set; }
-        public VkFramebuffer.HandleType Framebuffer { get; set; }
+        public IVkFramebuffer Framebuffer { get; set; }
         public bool OcclusionQueryEnable { get; set; }
         public VkQueryControlFlags QueryFlags { get; set; }
         public VkQueryPipelineStatisticFlags PipelineStatistics { get; set; }
@@ -61,38 +61,79 @@ namespace VulkaNet
 
             public static int SizeInBytes { get; } = Marshal.SizeOf<Raw>();
         }
-
-        public int MarshalSize() =>
-            Next.SafeMarshalSize() +
-            Raw.SizeInBytes;
-
-        public Raw* MarshalTo(ref byte* unmanaged)
-        {
-            var pNext = Next.SafeMarshalTo(ref unmanaged);
-
-            var result = (Raw*)unmanaged;
-            unmanaged += Raw.SizeInBytes;
-            result->sType = VkStructureType.CommandBufferInheritanceInfo;
-            result->pNext = pNext;
-            result->renderPass = RenderPass;
-            result->subpass = Subpass;
-            result->framebuffer = Framebuffer;
-            result->occlusionQueryEnable = new VkBool32(OcclusionQueryEnable);
-            result->queryFlags = QueryFlags;
-            result->pipelineStatistics = PipelineStatistics;
-            return result;
-        }
-
-        void* IVkStructWrapper.MarshalTo(ref byte* unmanaged) =>
-            MarshalTo(ref unmanaged);
     }
 
     public static unsafe class VkCommandBufferInheritanceInfoExtensions
     {
-        public static int SafeMarshalSize(this IVkCommandBufferInheritanceInfo s) =>
-            s?.MarshalSize() ?? 0;
+        public int SizeOfMarshalDirect(this ICommandBufferInheritanceInfo s)
+        {
+            if (s == null)
+                throw new InvalidOperationException("Trying to directly marshal a null.");
 
-        public static VkCommandBufferInheritanceInfo.Raw* SafeMarshalTo(this IVkCommandBufferInheritanceInfo s, ref byte* unmanaged) =>
-            (VkCommandBufferInheritanceInfo.Raw*)(s != null ? s.MarshalTo(ref unmanaged) : (void*)0);
+            return
+                Next.SizeOfMarshalIndirect();
+        }
+
+        public Raw* MarshalDirect(this IVkCommandBufferInheritanceInfo s, ref byte* unmanaged)
+        {
+            if (s == null)
+                throw new InvalidOperationException("Trying to directly marshal a null.");
+
+            var pNext = s.Next.MarshalIndirect(ref unmanaged);
+
+            VkCommandBufferInheritanceInfo.Raw result;
+            result.sType = VkStructureType.CommandBufferInheritanceInfo;
+            result.pNext = pNext;
+            result.renderPass = s.RenderPass;
+            result.subpass = s.Subpass;
+            result.framebuffer = s.Framebuffer;
+            result.occlusionQueryEnable = new VkBool32(s.OcclusionQueryEnable);
+            result.queryFlags = s.QueryFlags;
+            result.pipelineStatistics = s.PipelineStatistics;
+            return result;
+        }
+
+        public static int SizeOfMarshalIndirect(this IVkCommandBufferInheritanceInfo s) =>
+            s == null ? 0 : s.SizeOfMarshalDirect() + VkCommandBufferInheritanceInfo.Raw.SizeInBytes;
+
+        public static VkCommandBufferInheritanceInfo.Raw* MarshalIndirect(this IVkCommandBufferInheritanceInfo s, ref byte* unmanaged)
+        {
+            var result = (VkCommandBufferInheritanceInfo.Raw*)unmanaged;
+            unmanaged += VkCommandBufferInheritanceInfo.Raw.SizeInBytes;
+            *result = s.MarshalDirect(ref unmanaged);
+            return result;
+        }
+
+        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkCommandBufferInheritanceInfo> list) => 
+            list == null || list.Count == 0 
+                ? 0
+                : sizeof(VkCommandBufferInheritanceInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
+
+        public static VkCommandBufferInheritanceInfo.Raw* MarshalDirect(this IReadOnlyList<IVkCommandBufferInheritanceInfo> list, ref byte* unmanaged)
+        {
+            if (list == null || list.Count == 0)
+                return (VkCommandBufferInheritanceInfo.Raw*)0;
+            var result = (VkCommandBufferInheritanceInfo.Raw*)unmanaged;
+            unmanaged += sizeof(VkCommandBufferInheritanceInfo.Raw) * list.Count;
+            for (int i = 0; i < list.Count; i++)
+                result[i] = list[i].MarshalDirect(ref unmanaged);
+            return result;
+        }
+
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkCommandBufferInheritanceInfo> list)
+            list == null || list.Count == 0
+                ? 0
+                : sizeof(VkCommandBufferInheritanceInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
+
+        public static VkCommandBufferInheritanceInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkCommandBufferInheritanceInfo> list, ref byte* unmanaged)
+        {
+            if (list == null || list.Count == 0)
+                return (VkCommandBufferInheritanceInfo.Raw**)0;
+            var result = (VkCommandBufferInheritanceInfo.Raw**)unmanaged;
+            unmanaged += sizeof(VkCommandBufferInheritanceInfo.Raw*) * list.Count;
+            for (int i = 0; i < list.Count; i++)
+                result[i] = list[i].MarshalIndirect(ref unmanaged);
+            return result;
+        }
     }
 }

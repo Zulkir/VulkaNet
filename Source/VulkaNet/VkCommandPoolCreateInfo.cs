@@ -49,34 +49,75 @@ namespace VulkaNet
 
             public static int SizeInBytes { get; } = Marshal.SizeOf<Raw>();
         }
-
-        public int MarshalSize() =>
-            Next.SafeMarshalSize() +
-            Raw.SizeInBytes;
-
-        public Raw* MarshalTo(ref byte* unmanaged)
-        {
-            var pNext = Next.SafeMarshalTo(ref unmanaged);
-
-            var result = (Raw*)unmanaged;
-            unmanaged += Raw.SizeInBytes;
-            result->sType = VkStructureType.CommandPoolCreateInfo;
-            result->pNext = pNext;
-            result->flags = Flags;
-            result->queueFamilyIndex = QueueFamilyIndex;
-            return result;
-        }
-
-        void* IVkStructWrapper.MarshalTo(ref byte* unmanaged) =>
-            MarshalTo(ref unmanaged);
     }
 
     public static unsafe class VkCommandPoolCreateInfoExtensions
     {
-        public static int SafeMarshalSize(this IVkCommandPoolCreateInfo s) =>
-            s?.MarshalSize() ?? 0;
+        public int SizeOfMarshalDirect(this ICommandPoolCreateInfo s)
+        {
+            if (s == null)
+                throw new InvalidOperationException("Trying to directly marshal a null.");
 
-        public static VkCommandPoolCreateInfo.Raw* SafeMarshalTo(this IVkCommandPoolCreateInfo s, ref byte* unmanaged) =>
-            (VkCommandPoolCreateInfo.Raw*)(s != null ? s.MarshalTo(ref unmanaged) : (void*)0);
+            return
+                Next.SizeOfMarshalIndirect();
+        }
+
+        public Raw* MarshalDirect(this IVkCommandPoolCreateInfo s, ref byte* unmanaged)
+        {
+            if (s == null)
+                throw new InvalidOperationException("Trying to directly marshal a null.");
+
+            var pNext = s.Next.MarshalIndirect(ref unmanaged);
+
+            VkCommandPoolCreateInfo.Raw result;
+            result.sType = VkStructureType.CommandPoolCreateInfo;
+            result.pNext = pNext;
+            result.flags = s.Flags;
+            result.queueFamilyIndex = s.QueueFamilyIndex;
+            return result;
+        }
+
+        public static int SizeOfMarshalIndirect(this IVkCommandPoolCreateInfo s) =>
+            s == null ? 0 : s.SizeOfMarshalDirect() + VkCommandPoolCreateInfo.Raw.SizeInBytes;
+
+        public static VkCommandPoolCreateInfo.Raw* MarshalIndirect(this IVkCommandPoolCreateInfo s, ref byte* unmanaged)
+        {
+            var result = (VkCommandPoolCreateInfo.Raw*)unmanaged;
+            unmanaged += VkCommandPoolCreateInfo.Raw.SizeInBytes;
+            *result = s.MarshalDirect(ref unmanaged);
+            return result;
+        }
+
+        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkCommandPoolCreateInfo> list) => 
+            list == null || list.Count == 0 
+                ? 0
+                : sizeof(VkCommandPoolCreateInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
+
+        public static VkCommandPoolCreateInfo.Raw* MarshalDirect(this IReadOnlyList<IVkCommandPoolCreateInfo> list, ref byte* unmanaged)
+        {
+            if (list == null || list.Count == 0)
+                return (VkCommandPoolCreateInfo.Raw*)0;
+            var result = (VkCommandPoolCreateInfo.Raw*)unmanaged;
+            unmanaged += sizeof(VkCommandPoolCreateInfo.Raw) * list.Count;
+            for (int i = 0; i < list.Count; i++)
+                result[i] = list[i].MarshalDirect(ref unmanaged);
+            return result;
+        }
+
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkCommandPoolCreateInfo> list)
+            list == null || list.Count == 0
+                ? 0
+                : sizeof(VkCommandPoolCreateInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
+
+        public static VkCommandPoolCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkCommandPoolCreateInfo> list, ref byte* unmanaged)
+        {
+            if (list == null || list.Count == 0)
+                return (VkCommandPoolCreateInfo.Raw**)0;
+            var result = (VkCommandPoolCreateInfo.Raw**)unmanaged;
+            unmanaged += sizeof(VkCommandPoolCreateInfo.Raw*) * list.Count;
+            for (int i = 0; i < list.Count; i++)
+                result[i] = list[i].MarshalIndirect(ref unmanaged);
+            return result;
+        }
     }
 }

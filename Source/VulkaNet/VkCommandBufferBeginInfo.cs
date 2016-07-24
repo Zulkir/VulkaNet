@@ -49,36 +49,77 @@ namespace VulkaNet
 
             public static int SizeInBytes { get; } = Marshal.SizeOf<Raw>();
         }
-
-        public int MarshalSize() =>
-            Next.SafeMarshalSize() +
-            InheritanceInfo.SafeMarshalSize() +
-            Raw.SizeInBytes;
-
-        public Raw* MarshalTo(ref byte* unmanaged)
-        {
-            var pNext = Next.SafeMarshalTo(ref unmanaged);
-            var pInheritanceInfo = InheritanceInfo.SafeMarshalTo(ref unmanaged);
-
-            var result = (Raw*)unmanaged;
-            unmanaged += Raw.SizeInBytes;
-            result->sType = VkStructureType.CommandBufferBeginInfo;
-            result->pNext = pNext;
-            result->flags = Flags;
-            result->pInheritanceInfo = pInheritanceInfo;
-            return result;
-        }
-
-        void* IVkStructWrapper.MarshalTo(ref byte* unmanaged) =>
-            MarshalTo(ref unmanaged);
     }
 
     public static unsafe class VkCommandBufferBeginInfoExtensions
     {
-        public static int SafeMarshalSize(this IVkCommandBufferBeginInfo s) =>
-            s?.MarshalSize() ?? 0;
+        public int SizeOfMarshalDirect(this ICommandBufferBeginInfo s)
+        {
+            if (s == null)
+                throw new InvalidOperationException("Trying to directly marshal a null.");
 
-        public static VkCommandBufferBeginInfo.Raw* SafeMarshalTo(this IVkCommandBufferBeginInfo s, ref byte* unmanaged) =>
-            (VkCommandBufferBeginInfo.Raw*)(s != null ? s.MarshalTo(ref unmanaged) : (void*)0);
+            return
+                Next.SizeOfMarshalIndirect() +
+                InheritanceInfo.SizeOfMarshalIndirect();
+        }
+
+        public Raw* MarshalDirect(this IVkCommandBufferBeginInfo s, ref byte* unmanaged)
+        {
+            if (s == null)
+                throw new InvalidOperationException("Trying to directly marshal a null.");
+
+            var pNext = s.Next.MarshalIndirect(ref unmanaged);
+            var pInheritanceInfo = s.InheritanceInfo.MarshalIndirect(ref unmanaged);
+
+            VkCommandBufferBeginInfo.Raw result;
+            result.sType = VkStructureType.CommandBufferBeginInfo;
+            result.pNext = pNext;
+            result.flags = s.Flags;
+            result.pInheritanceInfo = pInheritanceInfo;
+            return result;
+        }
+
+        public static int SizeOfMarshalIndirect(this IVkCommandBufferBeginInfo s) =>
+            s == null ? 0 : s.SizeOfMarshalDirect() + VkCommandBufferBeginInfo.Raw.SizeInBytes;
+
+        public static VkCommandBufferBeginInfo.Raw* MarshalIndirect(this IVkCommandBufferBeginInfo s, ref byte* unmanaged)
+        {
+            var result = (VkCommandBufferBeginInfo.Raw*)unmanaged;
+            unmanaged += VkCommandBufferBeginInfo.Raw.SizeInBytes;
+            *result = s.MarshalDirect(ref unmanaged);
+            return result;
+        }
+
+        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkCommandBufferBeginInfo> list) => 
+            list == null || list.Count == 0 
+                ? 0
+                : sizeof(VkCommandBufferBeginInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
+
+        public static VkCommandBufferBeginInfo.Raw* MarshalDirect(this IReadOnlyList<IVkCommandBufferBeginInfo> list, ref byte* unmanaged)
+        {
+            if (list == null || list.Count == 0)
+                return (VkCommandBufferBeginInfo.Raw*)0;
+            var result = (VkCommandBufferBeginInfo.Raw*)unmanaged;
+            unmanaged += sizeof(VkCommandBufferBeginInfo.Raw) * list.Count;
+            for (int i = 0; i < list.Count; i++)
+                result[i] = list[i].MarshalDirect(ref unmanaged);
+            return result;
+        }
+
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkCommandBufferBeginInfo> list)
+            list == null || list.Count == 0
+                ? 0
+                : sizeof(VkCommandBufferBeginInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
+
+        public static VkCommandBufferBeginInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkCommandBufferBeginInfo> list, ref byte* unmanaged)
+        {
+            if (list == null || list.Count == 0)
+                return (VkCommandBufferBeginInfo.Raw**)0;
+            var result = (VkCommandBufferBeginInfo.Raw**)unmanaged;
+            unmanaged += sizeof(VkCommandBufferBeginInfo.Raw*) * list.Count;
+            for (int i = 0; i < list.Count; i++)
+                result[i] = list[i].MarshalIndirect(ref unmanaged);
+            return result;
+        }
     }
 }

@@ -32,9 +32,11 @@ namespace VulkaNetGenerator
         public GenApplicationInfo* pApplicationInfo;
         [CountFor("EnabledLayerNames")]
         public int enabledLayerCount;
+        [IsArray]
         public StrByte** ppEnabledLayerNames;
         [CountFor("EnabledExtensionNames")]
         public int enabledExtensionCount;
+        [IsArray]
         public StrByte** ppEnabledExtensionNames;
     }
 }

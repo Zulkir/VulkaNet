@@ -32,6 +32,7 @@ namespace VulkaNetGenerator
         public int queueFamilyIndex;
         [CountFor("QueuePriorities")]
         public int queueCount;
+        [IsArray]
         public float* pQueuePriorities;
     }
 }

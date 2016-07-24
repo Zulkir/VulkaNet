@@ -58,41 +58,82 @@ namespace VulkaNet
 
             public static int SizeInBytes { get; } = Marshal.SizeOf<Raw>();
         }
-
-        public int MarshalSize() =>
-            Next.SafeMarshalSize() +
-            ApplicationName.SafeMarshalSize() +
-            EngineName.SafeMarshalSize() +
-            Raw.SizeInBytes;
-
-        public Raw* MarshalTo(ref byte* unmanaged)
-        {
-            var pNext = Next.SafeMarshalTo(ref unmanaged);
-            var pApplicationName = ApplicationName.SafeMarshalTo(ref unmanaged);
-            var pEngineName = EngineName.SafeMarshalTo(ref unmanaged);
-
-            var result = (Raw*)unmanaged;
-            unmanaged += Raw.SizeInBytes;
-            result->sType = VkStructureType.ApplicationInfo;
-            result->pNext = pNext;
-            result->pApplicationName = pApplicationName;
-            result->applicationVersion = ApplicationVersion;
-            result->pEngineName = pEngineName;
-            result->engineVersion = EngineVersion;
-            result->apiVersion = ApiVersion;
-            return result;
-        }
-
-        void* IVkStructWrapper.MarshalTo(ref byte* unmanaged) =>
-            MarshalTo(ref unmanaged);
     }
 
     public static unsafe class VkApplicationInfoExtensions
     {
-        public static int SafeMarshalSize(this IVkApplicationInfo s) =>
-            s?.MarshalSize() ?? 0;
+        public int SizeOfMarshalDirect(this IApplicationInfo s)
+        {
+            if (s == null)
+                throw new InvalidOperationException("Trying to directly marshal a null.");
 
-        public static VkApplicationInfo.Raw* SafeMarshalTo(this IVkApplicationInfo s, ref byte* unmanaged) =>
-            (VkApplicationInfo.Raw*)(s != null ? s.MarshalTo(ref unmanaged) : (void*)0);
+            return
+                Next.SizeOfMarshalIndirect() +
+                ApplicationName.SizeOfMarshalIndirect() +
+                EngineName.SizeOfMarshalIndirect();
+        }
+
+        public Raw* MarshalDirect(this IVkApplicationInfo s, ref byte* unmanaged)
+        {
+            if (s == null)
+                throw new InvalidOperationException("Trying to directly marshal a null.");
+
+            var pNext = s.Next.MarshalIndirect(ref unmanaged);
+            var pApplicationName = s.ApplicationName.MarshalIndirect(ref unmanaged);
+            var pEngineName = s.EngineName.MarshalIndirect(ref unmanaged);
+
+            VkApplicationInfo.Raw result;
+            result.sType = VkStructureType.ApplicationInfo;
+            result.pNext = pNext;
+            result.pApplicationName = pApplicationName;
+            result.applicationVersion = s.ApplicationVersion;
+            result.pEngineName = pEngineName;
+            result.engineVersion = s.EngineVersion;
+            result.apiVersion = s.ApiVersion;
+            return result;
+        }
+
+        public static int SizeOfMarshalIndirect(this IVkApplicationInfo s) =>
+            s == null ? 0 : s.SizeOfMarshalDirect() + VkApplicationInfo.Raw.SizeInBytes;
+
+        public static VkApplicationInfo.Raw* MarshalIndirect(this IVkApplicationInfo s, ref byte* unmanaged)
+        {
+            var result = (VkApplicationInfo.Raw*)unmanaged;
+            unmanaged += VkApplicationInfo.Raw.SizeInBytes;
+            *result = s.MarshalDirect(ref unmanaged);
+            return result;
+        }
+
+        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkApplicationInfo> list) => 
+            list == null || list.Count == 0 
+                ? 0
+                : sizeof(VkApplicationInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
+
+        public static VkApplicationInfo.Raw* MarshalDirect(this IReadOnlyList<IVkApplicationInfo> list, ref byte* unmanaged)
+        {
+            if (list == null || list.Count == 0)
+                return (VkApplicationInfo.Raw*)0;
+            var result = (VkApplicationInfo.Raw*)unmanaged;
+            unmanaged += sizeof(VkApplicationInfo.Raw) * list.Count;
+            for (int i = 0; i < list.Count; i++)
+                result[i] = list[i].MarshalDirect(ref unmanaged);
+            return result;
+        }
+
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkApplicationInfo> list)
+            list == null || list.Count == 0
+                ? 0
+                : sizeof(VkApplicationInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
+
+        public static VkApplicationInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkApplicationInfo> list, ref byte* unmanaged)
+        {
+            if (list == null || list.Count == 0)
+                return (VkApplicationInfo.Raw**)0;
+            var result = (VkApplicationInfo.Raw**)unmanaged;
+            unmanaged += sizeof(VkApplicationInfo.Raw*) * list.Count;
+            for (int i = 0; i < list.Count; i++)
+                result[i] = list[i].MarshalIndirect(ref unmanaged);
+            return result;
+        }
     }
 }

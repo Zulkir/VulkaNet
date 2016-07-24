@@ -22,29 +22,27 @@ THE SOFTWARE.
 */
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public unsafe interface IVkSubmitInfo
+    public interface IVkSubmitInfo : IVkStructWrapper
     {
         IVkStructWrapper Next { get; }
-        IReadOnlyList<IVkSemaphore> WaitSemaphores { get; }
+        IReadOnlyList<VkSemaphore.HandleType> WaitSemaphores { get; }
         IReadOnlyList<VkPipelineStageFlags> WaitDstStageMask { get; }
-        IReadOnlyList<IVkCommandBuffer> CommandBuffers { get; }
-        IReadOnlyList<IVkSemaphore> SignalSemaphores { get; }
+        IReadOnlyList<VkCommandBuffer.HandleType> CommandBuffers { get; }
+        IReadOnlyList<VkSemaphore.HandleType> SignalSemaphores { get; }
     }
 
     public unsafe class VkSubmitInfo : IVkSubmitInfo
     {
         public IVkStructWrapper Next { get; set; }
-        public IReadOnlyList<IVkSemaphore> WaitSemaphores { get; set; }
+        public IReadOnlyList<VkSemaphore.HandleType> WaitSemaphores { get; set; }
         public IReadOnlyList<VkPipelineStageFlags> WaitDstStageMask { get; set; }
-        public IReadOnlyList<IVkCommandBuffer> CommandBuffers { get; set; }
-        public IReadOnlyList<IVkSemaphore> SignalSemaphores { get; set; }
+        public IReadOnlyList<VkCommandBuffer.HandleType> CommandBuffers { get; set; }
+        public IReadOnlyList<VkSemaphore.HandleType> SignalSemaphores { get; set; }
 
         [StructLayout(LayoutKind.Sequential)]
         public struct Raw
@@ -65,28 +63,29 @@ namespace VulkaNet
 
     public static unsafe class VkSubmitInfoExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkSubmitInfo s)
+        public int SizeOfMarshalDirect(this ISubmitInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
+
             return
-                s.Next.SafeMarshalSize() +
-                s.WaitSemaphores.SafeMarshalSize() +
-                s.WaitDstStageMask.SafeMarshalSize() +
-                s.CommandBuffers.SafeMarshalSize() +
-                s.SignalSemaphores.SafeMarshalSize();
+                Next.SizeOfMarshalIndirect() +
+                WaitSemaphores.SizeOfMarshalDirect() +
+                WaitDstStageMask.SizeOfMarshalDirect() +
+                CommandBuffers.SizeOfMarshalDirect() +
+                SignalSemaphores.SizeOfMarshalDirect();
         }
 
-        public static VkSubmitInfo.Raw MarshalDirect(this IVkSubmitInfo s, ref byte* unmanaged)
+        public Raw* MarshalDirect(this IVkSubmitInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
 
-            var pNext = s.Next.SafeMarshalTo(ref unmanaged);
-            var pWaitSemaphores = s.WaitSemaphores.SafeMarshalTo(ref unmanaged);
-            var pWaitDstStageMask = s.WaitDstStageMask.SafeMarshalTo(ref unmanaged);
-            var pCommandBuffers = s.CommandBuffers.SafeMarshalTo(ref unmanaged);
-            var pSignalSemaphores = s.SignalSemaphores.SafeMarshalTo(ref unmanaged);
+            var pNext = s.Next.MarshalIndirect(ref unmanaged);
+            var pWaitSemaphores = s.WaitSemaphores.MarshalDirect(ref unmanaged);
+            var pWaitDstStageMask = s.WaitDstStageMask.MarshalDirect(ref unmanaged);
+            var pCommandBuffers = s.CommandBuffers.MarshalDirect(ref unmanaged);
+            var pSignalSemaphores = s.SignalSemaphores.MarshalDirect(ref unmanaged);
 
             VkSubmitInfo.Raw result;
             result.sType = VkStructureType.SubmitInfo;
@@ -101,7 +100,7 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkSubmitInfo s) => 
+        public static int SizeOfMarshalIndirect(this IVkSubmitInfo s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkSubmitInfo.Raw.SizeInBytes;
 
         public static VkSubmitInfo.Raw* MarshalIndirect(this IVkSubmitInfo s, ref byte* unmanaged)
@@ -114,7 +113,7 @@ namespace VulkaNet
 
         public static int SizeOfMarshalDirect(this IReadOnlyList<IVkSubmitInfo> list) => 
             list == null || list.Count == 0 
-                ? 0 
+                ? 0
                 : sizeof(VkSubmitInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
         public static VkSubmitInfo.Raw* MarshalDirect(this IReadOnlyList<IVkSubmitInfo> list, ref byte* unmanaged)
@@ -128,9 +127,9 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkSubmitInfo> list) => 
-            list == null || list.Count == 0 
-                ? 0 
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkSubmitInfo> list)
+            list == null || list.Count == 0
+                ? 0
                 : sizeof(VkSubmitInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
         public static VkSubmitInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkSubmitInfo> list, ref byte* unmanaged)

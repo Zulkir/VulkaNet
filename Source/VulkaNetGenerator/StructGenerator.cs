@@ -111,65 +111,137 @@ namespace VulkaNetGenerator
                                 }
                             }
                         }
-                        if (input)
+                    }
+                    if (input)
+                    {
+                        writer.WriteLine();
+                        
+                        writer.WriteLine($"public static unsafe class Vk{name}Extensions");
+                        using (writer.Curly())
                         {
-                            writer.WriteLine();
-
-                            writer.WriteLine("public int MarshalSize() =>");
-                            writer.Tab();
-                            foreach (var prop in wrapperProperties.Where(x => x.MarshalledAsUnmanaged))
-                                writer.WriteLine($"{prop.Name}.SafeMarshalSize() +");
-                            writer.WriteLine("Raw.SizeInBytes;");
-                            writer.UnTab();
-                            writer.WriteLine();
-
-                            writer.WriteLine("public Raw* MarshalTo(ref byte* unmanaged)");
+                            var unmanagedProps = wrapperProperties.Where(x => x.MarshalledAsUnmanaged).ToArray();
+                            writer.WriteLine($"public int SizeOfMarshalDirect(this I{name} s)");
                             using (writer.Curly())
                             {
-                                foreach (var prop in wrapperProperties.Where(x => x.MarshalledAsUnmanaged))
-                                    writer.WriteLine($"var {prop.RawField.Name} = {prop.Name}.SafeMarshalTo(ref unmanaged);");
+                                writer.WriteLine("if (s == null)");
+                                writer.Tab();
+                                writer.WriteLine("throw new InvalidOperationException(\"Trying to directly marshal a null.\");");
+                                writer.UnTab();
                                 writer.WriteLine();
 
-                                writer.WriteLine("var result = (Raw*)unmanaged;");
-                                writer.WriteLine("unmanaged += Raw.SizeInBytes;");
+                                if (unmanagedProps.Any())
+                                {
+                                    writer.WriteLine("return");
+                                    writer.Tab();
+                                    foreach (var prop in unmanagedProps.Take(unmanagedProps.Length - 1))
+                                        writer.WriteLine($"{prop.Name}.{prop.SizeMethod}() +");
+                                    var lastProp = unmanagedProps.Last();
+                                    writer.WriteLine($"{lastProp.Name}.{lastProp.SizeMethod}();");
+                                    writer.UnTab();
+                                }
+                                else
+                                {
+                                    writer.WriteLine("return 0;");
+                                }
+                            }
+                            writer.WriteLine();
+
+                            writer.WriteLine($"public Raw* MarshalDirect(this IVk{name} s, ref byte* unmanaged)");
+                            using (writer.Curly())
+                            {
+                                writer.WriteLine("if (s == null)");
+                                writer.Tab();
+                                writer.WriteLine("throw new InvalidOperationException(\"Trying to directly marshal a null.\");");
+                                writer.UnTab();
+                                writer.WriteLine();
+
+                                foreach (var prop in unmanagedProps)
+                                    writer.WriteLine($"var {prop.RawField.Name} = s.{prop.Name}.{prop.MarshalMethod}(ref unmanaged);");
+                                writer.WriteLine();
+
+                                writer.WriteLine($"Vk{name}.Raw result;");
                                 foreach (var field in rawFields)
                                 {
                                     var prop = wrapperProperties.SingleOrDefault(x => x.RawField == field);
                                     var rval = field.Name == "sType" ? $"VkStructureType.{name}" :
                                                field.IsUnmanagedPtr ? $"{field.Name}" :
-                                               field.IsCountFor != null ? $"{field.IsCountFor}?.Count ?? 0" :
-                                               field.TypeStr == "VkBool32" ? $"new VkBool32({prop?.Name})" :
-                                               $"{prop?.Name}";
-                                    writer.WriteLine($"result->{field.Name} = {rval};");
+                                               field.IsCountFor != null ? $"s.{field.IsCountFor}?.Count ?? 0" :
+                                               field.TypeStr == "VkBool32" ? $"new VkBool32(s.{prop?.Name})" :
+                                               $"s.{prop?.Name}";
+                                    writer.WriteLine($"result.{field.Name} = {rval};");
                                 }
                                 writer.WriteLine("return result;");
                             }
-
                             writer.WriteLine();
-                            
-                            writer.WriteLine("void* IVkStructWrapper.MarshalTo(ref byte* unmanaged) =>");
-                            writer.Tab();
-                            writer.WriteLine("MarshalTo(ref unmanaged);");
-                            writer.UnTab();
-                        }
-                    }
-                    if (input)
-                    {
-                        writer.WriteLine();
 
-                        writer.WriteLine($"public static unsafe class Vk{name}Extensions");
-                        using (writer.Curly())
-                        {
-                            writer.WriteLine($"public static int SafeMarshalSize(this IVk{name} s) =>");
+                            writer.WriteLine($"public static int SizeOfMarshalIndirect(this IVk{name} s) =>");
                             writer.Tab();
-                            writer.WriteLine("s?.MarshalSize() ?? 0;");
+                            writer.WriteLine($"s == null ? 0 : s.SizeOfMarshalDirect() + Vk{name}.Raw.SizeInBytes;");
                             writer.UnTab();
                             writer.WriteLine();
 
-                            writer.WriteLine($"public static Vk{name}.Raw* SafeMarshalTo(this IVk{name} s, ref byte* unmanaged) =>");
+                            writer.WriteLine($"public static Vk{name}.Raw* MarshalIndirect(this IVk{name} s, ref byte* unmanaged)");
+                            using (writer.Curly())
+                            {
+                                writer.WriteLine($"var result = (Vk{name}.Raw*)unmanaged;");
+                                writer.WriteLine($"unmanaged += Vk{name}.Raw.SizeInBytes;");
+                                writer.WriteLine("*result = s.MarshalDirect(ref unmanaged);");
+                                writer.WriteLine("return result;");
+                            }
+                            writer.WriteLine();
+
+                            writer.WriteLine($"public static int SizeOfMarshalDirect(this IReadOnlyList<IVk{name}> list) => ");
                             writer.Tab();
-                            writer.WriteLine($"(Vk{name}.Raw*)(s != null ? s.MarshalTo(ref unmanaged) : (void*)0);");
+                            writer.WriteLine("list == null || list.Count == 0 ");
+                            writer.Tab();
+                            writer.WriteLine("? 0");
+                            writer.WriteLine($": sizeof(Vk{name}.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());");
                             writer.UnTab();
+                            writer.UnTab();
+                            writer.WriteLine();
+
+                            writer.WriteLine($"public static Vk{name}.Raw* MarshalDirect(this IReadOnlyList<IVk{name}> list, ref byte* unmanaged)");
+                            using (writer.Curly())
+                            {
+                                writer.WriteLine("if (list == null || list.Count == 0)");
+                                writer.Tab();
+                                writer.WriteLine($"return (Vk{name}.Raw*)0;");
+                                writer.UnTab();
+                                writer.WriteLine($"var result = (Vk{name}.Raw*)unmanaged;");
+                                writer.WriteLine($"unmanaged += sizeof(Vk{name}.Raw) * list.Count;");
+                                writer.WriteLine("for (int i = 0; i < list.Count; i++)");
+                                writer.Tab();
+                                writer.WriteLine("result[i] = list[i].MarshalDirect(ref unmanaged);");
+                                writer.UnTab();
+                                writer.WriteLine("return result;");
+                            }
+                            writer.WriteLine();
+
+                            writer.WriteLine($"public static int SizeOfMarshalIndirect(this IReadOnlyList<IVk{name}> list)");
+                            writer.Tab();
+                            writer.WriteLine("list == null || list.Count == 0");
+                            writer.Tab();
+                            writer.WriteLine("? 0");
+                            writer.WriteLine($": sizeof(Vk{name}.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());");
+                            writer.UnTab();
+                            writer.UnTab();
+                            writer.WriteLine();
+
+                            writer.WriteLine($"public static Vk{name}.Raw** MarshalIndirect(this IReadOnlyList<IVk{name}> list, ref byte* unmanaged)");
+                            using (writer.Curly())
+                            {
+                                writer.WriteLine("if (list == null || list.Count == 0)");
+                                writer.Tab();
+                                writer.WriteLine($"return (Vk{name}.Raw**)0;");
+                                writer.UnTab();
+                                writer.WriteLine($"var result = (Vk{name}.Raw**)unmanaged;");
+                                writer.WriteLine($"unmanaged += sizeof(Vk{name}.Raw*) * list.Count;");
+                                writer.WriteLine("for (int i = 0; i < list.Count; i++)");
+                                writer.Tab();
+                                writer.WriteLine("result[i] = list[i].MarshalIndirect(ref unmanaged);");
+                                writer.UnTab();
+                                writer.WriteLine("return result;");
+                            }
                         }
                     }
                 }

@@ -61,47 +61,6 @@ namespace VulkaNet
 
             public static int SizeInBytes { get; } = Marshal.SizeOf<Raw>();
         }
-        /*
-        public int SizeOfMarshalDirect()
-        {
-            return Next.SafeMarshalSize() +
-                   WaitSemaphores.SafeMarshalSize() +
-                   WaitDstStageMask.SafeMarshalSize() +
-                   CommandBuffers.SafeMarshalSize() +
-                   SignalSemaphores.SafeMarshalSize();
-        }
-
-        public int MarshalSizeIndirect() =>
-            SizeOfMarshalDirect() + Raw.SizeInBytes;
-
-        public Raw MarshalDirect(ref byte* unmanaged)
-        {
-            var pNext = Next.SafeMarshalTo(ref unmanaged);
-            var pWaitSemaphores = WaitSemaphores.SafeMarshalTo(ref unmanaged);
-            var pWaitDstStageMask = WaitDstStageMask.SafeMarshalTo(ref unmanaged);
-            var pCommandBuffers = CommandBuffers.SafeMarshalTo(ref unmanaged);
-            var pSignalSemaphores = SignalSemaphores.SafeMarshalTo(ref unmanaged);
-            
-            Raw result;
-            result.sType = VkStructureType.SubmitInfo;
-            result.pNext = pNext;
-            result.waitSemaphoreCount = WaitSemaphores?.Count ?? 0;
-            result.pWaitSemaphores = pWaitSemaphores;
-            result.pWaitDstStageMask = pWaitDstStageMask;
-            result.commandBufferCount = CommandBuffers?.Count ?? 0;
-            result.pCommandBuffers = pCommandBuffers;
-            result.signalSemaphoreCount = SignalSemaphores?.Count ?? 0;
-            result.pSignalSemaphores = pSignalSemaphores;
-            return result;
-        }
-
-        public Raw* MarshalIndirect(ref byte* unmanaged)
-        {
-            var result = (Raw*)unmanaged;
-            unmanaged += Raw.SizeInBytes;
-            *result = MarshalDirect(ref unmanaged);
-            return result;
-        }*/
     }
 
     public static unsafe class VkSubmitInfoExtensions
@@ -142,14 +101,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SafeSizeOfMarshalIndirect(this IVkSubmitInfo s)
-        {
-            if (s == null)
-                return 0;
-            return s.SizeOfMarshalDirect() + VkSubmitInfo.Raw.SizeInBytes;
-        }
+        public static int SizeOfMarshalIndirect(this IVkSubmitInfo s) => 
+            s == null ? 0 : s.SizeOfMarshalDirect() + VkSubmitInfo.Raw.SizeInBytes;
 
-        public static VkSubmitInfo.Raw* SafeMarshalIndirect(this IVkSubmitInfo s, ref byte* unmanaged)
+        public static VkSubmitInfo.Raw* MarshalIndirect(this IVkSubmitInfo s, ref byte* unmanaged)
         {
             var result = (VkSubmitInfo.Raw*)unmanaged;
             unmanaged += VkSubmitInfo.Raw.SizeInBytes;
@@ -157,14 +112,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SafeSizeOfMarshalDirect(this IReadOnlyList<IVkSubmitInfo> list)
-        {
-            if (list == null || list.Count == 0)
-                return 0;
-            return sizeof(VkSubmitInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
-        }
+        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkSubmitInfo> list) => 
+            list == null || list.Count == 0 
+                ? 0 
+                : sizeof(VkSubmitInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkSubmitInfo.Raw* SafeMarshalDirect(this IReadOnlyList<IVkSubmitInfo> list, ref byte* unmanaged)
+        public static VkSubmitInfo.Raw* MarshalDirect(this IReadOnlyList<IVkSubmitInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkSubmitInfo.Raw*)0;
@@ -175,22 +128,20 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SafeSizeOfMarshalIndirect(this IReadOnlyList<IVkSubmitInfo> list)
-        {
-            if (list == null || list.Count == 0)
-                return 0;
-            return sizeof(VkSubmitInfo.Raw*) * list.Count + list.Sum(x => x.SafeSizeOfMarshalIndirect());
-        }
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkSubmitInfo> list) => 
+            list == null || list.Count == 0 
+                ? 0 
+                : sizeof(VkSubmitInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkSubmitInfo.Raw** SafeMarshalIndirect(this IReadOnlyList<IVkSubmitInfo> list, ref byte* unmanaged)
+        public static VkSubmitInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkSubmitInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkSubmitInfo.Raw**)0;
-            var ptrArrayPtr = (VkSubmitInfo.Raw**)unmanaged;
+            var result = (VkSubmitInfo.Raw**)unmanaged;
             unmanaged += sizeof(VkSubmitInfo.Raw*) * list.Count;
             for (int i = 0; i < list.Count; i++)
-                ptrArrayPtr[i] = list[i].SafeMarshalIndirect(ref unmanaged);
-            return ptrArrayPtr;
+                result[i] = list[i].MarshalIndirect(ref unmanaged);
+            return result;
         }
     }
 }

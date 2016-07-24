@@ -34,6 +34,8 @@ namespace VulkaNetGenerator
         public bool NeedsCast { get; }
         public string CreatorFunc { get; }
         public bool CreatorFuncTakesPtr { get; }
+        public string SizeMethod { get; }
+        public string MarshalMethod { get; }
 
         public WrapperProperty(RawField rawField, RawField countField)
         {
@@ -46,6 +48,10 @@ namespace VulkaNetGenerator
             NeedsCast = DeriveNeedsCast(rawField);
             CreatorFunc = DeriveCreatorFunc(rawField, TypeStr);
             CreatorFuncTakesPtr = DeriveCreatorFuncTakesPtr(rawField);
+            string sizeMethod, marshalMethod;
+            DeriveMarshalMethods(rawField, out sizeMethod, out marshalMethod);
+            SizeMethod = sizeMethod;
+            MarshalMethod = marshalMethod;
         }
 
         private static string DeriveTypeStr(RawField rawField)
@@ -54,6 +60,8 @@ namespace VulkaNetGenerator
                 return rawField.ExplicitWrapperType;
             if (rawField.Name == "pNext")
                 return "IVkStructWrapper";
+            if (rawField.IsArray)
+                return DeriveTypeInternal($"IReadOnlyList<{rawField.TypeStr.Substring(0, rawField.TypeStr.Length - 1)}>");
             return DeriveTypeInternal(rawField.TypeStr);
         }
 
@@ -63,8 +71,8 @@ namespace VulkaNetGenerator
                 return "I" + rawTypeStr.Substring(0, rawTypeStr.Length - ".Raw*".Length);
             if (rawTypeStr.EndsWith(".Raw"))
                 return "I" + rawTypeStr.Substring(0, rawTypeStr.Length - ".Raw".Length);
-            if (rawTypeStr.EndsWith("*"))
-                return $"IReadOnlyList<{DeriveTypeInternal(rawTypeStr.Substring(0, rawTypeStr.Length - 1))}>";
+            //if (rawTypeStr.EndsWith("*"))
+            //    return $"IReadOnlyList<{DeriveTypeInternal(rawTypeStr.Substring(0, rawTypeStr.Length - 1))}>";
             if (rawTypeStr.EndsWith(".HandleType*"))
                 return "I" + rawTypeStr.Substring(0, rawTypeStr.Length - ".HandleType*".Length);
             if (rawTypeStr.EndsWith(".HandleType"))
@@ -104,6 +112,36 @@ namespace VulkaNetGenerator
             if (rawField.TypeStr == "VkBool32")
                 return true;
             return false;
+        }
+
+        private void DeriveMarshalMethods(RawField rawField, out string sizeMethod, out string marshalMethod)
+        {
+            if (rawField.IsArray)
+            {
+                if (rawField.TypeStr.EndsWith("**"))
+                {
+                    sizeMethod = "SizeOfMarshalIndirect";
+                    marshalMethod = "MarshalIndirect";
+                }
+                else
+                {
+                    sizeMethod = "SizeOfMarshalDirect";
+                    marshalMethod = "MarshalDirect";
+                }
+            }
+            else
+            {
+                if (rawField.TypeStr.EndsWith("*"))
+                {
+                    sizeMethod = "SizeOfMarshalIndirect";
+                    marshalMethod = "MarshalIndirect";
+                }
+                else
+                {
+                    sizeMethod = "SizeOfMarshalDirect";
+                    marshalMethod = "MarshalDirect";
+                }
+            }
         }
 
         private static bool IsDoublePointerName(string name) =>

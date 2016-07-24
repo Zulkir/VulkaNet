@@ -38,6 +38,7 @@ namespace VulkaNetGenerator
         public string IsCountFor { get; }
         public string ExplicitWrapperType { get; }
         public string FixedArraySize { get; }
+        public bool IsArray { get; }
 
         public RawField(FieldInfo fieldInfo)
         {
@@ -49,6 +50,7 @@ namespace VulkaNetGenerator
             IsCountFor = GetAttrValue<CountForAttribute>(fieldInfo);
             IgnoreInWrapper = Name == "sType" || IsCountFor != null;
             ExplicitWrapperType = DeriveExplicitWrapperType(fieldInfo);
+            IsArray = DeriveIsArray(fieldInfo);
         }
 
         private static string DeriveTypeStr(Type type, string fixedBufferSize)
@@ -105,9 +107,14 @@ namespace VulkaNetGenerator
             return null;
         }
 
-        private static string GetAttrValue<T>(FieldInfo fieldInfo)
-        {
-            return fieldInfo.CustomAttributes.FirstOrDefault(x => x.AttributeType == typeof(T))?.ConstructorArguments[0].Value as string;
-        }
+        private static bool DeriveIsArray(FieldInfo fieldInfo) =>
+            HasAttribute<IsArrayAttribute>(fieldInfo) ||
+            HasAttribute<FixedArrayAttribute>(fieldInfo);
+
+        private static bool HasAttribute<T>(FieldInfo fieldInfo) =>
+            fieldInfo.CustomAttributes.Any(x => x.AttributeType == typeof(T));
+
+        private static string GetAttrValue<T>(FieldInfo fieldInfo) => 
+            fieldInfo.CustomAttributes.FirstOrDefault(x => x.AttributeType == typeof(T))?.ConstructorArguments[0].Value as string;
     }
 }

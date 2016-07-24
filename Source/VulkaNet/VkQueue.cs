@@ -71,12 +71,12 @@ namespace VulkaNet
         public VkResult Submit(IReadOnlyList<IVkSubmitInfo> submits, IVkFence fence)
         {
             var unmanagedSize =
-                submits.SafeSizeOfMarshalDirect();
+                submits.SizeOfMarshalDirect();
             var unmanagedArray = new byte[unmanagedSize];
             fixed (byte* unmanagedStart = unmanagedArray)
             {
                 var unmanaged = unmanagedStart;
-                var pSubmits = submits.SafeMarshalDirect(ref unmanaged);
+                var pSubmits = submits.MarshalDirect(ref unmanaged);
                 return Direct.QueueSubmit(Handle, submits?.Count ?? 0, pSubmits, fence.Handle);
             }
         }

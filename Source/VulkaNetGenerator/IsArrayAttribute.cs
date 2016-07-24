@@ -22,25 +22,12 @@ THE SOFTWARE.
 */
 #endregion
 
+using System;
+
 namespace VulkaNetGenerator
 {
-    public unsafe struct GenSubmitInfo
+    public class IsArrayAttribute : Attribute
     {
-        public VkStructureType sType;
-        public void* pNext;
-        [CountFor("WaitSemaphores")]
-        public int waitSemaphoreCount;
-        [IsArray]
-        public HndSemaphore* pWaitSemaphores;
-        [IsArray]
-        public VkPipelineStageFlags* pWaitDstStageMask;
-        [CountFor("CommandBuffers")]
-        public int commandBufferCount;
-        [IsArray]
-        public HndCommandBuffer* pCommandBuffers;
-        [CountFor("SignalSemaphores")]
-        public int signalSemaphoreCount;
-        [IsArray]
-        public HndSemaphore* pSignalSemaphores;
+        
     }
 }

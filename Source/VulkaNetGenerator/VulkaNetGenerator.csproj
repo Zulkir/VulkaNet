@@ -63,6 +63,7 @@
     <Compile Include="GenPhysicalDeviceProperties.cs" />
     <Compile Include="GenPhysicalDeviceSparseProperties.cs" />
     <Compile Include="GenSubmitInfo.cs" />
+    <Compile Include="IsArrayAttribute.cs" />
     <Compile Include="StrByte.cs" />
     <Compile Include="StructGenerator.cs" />
     <Compile Include="MainGenerator.cs" />

@@ -46,14 +46,14 @@ namespace VulkaNet
             dest += 1;
         }
 
-        public static int SafeMarshalSize(this string str)
+        public static int SizeOfMarshalIndirect(this string str)
         {
             if (str == null)
                 return 0;
             return str.Length + 1;
         }
 
-        public static unsafe byte* SafeMarshalTo(this string str, ref byte* dst)
+        public static unsafe byte* MarshalIndirect(this string str, ref byte* dst)
         {
             if (str == null)
                 return (byte*)0;

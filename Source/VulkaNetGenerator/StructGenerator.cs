@@ -48,19 +48,18 @@ namespace VulkaNetGenerator
                 var rawFields = BuildRawFields(type);
                 var wrapperProperties = BuildWrapperProps(rawFields);
 
-                if (rawFields.Any(x => x.TypeStr.Contains("IntPtr")) || wrapperProperties.Any(x => x.TypeStr.Contains("IntPtr")))
-                    writer.WriteLine("using System;");
-                if (wrapperProperties.Any(x => x.TypeStr.Contains("ReadOnlyList")))
-                    writer.WriteLine("using System.Collections.Generic;");
+                //if (rawFields.Any(x => x.TypeStr.Contains("IntPtr")) || wrapperProperties.Any(x => x.TypeStr.Contains("IntPtr")))
+                writer.WriteLine("using System;");
+                //if (wrapperProperties.Any(x => x.TypeStr.Contains("ReadOnlyList")))
+                writer.WriteLine("using System.Collections.Generic;");
+                writer.WriteLine("using System.Linq;");
                 writer.WriteLine("using System.Runtime.InteropServices;");
                 writer.WriteLine();
 
                 writer.WriteLine("namespace VulkaNet");
                 using (writer.Curly())
                 {
-                    var interfacees = input ? " : IVkStructWrapper" : "";
-
-                    writer.WriteLine($"public interface IVk{name}{interfacees}");
+                    writer.WriteLine($"public interface IVk{name}");
                     using (writer.Curly())
                     {
                         foreach (var prop in wrapperProperties)
@@ -120,7 +119,7 @@ namespace VulkaNetGenerator
                         using (writer.Curly())
                         {
                             var unmanagedProps = wrapperProperties.Where(x => x.MarshalledAsUnmanaged).ToArray();
-                            writer.WriteLine($"public int SizeOfMarshalDirect(this I{name} s)");
+                            writer.WriteLine($"public static int SizeOfMarshalDirect(this IVk{name} s)");
                             using (writer.Curly())
                             {
                                 writer.WriteLine("if (s == null)");
@@ -134,9 +133,9 @@ namespace VulkaNetGenerator
                                     writer.WriteLine("return");
                                     writer.Tab();
                                     foreach (var prop in unmanagedProps.Take(unmanagedProps.Length - 1))
-                                        writer.WriteLine($"{prop.Name}.{prop.SizeMethod}() +");
+                                        writer.WriteLine($"s.{prop.Name}.{prop.SizeMethod}() +");
                                     var lastProp = unmanagedProps.Last();
-                                    writer.WriteLine($"{lastProp.Name}.{lastProp.SizeMethod}();");
+                                    writer.WriteLine($"s.{lastProp.Name}.{lastProp.SizeMethod}();");
                                     writer.UnTab();
                                 }
                                 else
@@ -146,7 +145,7 @@ namespace VulkaNetGenerator
                             }
                             writer.WriteLine();
 
-                            writer.WriteLine($"public Raw* MarshalDirect(this IVk{name} s, ref byte* unmanaged)");
+                            writer.WriteLine($"public static Vk{name}.Raw MarshalDirect(this IVk{name} s, ref byte* unmanaged)");
                             using (writer.Curly())
                             {
                                 writer.WriteLine("if (s == null)");
@@ -165,6 +164,7 @@ namespace VulkaNetGenerator
                                     var prop = wrapperProperties.SingleOrDefault(x => x.RawField == field);
                                     var rval = field.Name == "sType" ? $"VkStructureType.{name}" :
                                                field.IsUnmanagedPtr ? $"{field.Name}" :
+                                               field.IsHandle ? $"s.{prop?.Name}.Handle" :
                                                field.IsCountFor != null ? $"s.{field.IsCountFor}?.Count ?? 0" :
                                                field.TypeStr == "VkBool32" ? $"new VkBool32(s.{prop?.Name})" :
                                                $"s.{prop?.Name}";
@@ -217,7 +217,7 @@ namespace VulkaNetGenerator
                             }
                             writer.WriteLine();
 
-                            writer.WriteLine($"public static int SizeOfMarshalIndirect(this IReadOnlyList<IVk{name}> list)");
+                            writer.WriteLine($"public static int SizeOfMarshalIndirect(this IReadOnlyList<IVk{name}> list) =>");
                             writer.Tab();
                             writer.WriteLine("list == null || list.Count == 0");
                             writer.Tab();

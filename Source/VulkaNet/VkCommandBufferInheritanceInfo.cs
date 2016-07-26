@@ -22,11 +22,14 @@ THE SOFTWARE.
 */
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkCommandBufferInheritanceInfo : IVkStructWrapper
+    public interface IVkCommandBufferInheritanceInfo
     {
         IVkStructWrapper Next { get; }
         IVkRenderPass RenderPass { get; }
@@ -65,16 +68,16 @@ namespace VulkaNet
 
     public static unsafe class VkCommandBufferInheritanceInfoExtensions
     {
-        public int SizeOfMarshalDirect(this ICommandBufferInheritanceInfo s)
+        public static int SizeOfMarshalDirect(this IVkCommandBufferInheritanceInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
 
             return
-                Next.SizeOfMarshalIndirect();
+                s.Next.SizeOfMarshalIndirect();
         }
 
-        public Raw* MarshalDirect(this IVkCommandBufferInheritanceInfo s, ref byte* unmanaged)
+        public static VkCommandBufferInheritanceInfo.Raw MarshalDirect(this IVkCommandBufferInheritanceInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -84,9 +87,9 @@ namespace VulkaNet
             VkCommandBufferInheritanceInfo.Raw result;
             result.sType = VkStructureType.CommandBufferInheritanceInfo;
             result.pNext = pNext;
-            result.renderPass = s.RenderPass;
+            result.renderPass = s.RenderPass.Handle;
             result.subpass = s.Subpass;
-            result.framebuffer = s.Framebuffer;
+            result.framebuffer = s.Framebuffer.Handle;
             result.occlusionQueryEnable = new VkBool32(s.OcclusionQueryEnable);
             result.queryFlags = s.QueryFlags;
             result.pipelineStatistics = s.PipelineStatistics;
@@ -120,7 +123,7 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkCommandBufferInheritanceInfo> list)
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkCommandBufferInheritanceInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkCommandBufferInheritanceInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());

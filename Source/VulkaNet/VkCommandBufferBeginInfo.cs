@@ -22,11 +22,14 @@ THE SOFTWARE.
 */
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkCommandBufferBeginInfo : IVkStructWrapper
+    public interface IVkCommandBufferBeginInfo
     {
         IVkStructWrapper Next { get; }
         VkCommandBufferUsageFlags Flags { get; }
@@ -53,17 +56,17 @@ namespace VulkaNet
 
     public static unsafe class VkCommandBufferBeginInfoExtensions
     {
-        public int SizeOfMarshalDirect(this ICommandBufferBeginInfo s)
+        public static int SizeOfMarshalDirect(this IVkCommandBufferBeginInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
 
             return
-                Next.SizeOfMarshalIndirect() +
-                InheritanceInfo.SizeOfMarshalIndirect();
+                s.Next.SizeOfMarshalIndirect() +
+                s.InheritanceInfo.SizeOfMarshalIndirect();
         }
 
-        public Raw* MarshalDirect(this IVkCommandBufferBeginInfo s, ref byte* unmanaged)
+        public static VkCommandBufferBeginInfo.Raw MarshalDirect(this IVkCommandBufferBeginInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -106,7 +109,7 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkCommandBufferBeginInfo> list)
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkCommandBufferBeginInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkCommandBufferBeginInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());

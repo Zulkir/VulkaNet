@@ -147,13 +147,13 @@ namespace VulkaNet
         public VkObjectResult<IVkCommandPool> CreateCommandPool(IVkCommandPoolCreateInfo createInfo, IVkAllocationCallbacks allocator)
         {
             var unmanagedSize = 
-                createInfo.SafeMarshalSize() + 
+                createInfo.SizeOfMarshalIndirect() + 
                 allocator.SafeMarshalSize();
             var unmanagedArray = new byte[unmanagedSize];
             fixed (byte* unmanagedStart = unmanagedArray)
             {
                 var unmanaged = unmanagedStart;
-                var pCreateInfo = createInfo.SafeMarshalTo(ref unmanaged);
+                var pCreateInfo = createInfo.MarshalIndirect(ref unmanaged);
                 var pAllocator = allocator.SafeMarshalTo(ref unmanaged);
                 VkCommandPool.HandleType handle;
                 var result = Direct.CreateCommandPool(Handle, pCreateInfo, pAllocator, &handle);

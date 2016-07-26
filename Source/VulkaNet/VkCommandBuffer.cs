@@ -76,12 +76,12 @@ namespace VulkaNet
 
         public VkResult Begin(IVkCommandBufferBeginInfo beginInfo)
         {
-            var unmanagedSize = beginInfo.SafeMarshalSize();
+            var unmanagedSize = beginInfo.SizeOfMarshalIndirect();
             var unamangedArray = new byte[unmanagedSize];
             fixed (byte* unmanagedStart = unamangedArray)
             {
                 var unamanged = unmanagedStart;
-                var pBeginInfo = beginInfo.SafeMarshalTo(ref unamanged);
+                var pBeginInfo = beginInfo.MarshalIndirect(ref unamanged);
                 return Direct.BeginCommandBuffer(Handle, pBeginInfo);
             }
         }

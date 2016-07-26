@@ -22,12 +22,14 @@ THE SOFTWARE.
 */
 #endregion
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkSubmitInfo : IVkStructWrapper
+    public interface IVkSubmitInfo
     {
         IVkStructWrapper Next { get; }
         IReadOnlyList<VkSemaphore.HandleType> WaitSemaphores { get; }
@@ -63,20 +65,20 @@ namespace VulkaNet
 
     public static unsafe class VkSubmitInfoExtensions
     {
-        public int SizeOfMarshalDirect(this ISubmitInfo s)
+        public static int SizeOfMarshalDirect(this IVkSubmitInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
 
             return
-                Next.SizeOfMarshalIndirect() +
-                WaitSemaphores.SizeOfMarshalDirect() +
-                WaitDstStageMask.SizeOfMarshalDirect() +
-                CommandBuffers.SizeOfMarshalDirect() +
-                SignalSemaphores.SizeOfMarshalDirect();
+                s.Next.SizeOfMarshalIndirect() +
+                s.WaitSemaphores.SizeOfMarshalDirect() +
+                s.WaitDstStageMask.SizeOfMarshalDirect() +
+                s.CommandBuffers.SizeOfMarshalDirect() +
+                s.SignalSemaphores.SizeOfMarshalDirect();
         }
 
-        public Raw* MarshalDirect(this IVkSubmitInfo s, ref byte* unmanaged)
+        public static VkSubmitInfo.Raw MarshalDirect(this IVkSubmitInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -127,7 +129,7 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkSubmitInfo> list)
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkSubmitInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkSubmitInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());

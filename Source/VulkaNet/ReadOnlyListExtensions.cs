@@ -30,38 +30,38 @@ namespace VulkaNet
 {
     public static class ReadOnlyListExtensions
     {
-        public static int SafeMarshalSize(this IReadOnlyList<string> list) 
-            => SafeMarshalReferenceSize(list, StringExtensions.SafeMarshalSize);
-        public static int SafeMarshalSize(this IReadOnlyList<IVkStructWrapper> list)
-            => SafeMarshalReferenceSize(list, x => x.SafeMarshalSize());
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<string> list) 
+            => SafeMarshalReferenceSize(list, StringExtensions.SizeOfMarshalIndirect);
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkStructWrapper> list)
+            => SafeMarshalReferenceSize(list, x => x.SizeOfMarshalIndirect());
         public static int SafeMarshalReferenceSize<T>(this IReadOnlyList<T> list, Func<T, int> marshalElemSize) 
             => list != null ? list.Sum(marshalElemSize) + IntPtr.Size * list.Count : 0;
         
         public static int SafeMarshalStructSize<T>(this IReadOnlyList<T> list, int elemSize)
             => list?.Count * elemSize ?? 0;
-        public static int SafeMarshalSize(this IReadOnlyList<float> list)
+        public static int SizeOfMarshalDirect(this IReadOnlyList<float> list)
             => SafeMarshalStructSize(list, sizeof(float));
-        public static int SafeMarshalSize(this IReadOnlyList<VkPipelineStageFlags> list) =>
-            SafeMarshalStructSize(list, sizeof(VkPipelineStageFlags));
-        public static int SafeMarshalSize(this IReadOnlyList<IVkSemaphore> list) =>
-            SafeMarshalStructSize(list, VkSemaphore.HandleType.SizeInBytes);
-        public static int SafeMarshalSize(this IReadOnlyList<IVkCommandBuffer> list) =>
-            SafeMarshalStructSize(list, VkCommandBuffer.HandleType.SizeInBytes);
+        //public static int SafeMarshalSize(this IReadOnlyList<VkPipelineStageFlags> list) =>
+        //    SafeMarshalStructSize(list, sizeof(VkPipelineStageFlags));
+        //public static int SafeMarshalSize(this IReadOnlyList<IVkSemaphore> list) =>
+        //    SafeMarshalStructSize(list, VkSemaphore.HandleType.SizeInBytes);
+        //public static int SafeMarshalSize(this IReadOnlyList<IVkCommandBuffer> list) =>
+        //    SafeMarshalStructSize(list, VkCommandBuffer.HandleType.SizeInBytes);
 
 
         public unsafe delegate IntPtr MarshalElemDelegate<T>(T elem, ref byte* unmanaged);
         
         private static unsafe IntPtr SafeMarshalStringTo(string elem, ref byte* unmanaged) 
-            => (IntPtr)elem.SafeMarshalTo(ref unmanaged);
-        public static unsafe byte** SafeMarshalTo(this IReadOnlyList<string> list, ref byte* unamanged) 
+            => (IntPtr)elem.MarshalIndirect(ref unmanaged);
+        public static unsafe byte** MarshalIndirect(this IReadOnlyList<string> list, ref byte* unamanged) 
             => (byte**)SafeMarshalReferencesTo(list, ref unamanged, SafeMarshalStringTo);
 
         private static unsafe IntPtr SafeMarshalStructWrapperTo(IVkStructWrapper elem, ref byte* unmanaged)
-            => (IntPtr)elem.SafeMarshalTo(ref unmanaged);
-        public static unsafe void** SafeMarshalTo(this IReadOnlyList<IVkStructWrapper> list, ref byte* unamanged)
+            => (IntPtr)elem.MarshalIndirect(ref unmanaged);
+        public static unsafe void** MarshalIndirect(this IReadOnlyList<IVkStructWrapper> list, ref byte* unamanged)
             => (void**)SafeMarshalReferencesTo(list, ref unamanged, SafeMarshalStructWrapperTo);
 
-        public static unsafe IntPtr* SafeMarshalReferencesTo<T>(this IReadOnlyList<T> list, ref byte* unamanged, MarshalElemDelegate<T> marshalElem)
+        private static unsafe IntPtr* SafeMarshalReferencesTo<T>(this IReadOnlyList<T> list, ref byte* unamanged, MarshalElemDelegate<T> marshalElem)
             where T : class
         {
             if (list == null)
@@ -94,7 +94,7 @@ namespace VulkaNet
 
         private static unsafe void StoreFloat(float elem, ref byte* unmanaged) => 
             *(float*)unmanaged = elem;
-        public static unsafe float* SafeMarshalTo(this IReadOnlyList<float> list, ref byte* unamanged) => 
+        public static unsafe float* MarshalDirect(this IReadOnlyList<float> list, ref byte* unamanged) => 
             (float*)SafeMarshalStructsTo(list, ref unamanged, StoreFloat, sizeof(float));
 
         private static unsafe void StoreFloat(VkPipelineStageFlags elem, ref byte* unmanaged) =>

@@ -114,12 +114,12 @@ namespace VulkaNet
 
         public VkObjectResult<IVkCommandBuffer[]> AllocateCommandBuffers(IVkCommandBufferAllocateInfo allocateInfo)
         {
-            var unmanagedSize = allocateInfo.SafeMarshalSize();
+            var unmanagedSize = allocateInfo.SizeOfMarshalIndirect();
             var unamangedArray = new byte[unmanagedSize];
             fixed (byte* unmanagedStart = unamangedArray)
             {
                 var unamanged = unmanagedStart;
-                var pAllocateInfo = allocateInfo.SafeMarshalTo(ref unamanged, this);
+                var pAllocateInfo = allocateInfo.MarshalIndirect(ref unamanged, this);
                 var commandBufferHandles = new VkCommandBuffer.HandleType[allocateInfo.CommandBufferCount];
                 fixed (VkCommandBuffer.HandleType* pCommandBuffers = commandBufferHandles)
                 {

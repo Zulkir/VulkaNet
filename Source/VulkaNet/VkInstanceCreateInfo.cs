@@ -22,12 +22,14 @@ THE SOFTWARE.
 */
 #endregion
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkInstanceCreateInfo : IVkStructWrapper
+    public interface IVkInstanceCreateInfo
     {
         IVkStructWrapper Next { get; }
         VkInstanceCreateFlags Flags { get; }
@@ -62,19 +64,19 @@ namespace VulkaNet
 
     public static unsafe class VkInstanceCreateInfoExtensions
     {
-        public int SizeOfMarshalDirect(this IInstanceCreateInfo s)
+        public static int SizeOfMarshalDirect(this IVkInstanceCreateInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
 
             return
-                Next.SizeOfMarshalIndirect() +
-                ApplicationInfo.SizeOfMarshalIndirect() +
-                EnabledLayerNames.SizeOfMarshalIndirect() +
-                EnabledExtensionNames.SizeOfMarshalIndirect();
+                s.Next.SizeOfMarshalIndirect() +
+                s.ApplicationInfo.SizeOfMarshalIndirect() +
+                s.EnabledLayerNames.SizeOfMarshalIndirect() +
+                s.EnabledExtensionNames.SizeOfMarshalIndirect();
         }
 
-        public Raw* MarshalDirect(this IVkInstanceCreateInfo s, ref byte* unmanaged)
+        public static VkInstanceCreateInfo.Raw MarshalDirect(this IVkInstanceCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -123,7 +125,7 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkInstanceCreateInfo> list)
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkInstanceCreateInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkInstanceCreateInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());

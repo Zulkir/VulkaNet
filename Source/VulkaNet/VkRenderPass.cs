@@ -24,8 +24,20 @@ THE SOFTWARE.
 
 namespace VulkaNet
 {
-    public class VkRenderPass
+    public interface IVkRenderPass
     {
+        VkRenderPass.HandleType Handle { get; }
+    }
+
+    public class VkRenderPass : IVkRenderPass
+    {
+        public HandleType Handle { get; }
+
+        public VkRenderPass(HandleType handle)
+        {
+            Handle = handle;
+        }
+
         public struct HandleType
         {
             public readonly ulong InternalHandle;

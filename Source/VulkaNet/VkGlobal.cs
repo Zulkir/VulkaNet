@@ -107,14 +107,14 @@ namespace VulkaNet
 
         private IReadOnlyList<IVkExtensionProperties> EnumerateInstanceExtensionProperties(string layerName)
         {
-            var size = layerName.SafeMarshalSize();
+            var size = layerName.SizeOfMarshalIndirect();
             return VkHelpers.RunWithUnamangedData(size, u => EnumerateInstanceExtensionPropertiesInternal(u, layerName));
         }
 
         private IReadOnlyList<VkExtensionProperties> EnumerateInstanceExtensionPropertiesInternal(IntPtr data, string layerName)
         {
             var unmanaged = (byte*)data;
-            var pLayerName = layerName.SafeMarshalTo(ref unmanaged);
+            var pLayerName = layerName.MarshalIndirect(ref unmanaged);
             int count;
             Direct.EnumerateInstanceExtensionProperties(pLayerName, &count, (VkExtensionProperties.Raw*)0).CheckSuccess();
             var rawArray = new VkExtensionProperties.Raw[count];
@@ -128,7 +128,7 @@ namespace VulkaNet
         public VkObjectResult<IVkInstance> CreateInstance(VkInstanceCreateInfo createInfo, VkAllocationCallbacks allocator)
         {
             var size =
-                createInfo.SafeMarshalSize() +
+                createInfo.SizeOfMarshalIndirect() +
                 allocator.SafeMarshalSize();
             return VkHelpers.RunWithUnamangedData(size, u => CreateInstanceInternal(u, createInfo, allocator));
         }
@@ -136,7 +136,7 @@ namespace VulkaNet
         private VkObjectResult<IVkInstance> CreateInstanceInternal(IntPtr data, VkInstanceCreateInfo createInfo, VkAllocationCallbacks allocator)
         {
             var unmanaged = (byte*)data;
-            var pCreateInfo = createInfo.SafeMarshalTo(ref unmanaged);
+            var pCreateInfo = createInfo.MarshalIndirect(ref unmanaged);
             var pAllocator = allocator.SafeMarshalTo(ref unmanaged);
             IntPtr handle;
             var result = Direct.CreateInstance(pCreateInfo, pAllocator, &handle);

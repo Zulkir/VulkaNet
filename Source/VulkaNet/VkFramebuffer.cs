@@ -24,8 +24,20 @@ THE SOFTWARE.
 
 namespace VulkaNet
 {
-    public class VkFramebuffer
+    public interface IVkFramebuffer
     {
+        VkFramebuffer.HandleType Handle { get; }
+    }
+
+    public class VkFramebuffer : IVkFramebuffer
+    {
+        public HandleType Handle { get; }
+
+        public VkFramebuffer(HandleType handle)
+        {
+            Handle = handle;
+        }
+
         public struct HandleType
         {
             public readonly ulong InternalHandle;

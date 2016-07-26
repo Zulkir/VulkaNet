@@ -22,11 +22,14 @@ THE SOFTWARE.
 */
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkCommandBufferAllocateInfo : IVkStructWrapper
+    public interface IVkCommandBufferAllocateInfo
     {
         IVkStructWrapper Next { get; }
         IVkCommandPool CommandPool { get; }
@@ -56,16 +59,16 @@ namespace VulkaNet
 
     public static unsafe class VkCommandBufferAllocateInfoExtensions
     {
-        public int SizeOfMarshalDirect(this ICommandBufferAllocateInfo s)
+        public static int SizeOfMarshalDirect(this IVkCommandBufferAllocateInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
 
             return
-                Next.SizeOfMarshalIndirect();
+                s.Next.SizeOfMarshalIndirect();
         }
 
-        public Raw* MarshalDirect(this IVkCommandBufferAllocateInfo s, ref byte* unmanaged)
+        public static VkCommandBufferAllocateInfo.Raw MarshalDirect(this IVkCommandBufferAllocateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -75,7 +78,7 @@ namespace VulkaNet
             VkCommandBufferAllocateInfo.Raw result;
             result.sType = VkStructureType.CommandBufferAllocateInfo;
             result.pNext = pNext;
-            result.commandPool = s.CommandPool;
+            result.commandPool = s.CommandPool.Handle;
             result.level = s.Level;
             result.commandBufferCount = s.CommandBufferCount;
             return result;
@@ -108,7 +111,7 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkCommandBufferAllocateInfo> list)
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkCommandBufferAllocateInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkCommandBufferAllocateInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());

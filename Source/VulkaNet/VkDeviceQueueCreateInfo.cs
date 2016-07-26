@@ -22,12 +22,14 @@ THE SOFTWARE.
 */
 #endregion
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkDeviceQueueCreateInfo : IVkStructWrapper
+    public interface IVkDeviceQueueCreateInfo
     {
         IVkStructWrapper Next { get; }
         VkDeviceQueueCreateFlags Flags { get; }
@@ -58,17 +60,17 @@ namespace VulkaNet
 
     public static unsafe class VkDeviceQueueCreateInfoExtensions
     {
-        public int SizeOfMarshalDirect(this IDeviceQueueCreateInfo s)
+        public static int SizeOfMarshalDirect(this IVkDeviceQueueCreateInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
 
             return
-                Next.SizeOfMarshalIndirect() +
-                QueuePriorities.SizeOfMarshalDirect();
+                s.Next.SizeOfMarshalIndirect() +
+                s.QueuePriorities.SizeOfMarshalDirect();
         }
 
-        public Raw* MarshalDirect(this IVkDeviceQueueCreateInfo s, ref byte* unmanaged)
+        public static VkDeviceQueueCreateInfo.Raw MarshalDirect(this IVkDeviceQueueCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -113,7 +115,7 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkDeviceQueueCreateInfo> list)
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkDeviceQueueCreateInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkDeviceQueueCreateInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());

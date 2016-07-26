@@ -22,11 +22,14 @@ THE SOFTWARE.
 */
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkApplicationInfo : IVkStructWrapper
+    public interface IVkApplicationInfo
     {
         IVkStructWrapper Next { get; }
         string ApplicationName { get; }
@@ -62,18 +65,18 @@ namespace VulkaNet
 
     public static unsafe class VkApplicationInfoExtensions
     {
-        public int SizeOfMarshalDirect(this IApplicationInfo s)
+        public static int SizeOfMarshalDirect(this IVkApplicationInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
 
             return
-                Next.SizeOfMarshalIndirect() +
-                ApplicationName.SizeOfMarshalIndirect() +
-                EngineName.SizeOfMarshalIndirect();
+                s.Next.SizeOfMarshalIndirect() +
+                s.ApplicationName.SizeOfMarshalIndirect() +
+                s.EngineName.SizeOfMarshalIndirect();
         }
 
-        public Raw* MarshalDirect(this IVkApplicationInfo s, ref byte* unmanaged)
+        public static VkApplicationInfo.Raw MarshalDirect(this IVkApplicationInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -120,7 +123,7 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkApplicationInfo> list)
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkApplicationInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkApplicationInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());

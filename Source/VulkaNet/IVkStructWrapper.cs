@@ -32,9 +32,9 @@ namespace VulkaNet
 
     public static class VkStructWrapperExtensions
     {
-        public static int SafeMarshalSize(this IVkStructWrapper s) 
+        public static int SizeOfMarshalIndirect(this IVkStructWrapper s) 
             => s?.MarshalSize() ?? 0;
-        public static unsafe void* SafeMarshalTo(this IVkStructWrapper s, ref byte* unmanaged) 
+        public static unsafe void* MarshalIndirect(this IVkStructWrapper s, ref byte* unmanaged) 
             => s != null ? s.MarshalTo(ref unmanaged) : (void*)0;
     }
 }

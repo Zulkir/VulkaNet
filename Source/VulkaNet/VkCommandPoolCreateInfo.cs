@@ -22,11 +22,14 @@ THE SOFTWARE.
 */
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkCommandPoolCreateInfo : IVkStructWrapper
+    public interface IVkCommandPoolCreateInfo
     {
         IVkStructWrapper Next { get; }
         VkCommandPoolCreateFlags Flags { get; }
@@ -53,16 +56,16 @@ namespace VulkaNet
 
     public static unsafe class VkCommandPoolCreateInfoExtensions
     {
-        public int SizeOfMarshalDirect(this ICommandPoolCreateInfo s)
+        public static int SizeOfMarshalDirect(this IVkCommandPoolCreateInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
 
             return
-                Next.SizeOfMarshalIndirect();
+                s.Next.SizeOfMarshalIndirect();
         }
 
-        public Raw* MarshalDirect(this IVkCommandPoolCreateInfo s, ref byte* unmanaged)
+        public static VkCommandPoolCreateInfo.Raw MarshalDirect(this IVkCommandPoolCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -104,7 +107,7 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkCommandPoolCreateInfo> list)
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkCommandPoolCreateInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkCommandPoolCreateInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());

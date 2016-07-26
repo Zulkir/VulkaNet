@@ -77,7 +77,7 @@ namespace VulkaNet
         {
             var pNext = s.Next.SafeMarshalTo(ref unmanaged);
             var pQueueCreateInfos = (VkDeviceQueueCreateInfo.Raw**)s.QueueCreateInfos.SafeMarshalTo(ref unmanaged);
-            var ppEnabledExtensionNames = s.EnabledExtensionNames.SafeMarshalTo(ref unmanaged);
+            var ppEnabledExtensionNames = s.EnabledExtensionNames.direct(ref unmanaged);
             var pEnabledFeatures = s.EnabledFeatures.SafeMarshalTo(ref unmanaged);
             var result = (VkDeviceCreateInfo.Raw*)unmanaged;
             unmanaged += VkDeviceCreateInfo.Raw.SizeInBytes;

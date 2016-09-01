@@ -25,6 +25,8 @@ THE SOFTWARE.
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
+// todo: generate
+
 namespace VulkaNet
 {
     public interface IVkDeviceCreateInfo
@@ -61,7 +63,7 @@ namespace VulkaNet
             public static int SizeInBytes { get; } = Marshal.SizeOf<Raw>();
         }
     }
-
+    /*
     public static class VkDeviceCreateInfoExtensions
     {
         public static int SafeMarshalSize(this IVkDeviceCreateInfo s)
@@ -93,5 +95,5 @@ namespace VulkaNet
             result->pEnabledFeatures = pEnabledFeatures;
             return result;
         }
-    }
+    }*/
 }

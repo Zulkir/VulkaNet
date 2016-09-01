@@ -23,6 +23,7 @@ THE SOFTWARE.
 #endregion
 
 using System;
+using System.Collections.Generic;
 
 namespace VulkaNet
 {
@@ -47,5 +48,14 @@ namespace VulkaNet
         Host = 0x00004000,
         AllGraphics = 0x00008000,
         AllCommands = 0x00010000,
+    }
+
+    public static unsafe class VkPipelineStageFlagsExtensions
+    {
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkPipelineStageFlags> list) =>
+            list.SizeOfMarshalDirect(sizeof(VkPipelineStageFlags), x => 0);
+
+        public static VkPipelineStageFlags* MarshalDirect(this IReadOnlyList<VkPipelineStageFlags> list, ref byte* unmanaged) =>
+            (VkPipelineStageFlags*)list.MarshalDirect(ref unmanaged, (e, d) => { *(VkPipelineStageFlags*)d = e; }, sizeof(VkPipelineStageFlags));
     }
 }

@@ -119,7 +119,7 @@ namespace VulkaNet
             fixed (byte* unmanagedStart = unamangedArray)
             {
                 var unamanged = unmanagedStart;
-                var pAllocateInfo = allocateInfo.MarshalIndirect(ref unamanged, this);
+                var pAllocateInfo = allocateInfo.MarshalIndirect(ref unamanged);
                 var commandBufferHandles = new VkCommandBuffer.HandleType[allocateInfo.CommandBufferCount];
                 fixed (VkCommandBuffer.HandleType* pCommandBuffers = commandBufferHandles)
                 {

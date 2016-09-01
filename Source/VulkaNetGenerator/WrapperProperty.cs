@@ -61,7 +61,10 @@ namespace VulkaNetGenerator
             if (rawField.Name == "pNext")
                 return "IVkStructWrapper";
             if (rawField.IsArray)
-                return DeriveTypeInternal($"IReadOnlyList<{rawField.TypeStr.Substring(0, rawField.TypeStr.Length - 1)}>");
+            {
+                var elemTypeStr = DeriveTypeInternal(rawField.TypeStr.Substring(0, rawField.TypeStr.Length - 1));
+                return $"IReadOnlyList<{elemTypeStr}>";
+            }
             return DeriveTypeInternal(rawField.TypeStr);
         }
 

@@ -22,19 +22,23 @@ THE SOFTWARE.
 */
 #endregion
 
-namespace VulkaNet
+namespace VulkaNetGenerator
 {
-    public unsafe interface IVkStructWrapper
+    /*
+    public unsafe struct GenDeviceCreateInfo
     {
-        int SizeOfMarshalIndirectInternal();
-        void* MarshalIndirectInternal(ref byte* dst);
-    }
-    
-    public static class VkStructWrapperExtensions
-    {
-        public static int SizeOfMarshalIndirect(this IVkStructWrapper s) 
-            => s?.SizeOfMarshalIndirectInternal() ?? 0;
-        public static unsafe void* MarshalIndirect(this IVkStructWrapper s, ref byte* unmanaged) 
-            => s != null ? s.MarshalIndirectInternal(ref unmanaged) : (void*)0;
-    }
+        public VkStructureType sType;
+        public void* pNext;
+        public VkDeviceCreateFlags flags;
+        [CountFor("QueueCreateInfos")]
+        public int queueCreateInfoCount;
+        public GenDeviceQueueCreateInfo** pQueueCreateInfos;
+        [CountFor("EnabledLayerNames")]
+        public int enabledLayerCount;
+        public StrByte** ppEnabledLayerNames;
+        [CountFor("EnabledExtensionNames")]
+        public int enabledExtensionCount;
+        public StrByte** ppEnabledExtensionNames;
+        public GenPhysicalDeviceFeatures pEnabledFeatures;
+    }*/
 }

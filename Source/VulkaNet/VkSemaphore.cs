@@ -22,6 +22,8 @@ THE SOFTWARE.
 */
 #endregion
 
+using System.Collections.Generic;
+
 namespace VulkaNet
 {
     public interface IVkSemaphore : IVkNonDisptatchableHandledObject
@@ -45,5 +47,14 @@ namespace VulkaNet
             public override string ToString() => InternalHandle.ToString();
             public static int SizeInBytes { get; } = sizeof(ulong);
         }
+    }
+
+    public static unsafe class VkSemaphoreExtensions
+    {
+        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkSemaphore> list) =>
+            list.SizeOfMarshalDirect(0f);
+
+        public static VkSemaphore.HandleType* MarshalDirect(this IReadOnlyList<IVkSemaphore> list, ref byte* unmanaged) =>
+            (VkSemaphore.HandleType*)list.MarshalDirect(ref unmanaged, 0f);
     }
 }

@@ -28,94 +28,86 @@ using System.Linq;
 
 namespace VulkaNet
 {
-    public static class ReadOnlyListExtensions
+    public static unsafe class ReadOnlyListExtensions
     {
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<string> list) 
-            => SafeMarshalReferenceSize(list, StringExtensions.SizeOfMarshalIndirect);
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkStructWrapper> list)
-            => SafeMarshalReferenceSize(list, x => x.SizeOfMarshalIndirect());
-        public static int SafeMarshalReferenceSize<T>(this IReadOnlyList<T> list, Func<T, int> marshalElemSize) 
-            => list != null ? list.Sum(marshalElemSize) + IntPtr.Size * list.Count : 0;
-        
-        public static int SafeMarshalStructSize<T>(this IReadOnlyList<T> list, int elemSize)
-            => list?.Count * elemSize ?? 0;
-        public static int SizeOfMarshalDirect(this IReadOnlyList<float> list)
-            => SafeMarshalStructSize(list, sizeof(float));
-        //public static int SafeMarshalSize(this IReadOnlyList<VkPipelineStageFlags> list) =>
-        //    SafeMarshalStructSize(list, sizeof(VkPipelineStageFlags));
-        //public static int SafeMarshalSize(this IReadOnlyList<IVkSemaphore> list) =>
-        //    SafeMarshalStructSize(list, VkSemaphore.HandleType.SizeInBytes);
-        //public static int SafeMarshalSize(this IReadOnlyList<IVkCommandBuffer> list) =>
-        //    SafeMarshalStructSize(list, VkCommandBuffer.HandleType.SizeInBytes);
+        // Denotation:
+        // MarshalDirect(list) returns a pointer to an array of values stored in 'unmanaged'.
+        // MarshalIndirect(list) returns a pointer to an array of pointers stored in 'unmanaged'.
+        // For objects, their handlers are considered values and therefore, MarshalDirect(list) is used.
 
+        // Generic
 
-        public unsafe delegate IntPtr MarshalElemDelegate<T>(T elem, ref byte* unmanaged);
-        
-        private static unsafe IntPtr SafeMarshalStringTo(string elem, ref byte* unmanaged) 
-            => (IntPtr)elem.MarshalIndirect(ref unmanaged);
-        public static unsafe byte** MarshalIndirect(this IReadOnlyList<string> list, ref byte* unamanged) 
-            => (byte**)SafeMarshalReferencesTo(list, ref unamanged, SafeMarshalStringTo);
+        public static int SizeOfMarshalDirect<T>(this IReadOnlyList<T> list, int rawSize, Func<T, int> sizeOfMarshalElemDirect) =>
+            list != null ? list.Sum(sizeOfMarshalElemDirect) + rawSize * list.Count : 0;
 
-        private static unsafe IntPtr SafeMarshalStructWrapperTo(IVkStructWrapper elem, ref byte* unmanaged)
-            => (IntPtr)elem.MarshalIndirect(ref unmanaged);
-        public static unsafe void** MarshalIndirect(this IReadOnlyList<IVkStructWrapper> list, ref byte* unamanged)
-            => (void**)SafeMarshalReferencesTo(list, ref unamanged, SafeMarshalStructWrapperTo);
+        public static int SizeOfMarshalIndirect<T>(this IReadOnlyList<T> list, Func<T, int> sizeOfMarshalElemIndirect) => 
+            list != null ? list.Sum(sizeOfMarshalElemIndirect) + IntPtr.Size * list.Count : 0;
 
-        private static unsafe IntPtr* SafeMarshalReferencesTo<T>(this IReadOnlyList<T> list, ref byte* unamanged, MarshalElemDelegate<T> marshalElem)
+        public delegate void MarshalElemDirectDelegate<T>(T elem, ref byte* unmanaged, void* dst);
+
+        public static void* MarshalDirect<T>(this IReadOnlyList<T> list, ref byte* unamanged, MarshalElemDirectDelegate<T> marshalElemDirect, int elemSize)
+        {
+            if (list == null || list.Count == 0)
+                return (void*)0;
+            var result = unamanged;
+            unamanged += elemSize * list.Count;
+            for (int i = 0; i < list.Count; i++)
+                marshalElemDirect(list[i], ref unamanged, result + i * elemSize);
+            return result;
+        }
+
+        public delegate void StoreElemDelegate<T>(T elem, void* dst);
+
+        public static void* MarshalDirect<T>(this IReadOnlyList<T> list, ref byte* unamanged, StoreElemDelegate<T> storeElem, int elemSize) => 
+            MarshalDirect(list, ref unamanged, (T e, ref byte* u, void* d) => storeElem(e, d), elemSize);
+
+        public delegate void* MarshalElemIndirectDelegate<T>(T elem, ref byte* unmanaged);
+
+        private static void** MarshalIndirect<T>(this IReadOnlyList<T> list, ref byte* unamanged, MarshalElemIndirectDelegate<T> marshalElemIndirect)
             where T : class
         {
-            if (list == null)
-                return (IntPtr*)0;
-            var ptrArray = new IntPtr[list.Count];
+            if (list == null || list.Count == 0)
+                return (void**)0;
+            var ptrArray = new void*[list.Count];
             for (int i = 0; i < list.Count; i++)
-                ptrArray[i] = marshalElem(list[i], ref unamanged);
-            var result = (IntPtr*)unamanged;
+                ptrArray[i] = marshalElemIndirect(list[i], ref unamanged);
+            var result = (void**)unamanged;
+            unamanged += IntPtr.Size * ptrArray.Length;
             for (int i = 0; i < ptrArray.Length; i++)
                 result[i] = ptrArray[i];
-            unamanged += IntPtr.Size * ptrArray.Length;
             return result;
         }
 
-        
-        public unsafe delegate void StoreElemDelegate<T>(T elem, ref byte* unmanaged);
+        // Float
 
-        private static unsafe IntPtr SafeMarshalStructsTo<T>(this IReadOnlyList<T> list, ref byte* unamanged, StoreElemDelegate<T> storeElem, int elemSize)
-        {
-            if (list == null)
-                return (IntPtr)0;
-            var result = (IntPtr)unamanged;
-            foreach (var elem in list)
-            {
-                storeElem(elem, ref unamanged);
-                unamanged += elemSize;
-            }
-            return result;
-        }
+        public static int SizeOfMarshalDirect(this IReadOnlyList<float> list) =>
+            SizeOfMarshalDirect(list, sizeof(float), x => 0);
 
-        private static unsafe void StoreFloat(float elem, ref byte* unmanaged) => 
-            *(float*)unmanaged = elem;
-        public static unsafe float* MarshalDirect(this IReadOnlyList<float> list, ref byte* unamanged) => 
-            (float*)SafeMarshalStructsTo(list, ref unamanged, StoreFloat, sizeof(float));
+        public static float* MarshalDirect(this IReadOnlyList<float> list, ref byte* unmanaged) =>
+            (float*)MarshalDirect(list, ref unmanaged, (e, d) => { *(float*)d = e; }, sizeof(float));
 
-        private static unsafe void StoreFloat(VkPipelineStageFlags elem, ref byte* unmanaged) =>
-            *(VkPipelineStageFlags*)unmanaged = elem;
-        public static unsafe VkPipelineStageFlags* SafeMarshalTo(this IReadOnlyList<VkPipelineStageFlags> list, ref byte* unamanged) =>
-            (VkPipelineStageFlags*)SafeMarshalStructsTo(list, ref unamanged, StoreFloat, sizeof(VkPipelineStageFlags));
+        // String
 
-        private static unsafe void StoreHandled<T>(T elem, ref byte* unmanaged)
-            where T : IVkHandledObject
-            =>
-            *(IntPtr*)unmanaged = elem.RawHandle;
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<string> list) =>
+            SizeOfMarshalIndirect(list, x => x.SizeOfMarshalIndirect());
 
-        public static unsafe VkCommandBuffer.HandleType* SafeMarshalTo(this IReadOnlyList<IVkCommandBuffer> list, ref byte* unamanged) =>
-            (VkCommandBuffer.HandleType*)SafeMarshalStructsTo(list, ref unamanged, StoreHandled, VkCommandBuffer.HandleType.SizeInBytes);
+        public static byte** MarshalIndirect(this IReadOnlyList<string> list, ref byte* unmanaged) =>
+            (byte**)MarshalIndirect(list, ref unmanaged, (string e, ref byte* u) => (void*)e.MarshalIndirect(ref u));
 
-        private static unsafe void StoreNonDispatchableHandled<T>(T elem, ref byte* unmanaged)
-            where T : IVkNonDisptatchableHandledObject
-            =>
-            *(ulong*)unmanaged = elem.RawHandle;
-        
-        public static unsafe VkSemaphore.HandleType* SafeMarshalTo(this IReadOnlyList<IVkSemaphore> list, ref byte* unamanged) =>
-            (VkSemaphore.HandleType*)SafeMarshalStructsTo(list, ref unamanged, StoreNonDispatchableHandled, VkSemaphore.HandleType.SizeInBytes);
+        // Dispatched Handle
+
+        public static int SizeOfMarshalDirect<T>(this IReadOnlyList<T> list, int dummy) where T : IVkHandledObject =>
+            SizeOfMarshalDirect(list, sizeof(IntPtr), x => 0);
+
+        public static IntPtr* MarshalDirect<T>(this IReadOnlyList<T> list, ref byte* unmanaged, int dummy) where T : IVkHandledObject =>
+            (IntPtr*)MarshalDirect(list, ref unmanaged, (e, d) => { *(IntPtr*)d = e.RawHandle; }, sizeof(IntPtr));
+
+        // Non-Dispatched Handle
+
+        public static int SizeOfMarshalDirect<T>(this IReadOnlyList<T> list, float dummy) where T : IVkNonDisptatchableHandledObject =>
+            SizeOfMarshalDirect(list, sizeof(ulong), x => 0);
+
+        public static ulong* MarshalDirect<T>(this IReadOnlyList<T> list, ref byte* unmanaged, float dummy) where T : IVkNonDisptatchableHandledObject =>
+            (ulong*)MarshalDirect(list, ref unmanaged, (e, d) => { *(ulong*)d = e.RawHandle; }, sizeof(IntPtr));
     }
 }

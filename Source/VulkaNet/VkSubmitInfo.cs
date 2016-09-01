@@ -32,19 +32,19 @@ namespace VulkaNet
     public interface IVkSubmitInfo
     {
         IVkStructWrapper Next { get; }
-        IReadOnlyList<VkSemaphore.HandleType> WaitSemaphores { get; }
+        IReadOnlyList<IVkSemaphore> WaitSemaphores { get; }
         IReadOnlyList<VkPipelineStageFlags> WaitDstStageMask { get; }
-        IReadOnlyList<VkCommandBuffer.HandleType> CommandBuffers { get; }
-        IReadOnlyList<VkSemaphore.HandleType> SignalSemaphores { get; }
+        IReadOnlyList<IVkCommandBuffer> CommandBuffers { get; }
+        IReadOnlyList<IVkSemaphore> SignalSemaphores { get; }
     }
 
     public unsafe class VkSubmitInfo : IVkSubmitInfo
     {
         public IVkStructWrapper Next { get; set; }
-        public IReadOnlyList<VkSemaphore.HandleType> WaitSemaphores { get; set; }
+        public IReadOnlyList<IVkSemaphore> WaitSemaphores { get; set; }
         public IReadOnlyList<VkPipelineStageFlags> WaitDstStageMask { get; set; }
-        public IReadOnlyList<VkCommandBuffer.HandleType> CommandBuffers { get; set; }
-        public IReadOnlyList<VkSemaphore.HandleType> SignalSemaphores { get; set; }
+        public IReadOnlyList<IVkCommandBuffer> CommandBuffers { get; set; }
+        public IReadOnlyList<IVkSemaphore> SignalSemaphores { get; set; }
 
         [StructLayout(LayoutKind.Sequential)]
         public struct Raw

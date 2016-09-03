@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 /*
 Copyright (c) 2016 VulkaNet Project - Daniil Rodin
 
@@ -22,127 +22,130 @@ THE SOFTWARE.
 */
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
     public interface IVkPhysicalDeviceFeatures
     {
-        VkBool32 RobustBufferAccess { get; }
-        VkBool32 FullDrawIndexUint32 { get; }
-        VkBool32 ImageCubeArray { get; }
-        VkBool32 IndependentBlend { get; }
-        VkBool32 GeometryShader { get; }
-        VkBool32 TessellationShader { get; }
-        VkBool32 SampleRateShading { get; }
-        VkBool32 DualSrcBlend { get; }
-        VkBool32 LogicOp { get; }
-        VkBool32 MultiDrawIndirect { get; }
-        VkBool32 DrawIndirectFirstInstance { get; }
-        VkBool32 DepthClamp { get; }
-        VkBool32 DepthBiasClamp { get; }
-        VkBool32 FillModeNonSolid { get; }
-        VkBool32 DepthBounds { get; }
-        VkBool32 WideLines { get; }
-        VkBool32 LargePoints { get; }
-        VkBool32 AlphaToOne { get; }
-        VkBool32 MultiViewport { get; }
-        VkBool32 SamplerAnisotropy { get; }
-        VkBool32 TextureCompressionEtc2 { get; }
-        VkBool32 TextureCompressionAstcLdr { get; }
-        VkBool32 TextureCompressionBc { get; }
-        VkBool32 OcclusionQueryPrecise { get; }
-        VkBool32 PipelineStatisticsQuery { get; }
-        VkBool32 VertexPipelineStoresAndAtomics { get; }
-        VkBool32 FragmentStoresAndAtomics { get; }
-        VkBool32 ShaderTessellationAndGeometryPointSize { get; }
-        VkBool32 ShaderImageGatherExtended { get; }
-        VkBool32 ShaderStorageImageExtendedFormats { get; }
-        VkBool32 ShaderStorageImageMultisample { get; }
-        VkBool32 ShaderStorageImageReadWithoutFormat { get; }
-        VkBool32 ShaderStorageImageWriteWithoutFormat { get; }
-        VkBool32 ShaderUniformBufferArrayDynamicIndexing { get; }
-        VkBool32 ShaderSampledImageArrayDynamicIndexing { get; }
-        VkBool32 ShaderStorageBufferArrayDynamicIndexing { get; }
-        VkBool32 ShaderStorageImageArrayDynamicIndexing { get; }
-        VkBool32 ShaderClipDistance { get; }
-        VkBool32 ShaderCullDistance { get; }
-        VkBool32 ShaderFloat64 { get; }
-        VkBool32 ShaderInt64 { get; }
-        VkBool32 ShaderInt16 { get; }
-        VkBool32 ShaderResourceResidency { get; }
-        VkBool32 ShaderResourceMinLod { get; }
-        VkBool32 SparseBinding { get; }
-        VkBool32 SparseResidencyBuffer { get; }
-        VkBool32 SparseResidencyImage2D { get; }
-        VkBool32 SparseResidencyImage3D { get; }
-        VkBool32 SparseResidency2Samples { get; }
-        VkBool32 SparseResidency4Samples { get; }
-        VkBool32 SparseResidency8Samples { get; }
-        VkBool32 SparseResidency16Samples { get; }
-        VkBool32 SparseResidencyAliased { get; }
-        VkBool32 VariableMultisampleRate { get; }
-        VkBool32 InheritedQueries { get; }
+        bool RobustBufferAccess { get; }
+        bool FullDrawIndexUint32 { get; }
+        bool ImageCubeArray { get; }
+        bool IndependentBlend { get; }
+        bool GeometryShader { get; }
+        bool TessellationShader { get; }
+        bool SampleRateShading { get; }
+        bool DualSrcBlend { get; }
+        bool LogicOp { get; }
+        bool MultiDrawIndirect { get; }
+        bool DrawIndirectFirstInstance { get; }
+        bool DepthClamp { get; }
+        bool DepthBiasClamp { get; }
+        bool FillModeNonSolid { get; }
+        bool DepthBounds { get; }
+        bool WideLines { get; }
+        bool LargePoints { get; }
+        bool AlphaToOne { get; }
+        bool MultiViewport { get; }
+        bool SamplerAnisotropy { get; }
+        bool TextureCompressionETC2 { get; }
+        bool TextureCompressionASTC_LDR { get; }
+        bool TextureCompressionBC { get; }
+        bool OcclusionQueryPrecise { get; }
+        bool PipelineStatisticsQuery { get; }
+        bool VertexPipelineStoresAndAtomics { get; }
+        bool FragmentStoresAndAtomics { get; }
+        bool ShaderTessellationAndGeometryPointSize { get; }
+        bool ShaderImageGatherExtended { get; }
+        bool ShaderStorageImageExtendedFormats { get; }
+        bool ShaderStorageImageMultisample { get; }
+        bool ShaderStorageImageReadWithoutFormat { get; }
+        bool ShaderStorageImageWriteWithoutFormat { get; }
+        bool ShaderUniformBufferArrayDynamicIndexing { get; }
+        bool ShaderSampledImageArrayDynamicIndexing { get; }
+        bool ShaderStorageBufferArrayDynamicIndexing { get; }
+        bool ShaderStorageImageArrayDynamicIndexing { get; }
+        bool ShaderClipDistance { get; }
+        bool ShaderCullDistance { get; }
+        bool ShaderFloat64 { get; }
+        bool ShaderInt64 { get; }
+        bool ShaderInt16 { get; }
+        bool ShaderResourceResidency { get; }
+        bool ShaderResourceMinLod { get; }
+        bool SparseBinding { get; }
+        bool SparseResidencyBuffer { get; }
+        bool SparseResidencyImage2D { get; }
+        bool SparseResidencyImage3D { get; }
+        bool SparseResidency2Samples { get; }
+        bool SparseResidency4Samples { get; }
+        bool SparseResidency8Samples { get; }
+        bool SparseResidency16Samples { get; }
+        bool SparseResidencyAliased { get; }
+        bool VariableMultisampleRate { get; }
+        bool InheritedQueries { get; }
     }
 
     public unsafe class VkPhysicalDeviceFeatures : IVkPhysicalDeviceFeatures
     {
-        public VkBool32 RobustBufferAccess { get; }
-        public VkBool32 FullDrawIndexUint32 { get; }
-        public VkBool32 ImageCubeArray { get; }
-        public VkBool32 IndependentBlend { get; }
-        public VkBool32 GeometryShader { get; }
-        public VkBool32 TessellationShader { get; }
-        public VkBool32 SampleRateShading { get; }
-        public VkBool32 DualSrcBlend { get; }
-        public VkBool32 LogicOp { get; }
-        public VkBool32 MultiDrawIndirect { get; }
-        public VkBool32 DrawIndirectFirstInstance { get; }
-        public VkBool32 DepthClamp { get; }
-        public VkBool32 DepthBiasClamp { get; }
-        public VkBool32 FillModeNonSolid { get; }
-        public VkBool32 DepthBounds { get; }
-        public VkBool32 WideLines { get; }
-        public VkBool32 LargePoints { get; }
-        public VkBool32 AlphaToOne { get; }
-        public VkBool32 MultiViewport { get; }
-        public VkBool32 SamplerAnisotropy { get; }
-        public VkBool32 TextureCompressionEtc2 { get; }
-        public VkBool32 TextureCompressionAstcLdr { get; }
-        public VkBool32 TextureCompressionBc { get; }
-        public VkBool32 OcclusionQueryPrecise { get; }
-        public VkBool32 PipelineStatisticsQuery { get; }
-        public VkBool32 VertexPipelineStoresAndAtomics { get; }
-        public VkBool32 FragmentStoresAndAtomics { get; }
-        public VkBool32 ShaderTessellationAndGeometryPointSize { get; }
-        public VkBool32 ShaderImageGatherExtended { get; }
-        public VkBool32 ShaderStorageImageExtendedFormats { get; }
-        public VkBool32 ShaderStorageImageMultisample { get; }
-        public VkBool32 ShaderStorageImageReadWithoutFormat { get; }
-        public VkBool32 ShaderStorageImageWriteWithoutFormat { get; }
-        public VkBool32 ShaderUniformBufferArrayDynamicIndexing { get; }
-        public VkBool32 ShaderSampledImageArrayDynamicIndexing { get; }
-        public VkBool32 ShaderStorageBufferArrayDynamicIndexing { get; }
-        public VkBool32 ShaderStorageImageArrayDynamicIndexing { get; }
-        public VkBool32 ShaderClipDistance { get; }
-        public VkBool32 ShaderCullDistance { get; }
-        public VkBool32 ShaderFloat64 { get; }
-        public VkBool32 ShaderInt64 { get; }
-        public VkBool32 ShaderInt16 { get; }
-        public VkBool32 ShaderResourceResidency { get; }
-        public VkBool32 ShaderResourceMinLod { get; }
-        public VkBool32 SparseBinding { get; }
-        public VkBool32 SparseResidencyBuffer { get; }
-        public VkBool32 SparseResidencyImage2D { get; }
-        public VkBool32 SparseResidencyImage3D { get; }
-        public VkBool32 SparseResidency2Samples { get; }
-        public VkBool32 SparseResidency4Samples { get; }
-        public VkBool32 SparseResidency8Samples { get; }
-        public VkBool32 SparseResidency16Samples { get; }
-        public VkBool32 SparseResidencyAliased { get; }
-        public VkBool32 VariableMultisampleRate { get; }
-        public VkBool32 InheritedQueries { get; }
-        
+        public bool RobustBufferAccess { get; set; }
+        public bool FullDrawIndexUint32 { get; set; }
+        public bool ImageCubeArray { get; set; }
+        public bool IndependentBlend { get; set; }
+        public bool GeometryShader { get; set; }
+        public bool TessellationShader { get; set; }
+        public bool SampleRateShading { get; set; }
+        public bool DualSrcBlend { get; set; }
+        public bool LogicOp { get; set; }
+        public bool MultiDrawIndirect { get; set; }
+        public bool DrawIndirectFirstInstance { get; set; }
+        public bool DepthClamp { get; set; }
+        public bool DepthBiasClamp { get; set; }
+        public bool FillModeNonSolid { get; set; }
+        public bool DepthBounds { get; set; }
+        public bool WideLines { get; set; }
+        public bool LargePoints { get; set; }
+        public bool AlphaToOne { get; set; }
+        public bool MultiViewport { get; set; }
+        public bool SamplerAnisotropy { get; set; }
+        public bool TextureCompressionETC2 { get; set; }
+        public bool TextureCompressionASTC_LDR { get; set; }
+        public bool TextureCompressionBC { get; set; }
+        public bool OcclusionQueryPrecise { get; set; }
+        public bool PipelineStatisticsQuery { get; set; }
+        public bool VertexPipelineStoresAndAtomics { get; set; }
+        public bool FragmentStoresAndAtomics { get; set; }
+        public bool ShaderTessellationAndGeometryPointSize { get; set; }
+        public bool ShaderImageGatherExtended { get; set; }
+        public bool ShaderStorageImageExtendedFormats { get; set; }
+        public bool ShaderStorageImageMultisample { get; set; }
+        public bool ShaderStorageImageReadWithoutFormat { get; set; }
+        public bool ShaderStorageImageWriteWithoutFormat { get; set; }
+        public bool ShaderUniformBufferArrayDynamicIndexing { get; set; }
+        public bool ShaderSampledImageArrayDynamicIndexing { get; set; }
+        public bool ShaderStorageBufferArrayDynamicIndexing { get; set; }
+        public bool ShaderStorageImageArrayDynamicIndexing { get; set; }
+        public bool ShaderClipDistance { get; set; }
+        public bool ShaderCullDistance { get; set; }
+        public bool ShaderFloat64 { get; set; }
+        public bool ShaderInt64 { get; set; }
+        public bool ShaderInt16 { get; set; }
+        public bool ShaderResourceResidency { get; set; }
+        public bool ShaderResourceMinLod { get; set; }
+        public bool SparseBinding { get; set; }
+        public bool SparseResidencyBuffer { get; set; }
+        public bool SparseResidencyImage2D { get; set; }
+        public bool SparseResidencyImage3D { get; set; }
+        public bool SparseResidency2Samples { get; set; }
+        public bool SparseResidency4Samples { get; set; }
+        public bool SparseResidency8Samples { get; set; }
+        public bool SparseResidency16Samples { get; set; }
+        public bool SparseResidencyAliased { get; set; }
+        public bool VariableMultisampleRate { get; set; }
+        public bool InheritedQueries { get; set; }
+
         [StructLayout(LayoutKind.Sequential)]
         public struct Raw
         {
@@ -209,133 +212,179 @@ namespace VulkaNet
 
         public VkPhysicalDeviceFeatures(Raw* raw)
         {
-            RobustBufferAccess = raw->robustBufferAccess;
-            FullDrawIndexUint32 = raw->fullDrawIndexUint32;
-            ImageCubeArray = raw->imageCubeArray;
-            IndependentBlend = raw->independentBlend;
-            GeometryShader = raw->geometryShader;
-            TessellationShader = raw->tessellationShader;
-            SampleRateShading = raw->sampleRateShading;
-            DualSrcBlend = raw->dualSrcBlend;
-            LogicOp = raw->logicOp;
-            MultiDrawIndirect = raw->multiDrawIndirect;
-            DrawIndirectFirstInstance = raw->drawIndirectFirstInstance;
-            DepthClamp = raw->depthClamp;
-            DepthBiasClamp = raw->depthBiasClamp;
-            FillModeNonSolid = raw->fillModeNonSolid;
-            DepthBounds = raw->depthBounds;
-            WideLines = raw->wideLines;
-            LargePoints = raw->largePoints;
-            AlphaToOne = raw->alphaToOne;
-            MultiViewport = raw->multiViewport;
-            SamplerAnisotropy = raw->samplerAnisotropy;
-            TextureCompressionEtc2 = raw->textureCompressionETC2;
-            TextureCompressionAstcLdr = raw->textureCompressionASTC_LDR;
-            TextureCompressionBc = raw->textureCompressionBC;
-            OcclusionQueryPrecise = raw->occlusionQueryPrecise;
-            PipelineStatisticsQuery = raw->pipelineStatisticsQuery;
-            VertexPipelineStoresAndAtomics = raw->vertexPipelineStoresAndAtomics;
-            FragmentStoresAndAtomics = raw->fragmentStoresAndAtomics;
-            ShaderTessellationAndGeometryPointSize = raw->shaderTessellationAndGeometryPointSize;
-            ShaderImageGatherExtended = raw->shaderImageGatherExtended;
-            ShaderStorageImageExtendedFormats = raw->shaderStorageImageExtendedFormats;
-            ShaderStorageImageMultisample = raw->shaderStorageImageMultisample;
-            ShaderStorageImageReadWithoutFormat = raw->shaderStorageImageReadWithoutFormat;
-            ShaderStorageImageWriteWithoutFormat = raw->shaderStorageImageWriteWithoutFormat;
-            ShaderUniformBufferArrayDynamicIndexing = raw->shaderUniformBufferArrayDynamicIndexing;
-            ShaderSampledImageArrayDynamicIndexing = raw->shaderSampledImageArrayDynamicIndexing;
-            ShaderStorageBufferArrayDynamicIndexing = raw->shaderStorageBufferArrayDynamicIndexing;
-            ShaderStorageImageArrayDynamicIndexing = raw->shaderStorageImageArrayDynamicIndexing;
-            ShaderClipDistance = raw->shaderClipDistance;
-            ShaderCullDistance = raw->shaderCullDistance;
-            ShaderFloat64 = raw->shaderFloat64;
-            ShaderInt64 = raw->shaderInt64;
-            ShaderInt16 = raw->shaderInt16;
-            ShaderResourceResidency = raw->shaderResourceResidency;
-            ShaderResourceMinLod = raw->shaderResourceMinLod;
-            SparseBinding = raw->sparseBinding;
-            SparseResidencyBuffer = raw->sparseResidencyBuffer;
-            SparseResidencyImage2D = raw->sparseResidencyImage2D;
-            SparseResidencyImage3D = raw->sparseResidencyImage3D;
-            SparseResidency2Samples = raw->sparseResidency2Samples;
-            SparseResidency4Samples = raw->sparseResidency4Samples;
-            SparseResidency8Samples = raw->sparseResidency8Samples;
-            SparseResidency16Samples = raw->sparseResidency16Samples;
-            SparseResidencyAliased = raw->sparseResidencyAliased;
-            VariableMultisampleRate = raw->variableMultisampleRate;
-            InheritedQueries = raw->inheritedQueries;
+            RobustBufferAccess = (bool)raw->robustBufferAccess;
+            FullDrawIndexUint32 = (bool)raw->fullDrawIndexUint32;
+            ImageCubeArray = (bool)raw->imageCubeArray;
+            IndependentBlend = (bool)raw->independentBlend;
+            GeometryShader = (bool)raw->geometryShader;
+            TessellationShader = (bool)raw->tessellationShader;
+            SampleRateShading = (bool)raw->sampleRateShading;
+            DualSrcBlend = (bool)raw->dualSrcBlend;
+            LogicOp = (bool)raw->logicOp;
+            MultiDrawIndirect = (bool)raw->multiDrawIndirect;
+            DrawIndirectFirstInstance = (bool)raw->drawIndirectFirstInstance;
+            DepthClamp = (bool)raw->depthClamp;
+            DepthBiasClamp = (bool)raw->depthBiasClamp;
+            FillModeNonSolid = (bool)raw->fillModeNonSolid;
+            DepthBounds = (bool)raw->depthBounds;
+            WideLines = (bool)raw->wideLines;
+            LargePoints = (bool)raw->largePoints;
+            AlphaToOne = (bool)raw->alphaToOne;
+            MultiViewport = (bool)raw->multiViewport;
+            SamplerAnisotropy = (bool)raw->samplerAnisotropy;
+            TextureCompressionETC2 = (bool)raw->textureCompressionETC2;
+            TextureCompressionASTC_LDR = (bool)raw->textureCompressionASTC_LDR;
+            TextureCompressionBC = (bool)raw->textureCompressionBC;
+            OcclusionQueryPrecise = (bool)raw->occlusionQueryPrecise;
+            PipelineStatisticsQuery = (bool)raw->pipelineStatisticsQuery;
+            VertexPipelineStoresAndAtomics = (bool)raw->vertexPipelineStoresAndAtomics;
+            FragmentStoresAndAtomics = (bool)raw->fragmentStoresAndAtomics;
+            ShaderTessellationAndGeometryPointSize = (bool)raw->shaderTessellationAndGeometryPointSize;
+            ShaderImageGatherExtended = (bool)raw->shaderImageGatherExtended;
+            ShaderStorageImageExtendedFormats = (bool)raw->shaderStorageImageExtendedFormats;
+            ShaderStorageImageMultisample = (bool)raw->shaderStorageImageMultisample;
+            ShaderStorageImageReadWithoutFormat = (bool)raw->shaderStorageImageReadWithoutFormat;
+            ShaderStorageImageWriteWithoutFormat = (bool)raw->shaderStorageImageWriteWithoutFormat;
+            ShaderUniformBufferArrayDynamicIndexing = (bool)raw->shaderUniformBufferArrayDynamicIndexing;
+            ShaderSampledImageArrayDynamicIndexing = (bool)raw->shaderSampledImageArrayDynamicIndexing;
+            ShaderStorageBufferArrayDynamicIndexing = (bool)raw->shaderStorageBufferArrayDynamicIndexing;
+            ShaderStorageImageArrayDynamicIndexing = (bool)raw->shaderStorageImageArrayDynamicIndexing;
+            ShaderClipDistance = (bool)raw->shaderClipDistance;
+            ShaderCullDistance = (bool)raw->shaderCullDistance;
+            ShaderFloat64 = (bool)raw->shaderFloat64;
+            ShaderInt64 = (bool)raw->shaderInt64;
+            ShaderInt16 = (bool)raw->shaderInt16;
+            ShaderResourceResidency = (bool)raw->shaderResourceResidency;
+            ShaderResourceMinLod = (bool)raw->shaderResourceMinLod;
+            SparseBinding = (bool)raw->sparseBinding;
+            SparseResidencyBuffer = (bool)raw->sparseResidencyBuffer;
+            SparseResidencyImage2D = (bool)raw->sparseResidencyImage2D;
+            SparseResidencyImage3D = (bool)raw->sparseResidencyImage3D;
+            SparseResidency2Samples = (bool)raw->sparseResidency2Samples;
+            SparseResidency4Samples = (bool)raw->sparseResidency4Samples;
+            SparseResidency8Samples = (bool)raw->sparseResidency8Samples;
+            SparseResidency16Samples = (bool)raw->sparseResidency16Samples;
+            SparseResidencyAliased = (bool)raw->sparseResidencyAliased;
+            VariableMultisampleRate = (bool)raw->variableMultisampleRate;
+            InheritedQueries = (bool)raw->inheritedQueries;
         }
     }
 
-    public static class VkPhysicalDeviceFeaturesExtensions
+    public static unsafe class VkPhysicalDeviceFeaturesExtensions
     {
-        public static int SafeMarshalSize(this IVkPhysicalDeviceFeatures s)
-            => s != null 
-                ? VkPhysicalDeviceFeatures.Raw.SizeInBytes 
-                : 0;
-
-        public static unsafe VkPhysicalDeviceFeatures.Raw* SafeMarshalTo(this IVkPhysicalDeviceFeatures s, ref byte* unmanaged)
+        public static int SizeOfMarshalDirect(this IVkPhysicalDeviceFeatures s)
         {
             if (s == null)
-                return (VkPhysicalDeviceFeatures.Raw*)0;
+                throw new InvalidOperationException("Trying to directly marshal a null.");
 
+            return 0;
+        }
+
+        public static VkPhysicalDeviceFeatures.Raw MarshalDirect(this IVkPhysicalDeviceFeatures s, ref byte* unmanaged)
+        {
+            if (s == null)
+                throw new InvalidOperationException("Trying to directly marshal a null.");
+
+
+            VkPhysicalDeviceFeatures.Raw result;
+            result.robustBufferAccess = new VkBool32(s.RobustBufferAccess);
+            result.fullDrawIndexUint32 = new VkBool32(s.FullDrawIndexUint32);
+            result.imageCubeArray = new VkBool32(s.ImageCubeArray);
+            result.independentBlend = new VkBool32(s.IndependentBlend);
+            result.geometryShader = new VkBool32(s.GeometryShader);
+            result.tessellationShader = new VkBool32(s.TessellationShader);
+            result.sampleRateShading = new VkBool32(s.SampleRateShading);
+            result.dualSrcBlend = new VkBool32(s.DualSrcBlend);
+            result.logicOp = new VkBool32(s.LogicOp);
+            result.multiDrawIndirect = new VkBool32(s.MultiDrawIndirect);
+            result.drawIndirectFirstInstance = new VkBool32(s.DrawIndirectFirstInstance);
+            result.depthClamp = new VkBool32(s.DepthClamp);
+            result.depthBiasClamp = new VkBool32(s.DepthBiasClamp);
+            result.fillModeNonSolid = new VkBool32(s.FillModeNonSolid);
+            result.depthBounds = new VkBool32(s.DepthBounds);
+            result.wideLines = new VkBool32(s.WideLines);
+            result.largePoints = new VkBool32(s.LargePoints);
+            result.alphaToOne = new VkBool32(s.AlphaToOne);
+            result.multiViewport = new VkBool32(s.MultiViewport);
+            result.samplerAnisotropy = new VkBool32(s.SamplerAnisotropy);
+            result.textureCompressionETC2 = new VkBool32(s.TextureCompressionETC2);
+            result.textureCompressionASTC_LDR = new VkBool32(s.TextureCompressionASTC_LDR);
+            result.textureCompressionBC = new VkBool32(s.TextureCompressionBC);
+            result.occlusionQueryPrecise = new VkBool32(s.OcclusionQueryPrecise);
+            result.pipelineStatisticsQuery = new VkBool32(s.PipelineStatisticsQuery);
+            result.vertexPipelineStoresAndAtomics = new VkBool32(s.VertexPipelineStoresAndAtomics);
+            result.fragmentStoresAndAtomics = new VkBool32(s.FragmentStoresAndAtomics);
+            result.shaderTessellationAndGeometryPointSize = new VkBool32(s.ShaderTessellationAndGeometryPointSize);
+            result.shaderImageGatherExtended = new VkBool32(s.ShaderImageGatherExtended);
+            result.shaderStorageImageExtendedFormats = new VkBool32(s.ShaderStorageImageExtendedFormats);
+            result.shaderStorageImageMultisample = new VkBool32(s.ShaderStorageImageMultisample);
+            result.shaderStorageImageReadWithoutFormat = new VkBool32(s.ShaderStorageImageReadWithoutFormat);
+            result.shaderStorageImageWriteWithoutFormat = new VkBool32(s.ShaderStorageImageWriteWithoutFormat);
+            result.shaderUniformBufferArrayDynamicIndexing = new VkBool32(s.ShaderUniformBufferArrayDynamicIndexing);
+            result.shaderSampledImageArrayDynamicIndexing = new VkBool32(s.ShaderSampledImageArrayDynamicIndexing);
+            result.shaderStorageBufferArrayDynamicIndexing = new VkBool32(s.ShaderStorageBufferArrayDynamicIndexing);
+            result.shaderStorageImageArrayDynamicIndexing = new VkBool32(s.ShaderStorageImageArrayDynamicIndexing);
+            result.shaderClipDistance = new VkBool32(s.ShaderClipDistance);
+            result.shaderCullDistance = new VkBool32(s.ShaderCullDistance);
+            result.shaderFloat64 = new VkBool32(s.ShaderFloat64);
+            result.shaderInt64 = new VkBool32(s.ShaderInt64);
+            result.shaderInt16 = new VkBool32(s.ShaderInt16);
+            result.shaderResourceResidency = new VkBool32(s.ShaderResourceResidency);
+            result.shaderResourceMinLod = new VkBool32(s.ShaderResourceMinLod);
+            result.sparseBinding = new VkBool32(s.SparseBinding);
+            result.sparseResidencyBuffer = new VkBool32(s.SparseResidencyBuffer);
+            result.sparseResidencyImage2D = new VkBool32(s.SparseResidencyImage2D);
+            result.sparseResidencyImage3D = new VkBool32(s.SparseResidencyImage3D);
+            result.sparseResidency2Samples = new VkBool32(s.SparseResidency2Samples);
+            result.sparseResidency4Samples = new VkBool32(s.SparseResidency4Samples);
+            result.sparseResidency8Samples = new VkBool32(s.SparseResidency8Samples);
+            result.sparseResidency16Samples = new VkBool32(s.SparseResidency16Samples);
+            result.sparseResidencyAliased = new VkBool32(s.SparseResidencyAliased);
+            result.variableMultisampleRate = new VkBool32(s.VariableMultisampleRate);
+            result.inheritedQueries = new VkBool32(s.InheritedQueries);
+            return result;
+        }
+
+        public static int SizeOfMarshalIndirect(this IVkPhysicalDeviceFeatures s) =>
+            s == null ? 0 : s.SizeOfMarshalDirect() + VkPhysicalDeviceFeatures.Raw.SizeInBytes;
+
+        public static VkPhysicalDeviceFeatures.Raw* MarshalIndirect(this IVkPhysicalDeviceFeatures s, ref byte* unmanaged)
+        {
             var result = (VkPhysicalDeviceFeatures.Raw*)unmanaged;
             unmanaged += VkPhysicalDeviceFeatures.Raw.SizeInBytes;
-            result->robustBufferAccess = s.RobustBufferAccess;
-            result->fullDrawIndexUint32 = s.FullDrawIndexUint32;
-            result->imageCubeArray = s.ImageCubeArray;
-            result->independentBlend = s.IndependentBlend;
-            result->geometryShader = s.GeometryShader;
-            result->tessellationShader = s.TessellationShader;
-            result->sampleRateShading = s.SampleRateShading;
-            result->dualSrcBlend = s.DualSrcBlend;
-            result->logicOp = s.LogicOp;
-            result->multiDrawIndirect = s.MultiDrawIndirect;
-            result->drawIndirectFirstInstance = s.DrawIndirectFirstInstance;
-            result->depthClamp = s.DepthClamp;
-            result->depthBiasClamp = s.DepthBiasClamp;
-            result->fillModeNonSolid = s.FillModeNonSolid;
-            result->depthBounds = s.DepthBounds;
-            result->wideLines = s.WideLines;
-            result->largePoints = s.LargePoints;
-            result->alphaToOne = s.AlphaToOne;
-            result->multiViewport = s.MultiViewport;
-            result->samplerAnisotropy = s.SamplerAnisotropy;
-            result->textureCompressionETC2 = s.TextureCompressionEtc2;
-            result->textureCompressionASTC_LDR = s.TextureCompressionAstcLdr;
-            result->textureCompressionBC = s.TextureCompressionBc;
-            result->occlusionQueryPrecise = s.OcclusionQueryPrecise;
-            result->pipelineStatisticsQuery = s.PipelineStatisticsQuery;
-            result->vertexPipelineStoresAndAtomics = s.VertexPipelineStoresAndAtomics;
-            result->fragmentStoresAndAtomics = s.FragmentStoresAndAtomics;
-            result->shaderTessellationAndGeometryPointSize = s.ShaderTessellationAndGeometryPointSize;
-            result->shaderImageGatherExtended = s.ShaderImageGatherExtended;
-            result->shaderStorageImageExtendedFormats = s.ShaderStorageImageExtendedFormats;
-            result->shaderStorageImageMultisample = s.ShaderStorageImageMultisample;
-            result->shaderStorageImageReadWithoutFormat = s.ShaderStorageImageReadWithoutFormat;
-            result->shaderStorageImageWriteWithoutFormat = s.ShaderStorageImageWriteWithoutFormat;
-            result->shaderUniformBufferArrayDynamicIndexing = s.ShaderUniformBufferArrayDynamicIndexing;
-            result->shaderSampledImageArrayDynamicIndexing = s.ShaderSampledImageArrayDynamicIndexing;
-            result->shaderStorageBufferArrayDynamicIndexing = s.ShaderStorageBufferArrayDynamicIndexing;
-            result->shaderStorageImageArrayDynamicIndexing = s.ShaderStorageImageArrayDynamicIndexing;
-            result->shaderClipDistance = s.ShaderClipDistance;
-            result->shaderCullDistance = s.ShaderCullDistance;
-            result->shaderFloat64 = s.ShaderFloat64;
-            result->shaderInt64 = s.ShaderInt64;
-            result->shaderInt16 = s.ShaderInt16;
-            result->shaderResourceResidency = s.ShaderResourceResidency;
-            result->shaderResourceMinLod = s.ShaderResourceMinLod;
-            result->sparseBinding = s.SparseBinding;
-            result->sparseResidencyBuffer = s.SparseResidencyBuffer;
-            result->sparseResidencyImage2D = s.SparseResidencyImage2D;
-            result->sparseResidencyImage3D = s.SparseResidencyImage3D;
-            result->sparseResidency2Samples = s.SparseResidency2Samples;
-            result->sparseResidency4Samples = s.SparseResidency4Samples;
-            result->sparseResidency8Samples = s.SparseResidency8Samples;
-            result->sparseResidency16Samples = s.SparseResidency16Samples;
-            result->sparseResidencyAliased = s.SparseResidencyAliased;
-            result->variableMultisampleRate = s.VariableMultisampleRate;
-            result->inheritedQueries = s.InheritedQueries;
+            *result = s.MarshalDirect(ref unmanaged);
+            return result;
+        }
+
+        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkPhysicalDeviceFeatures> list) => 
+            list == null || list.Count == 0 
+                ? 0
+                : sizeof(VkPhysicalDeviceFeatures.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
+
+        public static VkPhysicalDeviceFeatures.Raw* MarshalDirect(this IReadOnlyList<IVkPhysicalDeviceFeatures> list, ref byte* unmanaged)
+        {
+            if (list == null || list.Count == 0)
+                return (VkPhysicalDeviceFeatures.Raw*)0;
+            var result = (VkPhysicalDeviceFeatures.Raw*)unmanaged;
+            unmanaged += sizeof(VkPhysicalDeviceFeatures.Raw) * list.Count;
+            for (int i = 0; i < list.Count; i++)
+                result[i] = list[i].MarshalDirect(ref unmanaged);
+            return result;
+        }
+
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkPhysicalDeviceFeatures> list) =>
+            list == null || list.Count == 0
+                ? 0
+                : sizeof(VkPhysicalDeviceFeatures.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
+
+        public static VkPhysicalDeviceFeatures.Raw** MarshalIndirect(this IReadOnlyList<IVkPhysicalDeviceFeatures> list, ref byte* unmanaged)
+        {
+            if (list == null || list.Count == 0)
+                return (VkPhysicalDeviceFeatures.Raw**)0;
+            var result = (VkPhysicalDeviceFeatures.Raw**)unmanaged;
+            unmanaged += sizeof(VkPhysicalDeviceFeatures.Raw*) * list.Count;
+            for (int i = 0; i < list.Count; i++)
+                result[i] = list[i].MarshalIndirect(ref unmanaged);
             return result;
         }
     }

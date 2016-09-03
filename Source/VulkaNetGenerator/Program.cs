@@ -40,6 +40,8 @@ namespace VulkaNetGenerator
             structGenerator.Generate<GenCommandBufferBeginInfo>(true, false);
             structGenerator.Generate<GenCommandBufferInheritanceInfo>(true, false);
             structGenerator.Generate<GenSubmitInfo>(true, false);
+            structGenerator.Generate<GenPhysicalDeviceFeatures>(true, true);
+            structGenerator.Generate<GenDeviceCreateInfo>(true, false);
         }
     }
 }

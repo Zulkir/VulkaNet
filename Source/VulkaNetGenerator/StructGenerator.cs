@@ -48,11 +48,12 @@ namespace VulkaNetGenerator
                 var rawFields = BuildRawFields(type);
                 var wrapperProperties = BuildWrapperProps(rawFields);
 
-                //if (rawFields.Any(x => x.TypeStr.Contains("IntPtr")) || wrapperProperties.Any(x => x.TypeStr.Contains("IntPtr")))
                 writer.WriteLine("using System;");
-                //if (wrapperProperties.Any(x => x.TypeStr.Contains("ReadOnlyList")))
-                writer.WriteLine("using System.Collections.Generic;");
-                writer.WriteLine("using System.Linq;");
+                if (input || wrapperProperties.Any(x => x.TypeStr.Contains("ReadOnlyList")))
+                {
+                    writer.WriteLine("using System.Collections.Generic;");
+                    writer.WriteLine("using System.Linq;");
+                }
                 writer.WriteLine("using System.Runtime.InteropServices;");
                 writer.WriteLine();
 

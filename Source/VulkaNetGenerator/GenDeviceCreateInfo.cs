@@ -24,7 +24,6 @@ THE SOFTWARE.
 
 namespace VulkaNetGenerator
 {
-    /*
     public unsafe struct GenDeviceCreateInfo
     {
         public VkStructureType sType;
@@ -32,13 +31,14 @@ namespace VulkaNetGenerator
         public VkDeviceCreateFlags flags;
         [CountFor("QueueCreateInfos")]
         public int queueCreateInfoCount;
-        public GenDeviceQueueCreateInfo** pQueueCreateInfos;
+        [IsArray]
+        public GenDeviceQueueCreateInfo* pQueueCreateInfos;
         [CountFor("EnabledLayerNames")]
         public int enabledLayerCount;
         public StrByte** ppEnabledLayerNames;
         [CountFor("EnabledExtensionNames")]
         public int enabledExtensionCount;
         public StrByte** ppEnabledExtensionNames;
-        public GenPhysicalDeviceFeatures pEnabledFeatures;
-    }*/
+        public GenPhysicalDeviceFeatures* pEnabledFeatures;
+    }
 }

@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 /*
 Copyright (c) 2016 VulkaNet Project - Daniil Rodin
 
@@ -22,10 +22,10 @@ THE SOFTWARE.
 */
 #endregion
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
-
-// todo: generate
 
 namespace VulkaNet
 {
@@ -34,6 +34,7 @@ namespace VulkaNet
         IVkStructWrapper Next { get; }
         VkDeviceCreateFlags Flags { get; }
         IReadOnlyList<IVkDeviceQueueCreateInfo> QueueCreateInfos { get; }
+        IReadOnlyList<string> EnabledLayerNames { get; }
         IReadOnlyList<string> EnabledExtensionNames { get; }
         IVkPhysicalDeviceFeatures EnabledFeatures { get; }
     }
@@ -43,6 +44,7 @@ namespace VulkaNet
         public IVkStructWrapper Next { get; set; }
         public VkDeviceCreateFlags Flags { get; set; }
         public IReadOnlyList<IVkDeviceQueueCreateInfo> QueueCreateInfos { get; set; }
+        public IReadOnlyList<string> EnabledLayerNames { get; set; }
         public IReadOnlyList<string> EnabledExtensionNames { get; set; }
         public IVkPhysicalDeviceFeatures EnabledFeatures { get; set; }
 
@@ -53,7 +55,7 @@ namespace VulkaNet
             public void* pNext;
             public VkDeviceCreateFlags flags;
             public int queueCreateInfoCount;
-            public VkDeviceQueueCreateInfo.Raw** pQueueCreateInfos;
+            public VkDeviceQueueCreateInfo.Raw* pQueueCreateInfos;
             public int enabledLayerCount;
             public byte** ppEnabledLayerNames;
             public int enabledExtensionCount;
@@ -63,37 +65,88 @@ namespace VulkaNet
             public static int SizeInBytes { get; } = Marshal.SizeOf<Raw>();
         }
     }
-    /*
-    public static class VkDeviceCreateInfoExtensions
-    {
-        public static int SafeMarshalSize(this IVkDeviceCreateInfo s)
-            => s != null
-                ? VkDeviceCreateInfo.Raw.SizeInBytes +
-                  s.Next.SafeMarshalSize() +
-                  s.QueueCreateInfos.SafeMarshalSize() +
-                  s.EnabledExtensionNames.SafeMarshalSize() +
-                  s.EnabledFeatures.SafeMarshalSize()
-                : 0;
 
-        public static unsafe VkDeviceCreateInfo.Raw* SafeMarshalTo(this IVkDeviceCreateInfo s, ref byte* unmanaged)
+    public static unsafe class VkDeviceCreateInfoExtensions
+    {
+        public static int SizeOfMarshalDirect(this IVkDeviceCreateInfo s)
         {
-            var pNext = s.Next.SafeMarshalTo(ref unmanaged);
-            var pQueueCreateInfos = (VkDeviceQueueCreateInfo.Raw**)s.QueueCreateInfos.SafeMarshalTo(ref unmanaged);
-            var ppEnabledExtensionNames = s.EnabledExtensionNames.direct(ref unmanaged);
-            var pEnabledFeatures = s.EnabledFeatures.SafeMarshalTo(ref unmanaged);
-            var result = (VkDeviceCreateInfo.Raw*)unmanaged;
-            unmanaged += VkDeviceCreateInfo.Raw.SizeInBytes;
-            result->sType = VkStructureType.DeviceCreateInfo;
-            result->pNext = pNext;
-            result->flags = s.Flags;
-            result->queueCreateInfoCount = s.QueueCreateInfos?.Count ?? 0;
-            result->pQueueCreateInfos = pQueueCreateInfos;
-            result->enabledLayerCount = 0;
-            result->ppEnabledLayerNames = (byte**)0;
-            result->enabledExtensionCount = s.EnabledExtensionNames?.Count ?? 0;
-            result->ppEnabledExtensionNames = ppEnabledExtensionNames;
-            result->pEnabledFeatures = pEnabledFeatures;
+            if (s == null)
+                throw new InvalidOperationException("Trying to directly marshal a null.");
+
+            return
+                s.Next.SizeOfMarshalIndirect() +
+                s.QueueCreateInfos.SizeOfMarshalDirect() +
+                s.EnabledLayerNames.SizeOfMarshalIndirect() +
+                s.EnabledExtensionNames.SizeOfMarshalIndirect() +
+                s.EnabledFeatures.SizeOfMarshalIndirect();
+        }
+
+        public static VkDeviceCreateInfo.Raw MarshalDirect(this IVkDeviceCreateInfo s, ref byte* unmanaged)
+        {
+            if (s == null)
+                throw new InvalidOperationException("Trying to directly marshal a null.");
+
+            var pNext = s.Next.MarshalIndirect(ref unmanaged);
+            var pQueueCreateInfos = s.QueueCreateInfos.MarshalDirect(ref unmanaged);
+            var ppEnabledLayerNames = s.EnabledLayerNames.MarshalIndirect(ref unmanaged);
+            var ppEnabledExtensionNames = s.EnabledExtensionNames.MarshalIndirect(ref unmanaged);
+            var pEnabledFeatures = s.EnabledFeatures.MarshalIndirect(ref unmanaged);
+
+            VkDeviceCreateInfo.Raw result;
+            result.sType = VkStructureType.DeviceCreateInfo;
+            result.pNext = pNext;
+            result.flags = s.Flags;
+            result.queueCreateInfoCount = s.QueueCreateInfos?.Count ?? 0;
+            result.pQueueCreateInfos = pQueueCreateInfos;
+            result.enabledLayerCount = s.EnabledLayerNames?.Count ?? 0;
+            result.ppEnabledLayerNames = ppEnabledLayerNames;
+            result.enabledExtensionCount = s.EnabledExtensionNames?.Count ?? 0;
+            result.ppEnabledExtensionNames = ppEnabledExtensionNames;
+            result.pEnabledFeatures = pEnabledFeatures;
             return result;
         }
-    }*/
+
+        public static int SizeOfMarshalIndirect(this IVkDeviceCreateInfo s) =>
+            s == null ? 0 : s.SizeOfMarshalDirect() + VkDeviceCreateInfo.Raw.SizeInBytes;
+
+        public static VkDeviceCreateInfo.Raw* MarshalIndirect(this IVkDeviceCreateInfo s, ref byte* unmanaged)
+        {
+            var result = (VkDeviceCreateInfo.Raw*)unmanaged;
+            unmanaged += VkDeviceCreateInfo.Raw.SizeInBytes;
+            *result = s.MarshalDirect(ref unmanaged);
+            return result;
+        }
+
+        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkDeviceCreateInfo> list) => 
+            list == null || list.Count == 0 
+                ? 0
+                : sizeof(VkDeviceCreateInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
+
+        public static VkDeviceCreateInfo.Raw* MarshalDirect(this IReadOnlyList<IVkDeviceCreateInfo> list, ref byte* unmanaged)
+        {
+            if (list == null || list.Count == 0)
+                return (VkDeviceCreateInfo.Raw*)0;
+            var result = (VkDeviceCreateInfo.Raw*)unmanaged;
+            unmanaged += sizeof(VkDeviceCreateInfo.Raw) * list.Count;
+            for (int i = 0; i < list.Count; i++)
+                result[i] = list[i].MarshalDirect(ref unmanaged);
+            return result;
+        }
+
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkDeviceCreateInfo> list) =>
+            list == null || list.Count == 0
+                ? 0
+                : sizeof(VkDeviceCreateInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
+
+        public static VkDeviceCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkDeviceCreateInfo> list, ref byte* unmanaged)
+        {
+            if (list == null || list.Count == 0)
+                return (VkDeviceCreateInfo.Raw**)0;
+            var result = (VkDeviceCreateInfo.Raw**)unmanaged;
+            unmanaged += sizeof(VkDeviceCreateInfo.Raw*) * list.Count;
+            for (int i = 0; i < list.Count; i++)
+                result[i] = list[i].MarshalIndirect(ref unmanaged);
+            return result;
+        }
+    }
 }

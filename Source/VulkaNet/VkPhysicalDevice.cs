@@ -115,7 +115,7 @@ namespace VulkaNet
         public VkObjectResult<IVkDevice> CreateDevice(IVkDeviceCreateInfo createInfo, IVkAllocationCallbacks allocator)
         {
             var size =
-                createInfo.SafeMarshalSize() +
+                createInfo.SizeOfMarshalDirect() +
                 allocator.SafeMarshalSize();
             return VkHelpers.RunWithUnamangedData(size, u => CreateDevice(u, createInfo, allocator));
         }
@@ -123,10 +123,10 @@ namespace VulkaNet
         private VkObjectResult<IVkDevice> CreateDevice(IntPtr data, IVkDeviceCreateInfo createInfo, IVkAllocationCallbacks allocator)
         {
             var unmanaged = (byte*)data;
-            var pCreateInfo = createInfo.SafeMarshalTo(ref unmanaged);
+            var createInfoRaw = createInfo.MarshalDirect(ref unmanaged);
             var pAllocator = allocator.SafeMarshalTo(ref unmanaged);
             VkDevice.HandleType handle;
-            var result = Direct.CreateDevice(Handle, pCreateInfo, pAllocator, &handle);
+            var result = Direct.CreateDevice(Handle, &createInfoRaw, pAllocator, &handle);
             var device = result == VkResult.Success ? new VkDevice(handle, allocator, this) : null;
             return new VkObjectResult<IVkDevice>(result, device);
         }

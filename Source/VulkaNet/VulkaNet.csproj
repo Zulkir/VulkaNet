@@ -54,6 +54,7 @@
     <Compile Include="VkCommandBufferBeginInfo.cs" />
     <Compile Include="VkCommandBufferInheritanceInfo.cs" />
     <Compile Include="VkCommandBufferLevel.cs" />
+    <Compile Include="VkCommandBufferResetFlags.cs" />
     <Compile Include="VkCommandBufferUsageFlags.cs" />
     <Compile Include="VkCommandPool.cs" />
     <Compile Include="VkCommandPoolCreateFlags.cs" />

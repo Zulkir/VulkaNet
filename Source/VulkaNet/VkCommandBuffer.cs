@@ -30,6 +30,7 @@ namespace VulkaNet
     public interface IVkCommandBuffer : IVkHandledObject, IVkDeviceChild
     {
         VkCommandBuffer.HandleType Handle { get; }
+        VkResult Reset(VkCommandBufferResetFlags flags);
         VkResult Begin(IVkCommandBufferBeginInfo beginInfo);
         VkResult End();
     }
@@ -59,6 +60,11 @@ namespace VulkaNet
 
         public class DirectFunctions
         {
+            public ResetCommandBufferDelegate ResetCommandBuffer { get; }
+            public delegate VkResult ResetCommandBufferDelegate(
+                HandleType commandBuffer,
+                VkCommandBufferResetFlags flags);
+
             public BeginCommandBufferDelegate BeginCommandBuffer { get; }
             public delegate VkResult BeginCommandBufferDelegate(
                 HandleType commandBuffer,
@@ -70,9 +76,15 @@ namespace VulkaNet
 
             public DirectFunctions(IVkDevice device)
             {
+                ResetCommandBuffer = device.GetDeviceDelegate<ResetCommandBufferDelegate>("vkResetCommandBuffer");
                 BeginCommandBuffer = device.GetDeviceDelegate<BeginCommandBufferDelegate>("vkBeginCommandBuffer");
                 EndCommandBuffer = device.GetDeviceDelegate<EndCommandBufferDelegate>("vkEndCommandBuffer");
             }
+        }
+
+        public VkResult Reset(VkCommandBufferResetFlags flags)
+        {
+            return Direct.ResetCommandBuffer(Handle, flags);
         }
 
         public VkResult Begin(IVkCommandBufferBeginInfo beginInfo)
@@ -87,8 +99,10 @@ namespace VulkaNet
             }
         }
 
-        public VkResult End() => 
-            Direct.EndCommandBuffer(Handle);
+        public VkResult End()
+        {
+            return Direct.EndCommandBuffer(Handle);
+        }
     }
 
     public static unsafe class VkCommandBufferExtensions

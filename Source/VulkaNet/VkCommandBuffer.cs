@@ -33,6 +33,7 @@ namespace VulkaNet
         VkResult Reset(VkCommandBufferResetFlags flags);
         VkResult Begin(IVkCommandBufferBeginInfo beginInfo);
         VkResult End();
+        void CmdExecuteCommands(IReadOnlyList<IVkCommandBuffer> commandBuffers);
     }
 
     public unsafe class VkCommandBuffer : IVkCommandBuffer
@@ -74,11 +75,18 @@ namespace VulkaNet
             public delegate VkResult EndCommandBufferDelegate(
                 HandleType commandBuffer);
 
+            public CmdExecuteCommandsDelegate CmdExecuteCommands { get; }
+            public delegate void CmdExecuteCommandsDelegate(
+                HandleType commandBuffer,
+                int commandBufferCount,
+                HandleType* pCommandBuffers);
+
             public DirectFunctions(IVkDevice device)
             {
                 ResetCommandBuffer = device.GetDeviceDelegate<ResetCommandBufferDelegate>("vkResetCommandBuffer");
                 BeginCommandBuffer = device.GetDeviceDelegate<BeginCommandBufferDelegate>("vkBeginCommandBuffer");
                 EndCommandBuffer = device.GetDeviceDelegate<EndCommandBufferDelegate>("vkEndCommandBuffer");
+                CmdExecuteCommands = device.GetDeviceDelegate<CmdExecuteCommandsDelegate>("vkCmdExecuteCommands");
             }
         }
 
@@ -102,6 +110,18 @@ namespace VulkaNet
         public VkResult End()
         {
             return Direct.EndCommandBuffer(Handle);
+        }
+
+        public void CmdExecuteCommands(IReadOnlyList<IVkCommandBuffer> commandBuffers)
+        {
+            var unmanagedSize = commandBuffers.SizeOfMarshalDirect();
+            var unamangedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unamangedArray)
+            {
+                var unamanged = unmanagedStart;
+                var pCommandBuffers = commandBuffers.MarshalDirect(ref unamanged);
+                Direct.CmdExecuteCommands(Handle, commandBuffers.Count, pCommandBuffers);
+            }
         }
     }
 

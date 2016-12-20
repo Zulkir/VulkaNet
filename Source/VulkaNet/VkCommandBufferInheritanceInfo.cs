@@ -87,9 +87,9 @@ namespace VulkaNet
             VkCommandBufferInheritanceInfo.Raw result;
             result.sType = VkStructureType.CommandBufferInheritanceInfo;
             result.pNext = pNext;
-            result.renderPass = s.RenderPass.Handle;
+            result.renderPass = s.RenderPass?.Handle ?? VkRenderPass.HandleType.Null;
             result.subpass = s.Subpass;
-            result.framebuffer = s.Framebuffer.Handle;
+            result.framebuffer = s.Framebuffer?.Handle ?? VkFramebuffer.HandleType.Null;
             result.occlusionQueryEnable = new VkBool32(s.OcclusionQueryEnable);
             result.queryFlags = s.QueryFlags;
             result.pipelineStatistics = s.PipelineStatistics;

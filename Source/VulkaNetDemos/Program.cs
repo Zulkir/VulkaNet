@@ -23,6 +23,7 @@ THE SOFTWARE.
 #endregion
 
 using System;
+using System.Linq;
 using System.Windows.Forms;
 using VulkaNet;
 
@@ -75,11 +76,12 @@ namespace VulkaNetDemos
                         QueueFamilyIndex = 0
                     }, null).Object;
 
-                    var commandBuffers = commandPool.AllocateCommandBuffers(new VkCommandBufferAllocateInfo
+                    var commandBuffer = commandPool.AllocateCommandBuffers(new VkCommandBufferAllocateInfo
                     {
                         Level = VkCommandBufferLevel.Primary,
                         CommandBufferCount = 1
-                    }).Object;
+                    }).Object.Single();
+                    
 
                     commandPool.Dispose();
                 }

@@ -165,7 +165,7 @@ namespace VulkaNetGenerator
                                     var prop = wrapperProperties.SingleOrDefault(x => x.RawField == field);
                                     var rval = field.Name == "sType" ? $"VkStructureType.{name}" :
                                                field.IsUnmanagedPtr ? $"{field.Name}" :
-                                               field.IsHandle ? $"s.{prop?.Name}.Handle" :
+                                               field.IsHandle ? $"s.{prop?.Name}?.Handle ?? {field.TypeStr}.Null" :
                                                field.IsCountFor != null ? $"s.{field.IsCountFor}?.Count ?? 0" :
                                                field.TypeStr == "VkBool32" ? $"new VkBool32(s.{prop?.Name})" :
                                                $"s.{prop?.Name}";

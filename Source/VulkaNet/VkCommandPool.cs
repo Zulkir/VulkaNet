@@ -59,6 +59,7 @@ namespace VulkaNet
             public readonly ulong InternalHandle;
             public HandleType(ulong internalHandle) { InternalHandle = internalHandle; }
             public override string ToString() => InternalHandle.ToString();
+            public static HandleType Null => new HandleType(0);
         }
 
         public class DirectFunctions
@@ -120,6 +121,7 @@ namespace VulkaNet
             {
                 var unamanged = unmanagedStart;
                 var pAllocateInfo = allocateInfo.MarshalIndirect(ref unamanged);
+                pAllocateInfo->commandPool = Handle;
                 var commandBufferHandles = new VkCommandBuffer.HandleType[allocateInfo.CommandBufferCount];
                 fixed (VkCommandBuffer.HandleType* pCommandBuffers = commandBufferHandles)
                 {

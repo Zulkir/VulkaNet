@@ -43,6 +43,7 @@ namespace VulkaNet
             public readonly ulong InternalHandle;
             public HandleType(ulong internalHandle) { InternalHandle = internalHandle; }
             public override string ToString() => InternalHandle.ToString();
+            public static HandleType Null => new HandleType(0);
         }
     }
 }

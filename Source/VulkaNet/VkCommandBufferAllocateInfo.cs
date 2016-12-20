@@ -78,7 +78,7 @@ namespace VulkaNet
             VkCommandBufferAllocateInfo.Raw result;
             result.sType = VkStructureType.CommandBufferAllocateInfo;
             result.pNext = pNext;
-            result.commandPool = s.CommandPool.Handle;
+            result.commandPool = s.CommandPool?.Handle ?? VkCommandPool.HandleType.Null;
             result.level = s.Level;
             result.commandBufferCount = s.CommandBufferCount;
             return result;

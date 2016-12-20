@@ -24,6 +24,7 @@ THE SOFTWARE.
 
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using VulkaNet.InternalHelpers;
 
@@ -36,6 +37,9 @@ namespace VulkaNet
         VkResult WaitIdle();
         IVkQueue GetDeviceQueue(int queueFamilyIndex, int queueIndex);
         VkObjectResult<IVkCommandPool> CreateCommandPool(IVkCommandPoolCreateInfo createInfo, IVkAllocationCallbacks allocator);
+        VkObjectResult<IVkFence> CreateFence(IVkFenceCreateInfo createInfo, IVkAllocationCallbacks allocator);
+        VkResult ResetFences(IReadOnlyList<IVkFence> fences);
+        VkResult WaitForFences(IReadOnlyList<IVkFence> fences, bool waitAll, ulong timeout);
     }
 
     public unsafe class VkDevice : IVkDevice
@@ -95,6 +99,27 @@ namespace VulkaNet
                 VkAllocationCallbacks.Raw* pAllocator,
                 VkCommandPool.HandleType* pCommandPool);
 
+            public CreateFenceDelegate CreateFence { get; }
+            public delegate VkResult CreateFenceDelegate(
+                HandleType device,
+                VkFenceCreateInfo.Raw* pCreateInfo,
+                VkAllocationCallbacks.Raw* pAllocator,
+                VkFence.HandleType* pFence);
+
+            public ResetFencesDelegate ResetFences { get; }
+            public delegate VkResult ResetFencesDelegate(
+                HandleType device,
+                int fenceCount,
+                VkFence.HandleType* pFences);
+
+            public WaitForFencesDelegate WaitForFences { get; }
+            public delegate VkResult WaitForFencesDelegate(
+                HandleType device,
+                int fenceCount,
+                VkFence.HandleType* pFences,
+                VkBool32 waitAll,
+                ulong timeout);
+
             public DirectFunctions(IVkDevice device)
             {
                 this.device = device;
@@ -104,6 +129,9 @@ namespace VulkaNet
                 DestroyDevice = GetDeviceDelegate<DestroyDeviceDelegate>("vkDestroyDevice");
                 GetDeviceQueue = GetDeviceDelegate<GetDeviceQueueDelegate>("vkGetDeviceQueue");
                 CreateCommandPool = GetDeviceDelegate<CreateCommandPoolDelegate>("vkCreateCommandPool");
+                CreateFence = GetDeviceDelegate<CreateFenceDelegate>("vkCreateFence");
+                ResetFences = GetDeviceDelegate<ResetFencesDelegate>("vkResetFences");
+                WaitForFences = GetDeviceDelegate<WaitForFencesDelegate>("vkWaitForFences");
             }
 
             public TDelegate GetDeviceDelegate<TDelegate>(string name)
@@ -159,6 +187,50 @@ namespace VulkaNet
                 var result = Direct.CreateCommandPool(Handle, pCreateInfo, pAllocator, &handle);
                 var instance = result == VkResult.Success ? new VkCommandPool(handle, this, allocator) : null;
                 return new VkObjectResult<IVkCommandPool>(result, instance);
+            }
+        }
+
+        public VkObjectResult<IVkFence> CreateFence(IVkFenceCreateInfo createInfo, IVkAllocationCallbacks allocator)
+        {
+            var unmanagedSize =
+                createInfo.SizeOfMarshalIndirect() +
+                allocator.SafeMarshalSize();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var pCreateInfo = createInfo.MarshalIndirect(ref unmanaged);
+                var pAllocator = allocator.SafeMarshalTo(ref unmanaged);
+                VkFence.HandleType handle;
+                var result = Direct.CreateFence(Handle, pCreateInfo, pAllocator, &handle);
+                var instance = result == VkResult.Success ? new VkFence(handle, this, allocator) : null;
+                return new VkObjectResult<IVkFence>(result, instance);
+            }
+        }
+
+        public VkResult ResetFences(IReadOnlyList<IVkFence> fences)
+        {
+            var unmanagedSize =
+                fences.SizeOfMarshalDirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var pFences = fences.MarshalDirect(ref unmanaged);
+                return Direct.ResetFences(Handle, fences.Count, pFences);
+            }
+        }
+
+        public VkResult WaitForFences(IReadOnlyList<IVkFence> fences, bool waitAll, ulong timeout)
+        {
+            var unmanagedSize =
+                fences.SizeOfMarshalDirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var pFences = fences.MarshalDirect(ref unmanaged);
+                return Direct.WaitForFences(Handle, fences.Count, pFences, new VkBool32(waitAll), timeout);
             }
         }
     }

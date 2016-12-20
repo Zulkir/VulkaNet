@@ -40,6 +40,7 @@ namespace VulkaNetGenerator
     public enum VkQueryPipelineStatisticFlags { }
     public enum VkPipelineStageFlags { }
     public enum VkDeviceCreateFlags { }
+    public enum VkFenceCreateFlags { }
 
     public struct HndCommandPool { }
     public struct HndRenderPass { }

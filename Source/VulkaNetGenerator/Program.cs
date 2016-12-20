@@ -42,6 +42,7 @@ namespace VulkaNetGenerator
             structGenerator.Generate<GenSubmitInfo>(true, false);
             structGenerator.Generate<GenPhysicalDeviceFeatures>(true, true);
             structGenerator.Generate<GenDeviceCreateInfo>(true, false);
+            structGenerator.Generate<GenFenceCreateInfo>(true, false);
         }
     }
 }

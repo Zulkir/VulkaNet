@@ -59,6 +59,7 @@
     <Compile Include="GenCommandPoolCreateInfo.cs" />
     <Compile Include="GenDeviceCreateInfo.cs" />
     <Compile Include="GenDeviceQueueCreateInfo.cs" />
+    <Compile Include="GenFenceCreateInfo.cs" />
     <Compile Include="GenInstanceCreateInfo.cs" />
     <Compile Include="GenPhysicalDeviceFeatures.cs" />
     <Compile Include="GenPhysicalDeviceLimits.cs" />

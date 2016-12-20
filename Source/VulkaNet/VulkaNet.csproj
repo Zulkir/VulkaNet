@@ -49,6 +49,7 @@
     <Compile Include="IVkDeviceChild.cs" />
     <Compile Include="IVkInstanceChild.cs" />
     <Compile Include="IVkNonDisptatchableHandledObject.cs" />
+    <Compile Include="VkAccessFlagBits.cs" />
     <Compile Include="VkCommandBuffer.cs" />
     <Compile Include="VkCommandBufferAllocateInfo.cs" />
     <Compile Include="VkCommandBufferBeginInfo.cs" />
@@ -61,7 +62,10 @@
     <Compile Include="VkCommandPoolCreateInfo.cs" />
     <Compile Include="VkCommandPoolResetFlags.cs" />
     <Compile Include="VkFence.cs" />
+    <Compile Include="VkFenceCreateFlags.cs" />
+    <Compile Include="VkFenceCreateInfo.cs" />
     <Compile Include="VkFramebuffer.cs" />
+    <Compile Include="VkPipelineStageFlagBits.cs" />
     <Compile Include="VkPipelineStageFlags.cs" />
     <Compile Include="VkQueryControlFlags.cs" />
     <Compile Include="VkQueryPipelineStatisticFlags.cs" />

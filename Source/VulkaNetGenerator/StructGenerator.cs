@@ -184,6 +184,10 @@ namespace VulkaNetGenerator
                             writer.WriteLine($"public static Vk{name}.Raw* MarshalIndirect(this IVk{name} s, ref byte* unmanaged)");
                             using (writer.Curly())
                             {
+                                writer.WriteLine("if (s == null)");
+                                writer.Tab();
+                                writer.WriteLine($"return (Vk{name}.Raw*)0;");
+                                writer.UnTab();
                                 writer.WriteLine($"var result = (Vk{name}.Raw*)unmanaged;");
                                 writer.WriteLine($"unmanaged += Vk{name}.Raw.SizeInBytes;");
                                 writer.WriteLine("*result = s.MarshalDirect(ref unmanaged);");

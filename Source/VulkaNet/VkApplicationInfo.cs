@@ -101,6 +101,8 @@ namespace VulkaNet
 
         public static VkApplicationInfo.Raw* MarshalIndirect(this IVkApplicationInfo s, ref byte* unmanaged)
         {
+            if (s == null)
+                return (VkApplicationInfo.Raw*)0;
             var result = (VkApplicationInfo.Raw*)unmanaged;
             unmanaged += VkApplicationInfo.Raw.SizeInBytes;
             *result = s.MarshalDirect(ref unmanaged);

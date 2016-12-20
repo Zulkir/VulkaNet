@@ -111,6 +111,8 @@ namespace VulkaNet
 
         public static VkDeviceCreateInfo.Raw* MarshalIndirect(this IVkDeviceCreateInfo s, ref byte* unmanaged)
         {
+            if (s == null)
+                return (VkDeviceCreateInfo.Raw*)0;
             var result = (VkDeviceCreateInfo.Raw*)unmanaged;
             unmanaged += VkDeviceCreateInfo.Raw.SizeInBytes;
             *result = s.MarshalDirect(ref unmanaged);

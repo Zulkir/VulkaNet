@@ -103,6 +103,8 @@ namespace VulkaNet
 
         public static VkInstanceCreateInfo.Raw* MarshalIndirect(this IVkInstanceCreateInfo s, ref byte* unmanaged)
         {
+            if (s == null)
+                return (VkInstanceCreateInfo.Raw*)0;
             var result = (VkInstanceCreateInfo.Raw*)unmanaged;
             unmanaged += VkInstanceCreateInfo.Raw.SizeInBytes;
             *result = s.MarshalDirect(ref unmanaged);

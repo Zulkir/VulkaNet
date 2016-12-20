@@ -101,6 +101,8 @@ namespace VulkaNet
 
         public static VkCommandBufferInheritanceInfo.Raw* MarshalIndirect(this IVkCommandBufferInheritanceInfo s, ref byte* unmanaged)
         {
+            if (s == null)
+                return (VkCommandBufferInheritanceInfo.Raw*)0;
             var result = (VkCommandBufferInheritanceInfo.Raw*)unmanaged;
             unmanaged += VkCommandBufferInheritanceInfo.Raw.SizeInBytes;
             *result = s.MarshalDirect(ref unmanaged);

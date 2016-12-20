@@ -350,6 +350,8 @@ namespace VulkaNet
 
         public static VkPhysicalDeviceFeatures.Raw* MarshalIndirect(this IVkPhysicalDeviceFeatures s, ref byte* unmanaged)
         {
+            if (s == null)
+                return (VkPhysicalDeviceFeatures.Raw*)0;
             var result = (VkPhysicalDeviceFeatures.Raw*)unmanaged;
             unmanaged += VkPhysicalDeviceFeatures.Raw.SizeInBytes;
             *result = s.MarshalDirect(ref unmanaged);

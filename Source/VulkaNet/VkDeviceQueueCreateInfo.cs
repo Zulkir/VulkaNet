@@ -93,6 +93,8 @@ namespace VulkaNet
 
         public static VkDeviceQueueCreateInfo.Raw* MarshalIndirect(this IVkDeviceQueueCreateInfo s, ref byte* unmanaged)
         {
+            if (s == null)
+                return (VkDeviceQueueCreateInfo.Raw*)0;
             var result = (VkDeviceQueueCreateInfo.Raw*)unmanaged;
             unmanaged += VkDeviceQueueCreateInfo.Raw.SizeInBytes;
             *result = s.MarshalDirect(ref unmanaged);

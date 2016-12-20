@@ -89,6 +89,8 @@ namespace VulkaNet
 
         public static VkCommandBufferAllocateInfo.Raw* MarshalIndirect(this IVkCommandBufferAllocateInfo s, ref byte* unmanaged)
         {
+            if (s == null)
+                return (VkCommandBufferAllocateInfo.Raw*)0;
             var result = (VkCommandBufferAllocateInfo.Raw*)unmanaged;
             unmanaged += VkCommandBufferAllocateInfo.Raw.SizeInBytes;
             *result = s.MarshalDirect(ref unmanaged);

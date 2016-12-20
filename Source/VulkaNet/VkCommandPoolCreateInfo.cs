@@ -85,6 +85,8 @@ namespace VulkaNet
 
         public static VkCommandPoolCreateInfo.Raw* MarshalIndirect(this IVkCommandPoolCreateInfo s, ref byte* unmanaged)
         {
+            if (s == null)
+                return (VkCommandPoolCreateInfo.Raw*)0;
             var result = (VkCommandPoolCreateInfo.Raw*)unmanaged;
             unmanaged += VkCommandPoolCreateInfo.Raw.SizeInBytes;
             *result = s.MarshalDirect(ref unmanaged);

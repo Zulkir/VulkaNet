@@ -107,6 +107,8 @@ namespace VulkaNet
 
         public static VkSubmitInfo.Raw* MarshalIndirect(this IVkSubmitInfo s, ref byte* unmanaged)
         {
+            if (s == null)
+                return (VkSubmitInfo.Raw*)0;
             var result = (VkSubmitInfo.Raw*)unmanaged;
             unmanaged += VkSubmitInfo.Raw.SizeInBytes;
             *result = s.MarshalDirect(ref unmanaged);

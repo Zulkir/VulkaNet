@@ -81,6 +81,8 @@ namespace VulkaNet
 
         public static VkFenceCreateInfo.Raw* MarshalIndirect(this IVkFenceCreateInfo s, ref byte* unmanaged)
         {
+            if (s == null)
+                return (VkFenceCreateInfo.Raw*)0;
             var result = (VkFenceCreateInfo.Raw*)unmanaged;
             unmanaged += VkFenceCreateInfo.Raw.SizeInBytes;
             *result = s.MarshalDirect(ref unmanaged);

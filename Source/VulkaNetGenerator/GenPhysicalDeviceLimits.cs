@@ -23,6 +23,7 @@ THE SOFTWARE.
 #endregion
 
 using System;
+using VulkaNetGenerator.Attributes;
 
 namespace VulkaNetGenerator
 {

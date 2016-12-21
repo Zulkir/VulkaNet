@@ -52,9 +52,9 @@ namespace VulkaNet
     public static unsafe class VkSemaphoreExtensions
     {
         public static int SizeOfMarshalDirect(this IReadOnlyList<IVkSemaphore> list) =>
-            list.SizeOfMarshalDirect(0f);
+            list.SizeOfMarshalDirectNonDispatchable();
 
         public static VkSemaphore.HandleType* MarshalDirect(this IReadOnlyList<IVkSemaphore> list, ref byte* unmanaged) =>
-            (VkSemaphore.HandleType*)list.MarshalDirect(ref unmanaged, 0f);
+            (VkSemaphore.HandleType*)list.MarshalDirectNonDispatchable(ref unmanaged);
     }
 }

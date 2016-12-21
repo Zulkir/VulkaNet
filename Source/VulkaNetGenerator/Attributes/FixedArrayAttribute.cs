@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace VulkaNetGenerator
+namespace VulkaNetGenerator.Attributes
 {
     public class FixedArrayAttribute : Attribute
     {

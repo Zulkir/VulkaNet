@@ -99,9 +99,9 @@ namespace VulkaNet
     public static unsafe class VkFenceExtensions
     {
         public static int SizeOfMarshalDirect(this IReadOnlyList<IVkFence> list) =>
-            list.SizeOfMarshalDirect(0f);
+            list.SizeOfMarshalDirectNonDispatchable();
 
         public static VkFence.HandleType* MarshalDirect(this IReadOnlyList<IVkFence> list, ref byte* unmanaged) =>
-            (VkFence.HandleType*)list.MarshalDirect(ref unmanaged, 0f);
+            (VkFence.HandleType*)list.MarshalDirectNonDispatchable(ref unmanaged);
     }
 }

@@ -128,9 +128,9 @@ namespace VulkaNet
     public static unsafe class VkCommandBufferExtensions
     {
         public static int SizeOfMarshalDirect(this IReadOnlyList<IVkCommandBuffer> list) =>
-            list.SizeOfMarshalDirect(0);
+            list.SizeOfMarshalDirectDispatchable();
 
         public static VkCommandBuffer.HandleType* MarshalDirect(this IReadOnlyList<IVkCommandBuffer> list, ref byte* unmanaged) =>
-            (VkCommandBuffer.HandleType*)list.MarshalDirect(ref unmanaged, 0);
+            (VkCommandBuffer.HandleType*)list.MarshalDirectDispatchable(ref unmanaged);
     }
 }

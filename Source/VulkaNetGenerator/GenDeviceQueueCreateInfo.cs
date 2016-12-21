@@ -22,6 +22,8 @@ THE SOFTWARE.
 */
 #endregion
 
+using VulkaNetGenerator.Attributes;
+
 namespace VulkaNetGenerator
 {
     public unsafe struct GenDeviceQueueCreateInfo

@@ -24,15 +24,10 @@ THE SOFTWARE.
 
 using System;
 
-namespace VulkaNetGenerator
+namespace VulkaNetGenerator.Attributes
 {
-    public class CountForAttribute : Attribute
+    public class IsArrayAttribute : Attribute
     {
-        public string Property { get; }
-
-        public CountForAttribute(string property)
-        {
-            Property = property;
-        }
+        
     }
 }

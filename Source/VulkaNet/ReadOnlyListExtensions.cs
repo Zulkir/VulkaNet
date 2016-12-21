@@ -96,18 +96,18 @@ namespace VulkaNet
 
         // Dispatched Handle
 
-        public static int SizeOfMarshalDirect<T>(this IReadOnlyList<T> list, int dummy) where T : IVkHandledObject =>
+        public static int SizeOfMarshalDirectDispatchable<T>(this IReadOnlyList<T> list) where T : IVkHandledObject =>
             SizeOfMarshalDirect(list, sizeof(IntPtr), x => 0);
 
-        public static IntPtr* MarshalDirect<T>(this IReadOnlyList<T> list, ref byte* unmanaged, int dummy) where T : IVkHandledObject =>
+        public static IntPtr* MarshalDirectDispatchable<T>(this IReadOnlyList<T> list, ref byte* unmanaged) where T : IVkHandledObject =>
             (IntPtr*)MarshalDirect(list, ref unmanaged, (e, d) => { *(IntPtr*)d = e.RawHandle; }, sizeof(IntPtr));
 
         // Non-Dispatched Handle
 
-        public static int SizeOfMarshalDirect<T>(this IReadOnlyList<T> list, float dummy) where T : IVkNonDisptatchableHandledObject =>
+        public static int SizeOfMarshalDirectNonDispatchable<T>(this IReadOnlyList<T> list) where T : IVkNonDisptatchableHandledObject =>
             SizeOfMarshalDirect(list, sizeof(ulong), x => 0);
 
-        public static ulong* MarshalDirect<T>(this IReadOnlyList<T> list, ref byte* unmanaged, float dummy) where T : IVkNonDisptatchableHandledObject =>
+        public static ulong* MarshalDirectNonDispatchable<T>(this IReadOnlyList<T> list, ref byte* unmanaged) where T : IVkNonDisptatchableHandledObject =>
             (ulong*)MarshalDirect(list, ref unmanaged, (e, d) => { *(ulong*)d = e.RawHandle; }, sizeof(IntPtr));
     }
 }

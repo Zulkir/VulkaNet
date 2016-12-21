@@ -47,18 +47,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AsTypeAttribute.cs" />
+    <Compile Include="Attributes\AsTypeAttribute.cs" />
+    <Compile Include="Attributes\DisposeAttribute.cs" />
     <Compile Include="CodeWriter.cs" />
-    <Compile Include="CountForAttribute.cs" />
+    <Compile Include="Attributes\CountForAttribute.cs" />
     <Compile Include="DummyTypes.cs" />
-    <Compile Include="FixedArrayAttribute.cs" />
+    <Compile Include="Attributes\FixedArrayAttribute.cs" />
     <Compile Include="GenApplicationInfo.cs" />
     <Compile Include="GenCommandBufferAllocateInfo.cs" />
     <Compile Include="GenCommandBufferBeginInfo.cs" />
     <Compile Include="GenCommandBufferInheritanceInfo.cs" />
     <Compile Include="GenCommandPoolCreateInfo.cs" />
+    <Compile Include="GenDevice.cs" />
     <Compile Include="GenDeviceCreateInfo.cs" />
     <Compile Include="GenDeviceQueueCreateInfo.cs" />
+    <Compile Include="GenFence.cs" />
     <Compile Include="GenFenceCreateInfo.cs" />
     <Compile Include="GenInstanceCreateInfo.cs" />
     <Compile Include="GenPhysicalDeviceFeatures.cs" />
@@ -66,12 +69,23 @@
     <Compile Include="GenPhysicalDeviceProperties.cs" />
     <Compile Include="GenPhysicalDeviceSparseProperties.cs" />
     <Compile Include="GenSubmitInfo.cs" />
-    <Compile Include="IsArrayAttribute.cs" />
+    <Compile Include="IGenDeviceChild.cs" />
+    <Compile Include="IGenHandledObject.cs" />
+    <Compile Include="Attributes\IsArrayAttribute.cs" />
+    <Compile Include="Attributes\MethodNameAttribute.cs" />
+    <Compile Include="RawField.cs" />
+    <Compile Include="RawFunction.cs" />
+    <Compile Include="RawParameter.cs" />
+    <Compile Include="Attributes\ReturnAttribute.cs" />
+    <Compile Include="Attributes\SelfAttribute.cs" />
     <Compile Include="StrByte.cs" />
-    <Compile Include="StructGenerator.cs" />
+    <Compile Include="Generator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RawField.cs" />
+    <Compile Include="RawBase.cs" />
+    <Compile Include="WrapperBase.cs" />
+    <Compile Include="WrapperMethod.cs" />
+    <Compile Include="WrapperParameter.cs" />
     <Compile Include="WrapperProperty.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

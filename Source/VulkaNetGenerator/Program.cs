@@ -28,21 +28,23 @@ namespace VulkaNetGenerator
     {
         static void Main(string[] args)
         {
-            var structGenerator = new StructGenerator();
-            structGenerator.Generate<GenApplicationInfo>(true, false);
-            structGenerator.Generate<GenInstanceCreateInfo>(true, false);
-            structGenerator.Generate<GenPhysicalDeviceSparseProperties>(false, true);
-            structGenerator.Generate<GenPhysicalDeviceLimits>(false, true);
-            structGenerator.Generate<GenPhysicalDeviceProperties>(false, true);
-            structGenerator.Generate<GenDeviceQueueCreateInfo>(true, false);
-            structGenerator.Generate<GenCommandPoolCreateInfo>(true, false);
-            structGenerator.Generate<GenCommandBufferAllocateInfo>(true, false);
-            structGenerator.Generate<GenCommandBufferBeginInfo>(true, false);
-            structGenerator.Generate<GenCommandBufferInheritanceInfo>(true, false);
-            structGenerator.Generate<GenSubmitInfo>(true, false);
-            structGenerator.Generate<GenPhysicalDeviceFeatures>(true, true);
-            structGenerator.Generate<GenDeviceCreateInfo>(true, false);
-            structGenerator.Generate<GenFenceCreateInfo>(true, false);
+            var generator = new Generator();
+            generator.GenerateStruct<GenApplicationInfo>(true, false);
+            generator.GenerateStruct<GenInstanceCreateInfo>(true, false);
+            generator.GenerateStruct<GenPhysicalDeviceSparseProperties>(false, true);
+            generator.GenerateStruct<GenPhysicalDeviceLimits>(false, true);
+            generator.GenerateStruct<GenPhysicalDeviceProperties>(false, true);
+            generator.GenerateStruct<GenDeviceQueueCreateInfo>(true, false);
+            generator.GenerateStruct<GenCommandPoolCreateInfo>(true, false);
+            generator.GenerateStruct<GenCommandBufferAllocateInfo>(true, false);
+            generator.GenerateStruct<GenCommandBufferBeginInfo>(true, false);
+            generator.GenerateStruct<GenCommandBufferInheritanceInfo>(true, false);
+            generator.GenerateStruct<GenSubmitInfo>(true, false);
+            generator.GenerateStruct<GenPhysicalDeviceFeatures>(true, true);
+            generator.GenerateStruct<GenDeviceCreateInfo>(true, false);
+            generator.GenerateStruct<GenFenceCreateInfo>(true, false);
+
+            generator.GenerateClass<GenFence>();
         }
     }
 }

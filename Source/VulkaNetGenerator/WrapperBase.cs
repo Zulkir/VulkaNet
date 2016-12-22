@@ -5,7 +5,7 @@
     {
         public TRaw Raw { get; }
         public string TypeStr { get; }
-        public string Name { get; }
+        public string Name { get; protected set; }
         public bool MarshalledAsUnmanaged { get; }
         public bool NeedsCast { get; }
         public string CreatorFunc { get; }

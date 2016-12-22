@@ -53,6 +53,7 @@
     <Compile Include="Attributes\CountForAttribute.cs" />
     <Compile Include="DummyTypes.cs" />
     <Compile Include="Attributes\FixedArrayAttribute.cs" />
+    <Compile Include="GenAllocationCallbacks.cs" />
     <Compile Include="GenApplicationInfo.cs" />
     <Compile Include="GenCommandBufferAllocateInfo.cs" />
     <Compile Include="GenCommandBufferBeginInfo.cs" />
@@ -69,10 +70,12 @@
     <Compile Include="GenPhysicalDeviceProperties.cs" />
     <Compile Include="GenPhysicalDeviceSparseProperties.cs" />
     <Compile Include="GenSubmitInfo.cs" />
+    <Compile Include="IGenAllocatable.cs" />
     <Compile Include="IGenDeviceChild.cs" />
     <Compile Include="IGenHandledObject.cs" />
     <Compile Include="Attributes\IsArrayAttribute.cs" />
     <Compile Include="Attributes\MethodNameAttribute.cs" />
+    <Compile Include="IGenNonDispatchableHandledObject.cs" />
     <Compile Include="RawField.cs" />
     <Compile Include="RawFunction.cs" />
     <Compile Include="RawParameter.cs" />

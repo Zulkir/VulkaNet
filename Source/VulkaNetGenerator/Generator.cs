@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace VulkaNetGenerator
 {
@@ -263,7 +264,10 @@ namespace VulkaNetGenerator
             var isDispatchable = typeof(IGenHandledObject).IsAssignableFrom(type);
 
             var rawFunctions = BuildRawFunctions(type);
+            var disposeMethod = rawMethods.FirstOrDefault(x => x.IsDispose);
             var wrapperMethods = BuildWrapperMethods(rawFunctions);
+
+            
 
             if (!Directory.Exists("GeneratedSource"))
                 Directory.CreateDirectory("GeneratedSource");
@@ -283,11 +287,15 @@ namespace VulkaNetGenerator
                 writer.WriteLine("namespace VulkaNet");
                 using (writer.Curly())
                 {
+                    var isAllocatable = typeof(IGenAllocatable).IsAssignableFrom(type);
+
                     var interfaces = new List<string>();
                     if (typeof(IGenHandledObject).IsAssignableFrom(type))
                         interfaces.Add("IVkHandledObject");
                     if (typeof(IGenDeviceChild).IsAssignableFrom(type))
                         interfaces.Add("IVkDeviceChild");
+                    if (disposeMethod != null)
+                        interfaces.Add("IDisposable");
                     var interfacesString = interfaces.Any()
                         ? " : " + string.Join(", ", interfaces)
                         : "";
@@ -296,6 +304,8 @@ namespace VulkaNetGenerator
                     using (writer.Curly())
                     {
                         writer.WriteLine($"Vk{name}.HandleType Handle {{ get; }}");
+                        if (isAllocatable)
+                            writer.WriteLine("IVkAllocationCallbacks Allocator { get; }");
                         foreach (var wm in wrapperMethods)
                         {
                             var paramStrings = wm.Parameters.Select(wp => $"{wp.TypeStr} {wp.Name}").ToArray();
@@ -308,6 +318,7 @@ namespace VulkaNetGenerator
                     writer.WriteLine($"public unsafe class Vk{name} : IVk{name}");
                     using (writer.Curly())
                     {
+                        
                         var rawHandleTypeStr = isDispatchable ? "IntPtr" : "ulong";
 
                         if (isDevice)
@@ -318,20 +329,39 @@ namespace VulkaNetGenerator
                         {
                             writer.WriteLine("public IVkDevice Device { get; }");
                             writer.WriteLine("public HandleType Handle { get; }");
-                            writer.WriteLine();
-                            
-                            writer.WriteLine($"public {rawHandleTypeStr} RawHandle => Handle.InternalHandle;");
+                            if (isAllocatable)
+                                writer.WriteLine("IVkAllocationCallbacks Allocator { get; }");
                             writer.WriteLine();
 
-                            writer.WriteLine($"public Vk{name}(IVkDevice device, HandleType handle)");
-                            using (writer.Curly())
-                            {
-                                writer.WriteLine("Device = device;");
-                                writer.WriteLine("Handle = handle;");
-                            }
+                            writer.WriteLine("private VkDevice.DirectFunction Direct => Device.Direct;");
                             writer.WriteLine();
+
+                            writer.WriteLine($"public {rawHandleTypeStr} RawHandle => Handle.InternalHandle;");
+                            writer.WriteLine();
+                            
+                            if (isAllocatable)
+                            {
+                                writer.WriteLine($"public Vk{name}(IVkDevice device, HandleType handle, IVkAllocationCallbacks allocator)");
+                                using (writer.Curly())
+                                {
+                                    writer.WriteLine("Device = device;");
+                                    writer.WriteLine("Handle = handle;");
+                                    writer.WriteLine("Allocator = allocator;;");
+                                }
+                                writer.WriteLine();
+                            }
+                            else
+                            {
+                                writer.WriteLine($"public Vk{name}(IVkDevice device, HandleType handle)");
+                                using (writer.Curly())
+                                {
+                                    writer.WriteLine("Device = device;");
+                                    writer.WriteLine("Handle = handle;");
+                                }
+                                writer.WriteLine();
+                            }
                         }
-                        
+
                         writer.WriteLine("public struct HandleType");
                         using (writer.Curly())
                         {
@@ -343,9 +373,77 @@ namespace VulkaNetGenerator
                         }
                         writer.WriteLine();
 
-                        // todo: Dispose();
-                        
-                        // todo: Methods
+                        foreach (var wrapper in wrapperMethods)
+                        {
+                            var raw = wrapper.Raw;
+                            var paramsStr = string.Join(", ", wrapper.Parameters.Select(x => $"{x.TypeStr} {x.Name}"));
+                            writer.WriteLine($"public {wrapper.ReturnTypeStr} {wrapper.Name}({paramsStr})");
+                            using (writer.Curly())
+                            {
+                                var unmanagedParams = wrapper.Parameters.Where(x => x.MarshalledAsUnmanaged).ToArray();
+                                if (unmanagedParams.Any())
+                                {
+                                    writer.WriteLine($"var unmanagedSize =");
+                                    writer.Tab();
+                                    foreach (var parameter in unmanagedParams.Take(unmanagedParams.Length - 1))
+                                        writer.WriteLine($"{parameter.Name}.{parameter.SizeMethod}() +");
+                                    var lastParam = unmanagedParams.Last();
+                                    writer.WriteLine($"{lastParam.Name}.{lastParam.SizeMethod}();");
+                                    writer.UnTab();
+                                    writer.WriteLine("var unmanagedArray= new byte[unmanagedSize];");
+                                    writer.WriteLine("fixed (byte* unmanagedStart = unamangedArray)");
+                                    writer.WriteLine("{");
+                                    writer.Tab();
+                                    writer.WriteLine("var unamanged = unmanagedStart;");
+                                }
+
+                                foreach (var rParam in raw.Parameters)
+                                {
+                                    var wParam = wrapper.Parameters.SingleOrDefault(x => x.Raw == rParam);
+                                    var rval = rParam.TypeStr == "VkDevice.Raw" ? (isDevice ? "this" : "Device") :
+                                               rParam.TypeStr == $"Vk{name}.Raw" ? "this" :
+                                               wParam != null && wParam.MarshalledAsUnmanaged ? $"{wParam.Name}.{wParam.MarshalMethod}(ref unmanaged);" :
+                                               rParam.IsHandle ? $"{wParam?.Name}?.Handle ?? {rParam.TypeStr}.Null" :
+                                               rParam.IsCountFor != null ? $"s.{rParam.IsCountFor}?.Count ?? 0" :
+                                               rParam.TypeStr == "VkBool32" ? $"new VkBool32(s.{wParam?.Name})" :
+                                               $"s.{wParam?.Name}";
+                                    writer.WriteLine($"var {rParam.Name} = {rval};");
+                                }
+                                var rawParamsStr = string.Join(", ", raw.Parameters.Select(x => x.Name));
+                                if (wrapper.ReturnTypeStr == "void" && raw.ReturnTypeStr == "void")
+                                {
+                                    writer.WriteLine($"Direct.{raw.Name}({rawParamsStr});");
+                                }
+                                else if (wrapper.ReturnTypeStr == "VkResult" && raw.ReturnTypeStr == "VkResult")
+                                {
+                                    writer.WriteLine($"return Direct.{raw.Name}({rawParamsStr});");
+                                }
+                                else if (wrapper.ReturnTypeStr.StartsWith("VkObjectResult") && raw.ReturnTypeStr == "VkResult")
+                                {
+                                    var objTypeStr = Regex.Match(wrapper.ReturnTypeStr, @"VkObjectResult<([\w]+)>").Groups[1].Value;
+                                    writer.WriteLine("var result = Direct.{raw.Name}({rawParamsStr});");
+                                    var ctrParams = new List<string>();
+                                    ctrParams.Add(isDevice ? "this" : "Device");
+                                    ctrParams.Add(raw.Parameters.Single(x => x.IsReturnParam).Name);
+                                    if (wrapper.Parameters.Any(x => x.Name == "allocator"))
+                                        ctrParams.Add("allocator");
+                                    var ctrParamsStr = string.Join(", ", ctrParams);
+                                    writer.WriteLine($"var instance = result == VkResult.Success ? new {objTypeStr}({ctrParamsStr}) : null;");
+                                    writer.WriteLine($"return new VkObjectResult<{objTypeStr}>(result, instance);");
+                                }
+                                else
+                                {
+                                    throw new NotSupportedException("Unexpected return type combination.");
+                                }
+
+                                if (unmanagedParams.Any())
+                                {
+                                    writer.UnTab();
+                                    writer.WriteLine("}");
+                                }
+                            }
+                            writer.WriteLine();
+                        }
                     }
                     writer.WriteLine();
 

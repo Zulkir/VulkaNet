@@ -46,7 +46,7 @@ namespace VulkaNet
         public IVkAllocationCallbacks Allocator { get; }
         public DirectFunctions Direct { get; }
         
-        public VkCommandPool(HandleType handle, IVkDevice device, IVkAllocationCallbacks allocator)
+        public VkCommandPool(IVkDevice device, HandleType handle, IVkAllocationCallbacks allocator)
         {
             Handle = handle;
             Device = device;

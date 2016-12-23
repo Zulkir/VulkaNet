@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 namespace VulkaNet
 {
-    public interface IVkNonDisptatchableHandledObject
+    public interface IVkNonDispatchableHandledObject
     {
         ulong RawHandle { get; }
     }

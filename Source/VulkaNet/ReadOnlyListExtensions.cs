@@ -104,10 +104,10 @@ namespace VulkaNet
 
         // Non-Dispatched Handle
 
-        public static int SizeOfMarshalDirectNonDispatchable<T>(this IReadOnlyList<T> list) where T : IVkNonDisptatchableHandledObject =>
+        public static int SizeOfMarshalDirectNonDispatchable<T>(this IReadOnlyList<T> list) where T : IVkNonDispatchableHandledObject =>
             SizeOfMarshalDirect(list, sizeof(ulong), x => 0);
 
-        public static ulong* MarshalDirectNonDispatchable<T>(this IReadOnlyList<T> list, ref byte* unmanaged) where T : IVkNonDisptatchableHandledObject =>
+        public static ulong* MarshalDirectNonDispatchable<T>(this IReadOnlyList<T> list, ref byte* unmanaged) where T : IVkNonDispatchableHandledObject =>
             (ulong*)MarshalDirect(list, ref unmanaged, (e, d) => { *(ulong*)d = e.RawHandle; }, sizeof(IntPtr));
     }
 }

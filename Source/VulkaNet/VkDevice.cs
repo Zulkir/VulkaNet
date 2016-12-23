@@ -30,13 +30,14 @@ using VulkaNet.InternalHelpers;
 
 namespace VulkaNet
 {
-    public interface IVkDevice : IVkInstanceChild, IDisposable
+    public interface IVkDevice : IVkHandledObject, IDisposable, IVkInstanceChild
     {
         IVkPhysicalDevice PhysicalDevice { get; }
         VkDevice.HandleType Handle { get; }
-        TDelegate GetDeviceDelegate<TDelegate>(string name);
-        VkResult WaitIdle();
+        VkDevice.DirectFunctions Direct { get; }
+        IVkAllocationCallbacks Allocator { get; }
         IVkQueue GetDeviceQueue(int queueFamilyIndex, int queueIndex);
+        VkResult WaitIdle();
         VkObjectResult<IVkCommandPool> CreateCommandPool(IVkCommandPoolCreateInfo createInfo, IVkAllocationCallbacks allocator);
         VkObjectResult<IVkFence> CreateFence(IVkFenceCreateInfo createInfo, IVkAllocationCallbacks allocator);
         VkResult ResetFences(IReadOnlyList<IVkFence> fences);
@@ -45,11 +46,13 @@ namespace VulkaNet
 
     public unsafe class VkDevice : IVkDevice
     {
+        public IVkInstance Instance { get; }
         public IVkPhysicalDevice PhysicalDevice { get; }
         public HandleType Handle { get; }
         public IVkAllocationCallbacks Allocator { get; }
-        public IVkInstance Instance { get; }
         public DirectFunctions Direct { get; }
+
+        public IntPtr RawHandle => Handle.InternalHandle;
 
         private readonly ConcurrentDictionary<ValuePair<int, int>, IVkQueue> queues;
 
@@ -65,9 +68,10 @@ namespace VulkaNet
 
         public struct HandleType
         {
-            public IntPtr InternalHandle;
+            public readonly IntPtr InternalHandle;
             public HandleType(IntPtr internalHandle) { InternalHandle = internalHandle; }
             public override string ToString() => InternalHandle.ToString();
+            public static int SizeInBytes { get; } = IntPtr.Size;
         }
 
         public class DirectFunctions
@@ -79,6 +83,24 @@ namespace VulkaNet
                 HandleType device,
                 byte* pName);
 
+            public GetDeviceQueueDelegate GetDeviceQueue { get; }
+            public delegate VkResult GetDeviceQueueDelegate(
+                HandleType device,
+                uint queueFamilyIndex,
+                uint queueIndex,
+                VkQueue.HandleType* pQueue);
+
+            public DestroyFenceDelegate DestroyFence { get; }
+            public delegate void DestroyFenceDelegate(
+                HandleType device,
+                VkFence.HandleType fence,
+                VkAllocationCallbacks.Raw* pAllocator);
+
+            public GetFenceStatusDelegate GetFenceStatus { get; }
+            public delegate VkResult GetFenceStatusDelegate(
+                HandleType device,
+                VkFence.HandleType fence);
+
             public DestroyDeviceDelegate DestroyDevice { get; }
             public delegate void DestroyDeviceDelegate(
                 HandleType device,
@@ -87,13 +109,6 @@ namespace VulkaNet
             public DeviceWaitIdleDelegate DeviceWaitIdle { get; }
             public delegate VkResult DeviceWaitIdleDelegate(
                 HandleType device);
-
-            public GetDeviceQueueDelegate GetDeviceQueue { get; }
-            public delegate VkResult GetDeviceQueueDelegate(
-                HandleType device,
-                uint queueFamilyIndex,
-                uint queueIndex,
-                VkQueue.HandleType* pQueue);
 
             public CreateCommandPoolDelegate CreateCommandPool { get; }
             public delegate VkResult CreateCommandPoolDelegate(
@@ -128,9 +143,11 @@ namespace VulkaNet
                 this.device = device;
 
                 GetDeviceProcAddr = VkHelpers.GetInstanceDelegate<GetDeviceProcAddrDelegate>(device.Instance, "vkGetDeviceProcAddr");
-                DeviceWaitIdle = GetDeviceDelegate<DeviceWaitIdleDelegate>("vkDeviceWaitIdle");
-                DestroyDevice = GetDeviceDelegate<DestroyDeviceDelegate>("vkDestroyDevice");
                 GetDeviceQueue = GetDeviceDelegate<GetDeviceQueueDelegate>("vkGetDeviceQueue");
+                DestroyFence = GetDeviceDelegate<DestroyFenceDelegate>("vkDestroyFence");
+                GetFenceStatus = GetDeviceDelegate<GetFenceStatusDelegate>("vkGetFenceStatus");
+                DestroyDevice = GetDeviceDelegate<DestroyDeviceDelegate>("vkDestroyDevice");
+                DeviceWaitIdle = GetDeviceDelegate<DeviceWaitIdleDelegate>("vkDeviceWaitIdle");
                 CreateCommandPool = GetDeviceDelegate<CreateCommandPoolDelegate>("vkCreateCommandPool");
                 CreateFence = GetDeviceDelegate<CreateFenceDelegate>("vkCreateFence");
                 ResetFences = GetDeviceDelegate<ResetFencesDelegate>("vkResetFences");
@@ -146,26 +163,7 @@ namespace VulkaNet
             }
         }
 
-        public void Dispose()
-        {
-            var size = Allocator.SafeMarshalSize();
-            VkHelpers.RunWithUnamangedData(size, DisposeInternal);
-        }
-
-        private void DisposeInternal(IntPtr data)
-        {
-            var unmanaged = (byte*)data;
-            var pAllocator = Allocator.SafeMarshalTo(ref unmanaged);
-            Direct.DestroyDevice(Handle, pAllocator);
-        }
-
-        public TDelegate GetDeviceDelegate<TDelegate>(string name) =>
-            Direct.GetDeviceDelegate<TDelegate>(name);
-
-        public VkResult WaitIdle() => 
-            Direct.DeviceWaitIdle(Handle);
-
-        public IVkQueue GetDeviceQueue(int queueFamilyIndex, int queueIndex) => 
+        public IVkQueue GetDeviceQueue(int queueFamilyIndex, int queueIndex) =>
             queues.GetOrAdd(new ValuePair<int, int>(queueFamilyIndex, queueIndex), DoGetDeviceQueue);
 
         private IVkQueue DoGetDeviceQueue(ValuePair<int, int> key)
@@ -175,20 +173,41 @@ namespace VulkaNet
             return new VkQueue(handle, this);
         }
 
-        public VkObjectResult<IVkCommandPool> CreateCommandPool(IVkCommandPoolCreateInfo createInfo, IVkAllocationCallbacks allocator)
+        public void Dispose()
         {
-            var unmanagedSize = 
-                createInfo.SizeOfMarshalIndirect() + 
-                allocator.SafeMarshalSize();
+            var unmanagedSize =
+                Allocator.SizeOfMarshalIndirect();
             var unmanagedArray = new byte[unmanagedSize];
             fixed (byte* unmanagedStart = unmanagedArray)
             {
                 var unmanaged = unmanagedStart;
-                var pCreateInfo = createInfo.MarshalIndirect(ref unmanaged);
-                var pAllocator = allocator.SafeMarshalTo(ref unmanaged);
-                VkCommandPool.HandleType handle;
-                var result = Direct.CreateCommandPool(Handle, pCreateInfo, pAllocator, &handle);
-                var instance = result == VkResult.Success ? new VkCommandPool(handle, this, allocator) : null;
+                var _device = Handle;
+                var _pAllocator = Allocator.MarshalIndirect(ref unmanaged);
+                Direct.DestroyDevice(_device, _pAllocator);
+            }
+        }
+
+        public VkResult WaitIdle()
+        {
+            var _device = Handle;
+            return Direct.DeviceWaitIdle(_device);
+        }
+
+        public VkObjectResult<IVkCommandPool> CreateCommandPool(IVkCommandPoolCreateInfo createInfo, IVkAllocationCallbacks allocator)
+        {
+            var unmanagedSize =
+                createInfo.SizeOfMarshalIndirect() +
+                allocator.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _device = Handle;
+                var _pCreateInfo = createInfo.MarshalIndirect(ref unmanaged);
+                var _pAllocator = allocator.MarshalIndirect(ref unmanaged);
+                VkCommandPool.HandleType _pCommandPool;
+                var result = Direct.CreateCommandPool(_device, _pCreateInfo, _pAllocator, &_pCommandPool);
+                var instance = result == VkResult.Success ? new VkCommandPool(this, _pCommandPool, allocator) : null;
                 return new VkObjectResult<IVkCommandPool>(result, instance);
             }
         }
@@ -197,16 +216,17 @@ namespace VulkaNet
         {
             var unmanagedSize =
                 createInfo.SizeOfMarshalIndirect() +
-                allocator.SafeMarshalSize();
+                allocator.SizeOfMarshalIndirect();
             var unmanagedArray = new byte[unmanagedSize];
             fixed (byte* unmanagedStart = unmanagedArray)
             {
                 var unmanaged = unmanagedStart;
-                var pCreateInfo = createInfo.MarshalIndirect(ref unmanaged);
-                var pAllocator = allocator.SafeMarshalTo(ref unmanaged);
-                VkFence.HandleType handle;
-                var result = Direct.CreateFence(Handle, pCreateInfo, pAllocator, &handle);
-                var instance = result == VkResult.Success ? new VkFence(handle, this, allocator) : null;
+                var _device = Handle;
+                var _pCreateInfo = createInfo.MarshalIndirect(ref unmanaged);
+                var _pAllocator = allocator.MarshalIndirect(ref unmanaged);
+                VkFence.HandleType _pFence;
+                var result = Direct.CreateFence(_device, _pCreateInfo, _pAllocator, &_pFence);
+                var instance = result == VkResult.Success ? new VkFence(this, _pFence, allocator) : null;
                 return new VkObjectResult<IVkFence>(result, instance);
             }
         }
@@ -219,8 +239,10 @@ namespace VulkaNet
             fixed (byte* unmanagedStart = unmanagedArray)
             {
                 var unmanaged = unmanagedStart;
-                var pFences = fences.MarshalDirect(ref unmanaged);
-                return Direct.ResetFences(Handle, fences.Count, pFences);
+                var _device = Handle;
+                var _fenceCount = fences?.Count ?? 0;
+                var _pFences = fences.MarshalDirect(ref unmanaged);
+                return Direct.ResetFences(_device, _fenceCount, _pFences);
             }
         }
 
@@ -232,9 +254,23 @@ namespace VulkaNet
             fixed (byte* unmanagedStart = unmanagedArray)
             {
                 var unmanaged = unmanagedStart;
-                var pFences = fences.MarshalDirect(ref unmanaged);
-                return Direct.WaitForFences(Handle, fences.Count, pFences, new VkBool32(waitAll), timeout);
+                var _device = Handle;
+                var _fenceCount = fences?.Count ?? 0;
+                var _pFences = fences.MarshalDirect(ref unmanaged);
+                var _waitAll = new VkBool32(waitAll);
+                var _timeout = timeout;
+                return Direct.WaitForFences(_device, _fenceCount, _pFences, _waitAll, _timeout);
             }
         }
+
+    }
+
+    public static unsafe class VkDeviceExtensions
+    {
+        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkDevice> list) =>
+            list.SizeOfMarshalDirectDispatchable();
+
+        public static VkDevice.HandleType* MarshalDirect(this IReadOnlyList<IVkDevice> list, ref byte* unmanaged) =>
+            (VkDevice.HandleType*)list.MarshalDirectDispatchable(ref unmanaged);
     }
 }

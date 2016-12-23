@@ -277,9 +277,14 @@ namespace VulkaNetGenerator
                 writer.WriteLine();
                 
                 writer.WriteLine("using System;");
+                if (isDevice)
+                    writer.WriteLine("using System.Collections.Concurrent;");
                 writer.WriteLine("using System.Collections.Generic;");
-                writer.WriteLine("using System.Linq;");
-                writer.WriteLine("using System.Runtime.InteropServices;");
+                //writer.WriteLine("using System.Linq;");
+                if (isDevice)
+                    writer.WriteLine("using System.Runtime.InteropServices;");
+                if (isDevice)
+                    writer.WriteLine("using VulkaNet.InternalHelpers;");
                 writer.WriteLine();
 
                 writer.WriteLine("namespace VulkaNet");
@@ -290,10 +295,14 @@ namespace VulkaNetGenerator
                     var interfaces = new List<string>();
                     if (typeof(IGenHandledObject).IsAssignableFrom(type))
                         interfaces.Add("IVkHandledObject");
+                    if (typeof(IGenNonDispatchableHandledObject).IsAssignableFrom(type))
+                        interfaces.Add("IVkNonDispatchableHandledObject");
                     if (typeof(IGenDeviceChild).IsAssignableFrom(type))
                         interfaces.Add("IVkDeviceChild");
                     if (wrapperMethods.Any(x => x.Name == "Dispose"))
                         interfaces.Add("IDisposable");
+                    if (isDevice)
+                        interfaces.Add("IVkInstanceChild");
                     var interfacesString = interfaces.Any()
                         ? " : " + string.Join(", ", interfaces)
                         : "";
@@ -301,14 +310,20 @@ namespace VulkaNetGenerator
                     writer.WriteLine($"public interface IVk{name}{interfacesString}");
                     using (writer.Curly())
                     {
+                        if (isDevice)
+                            writer.WriteLine("IVkPhysicalDevice PhysicalDevice { get; }");
                         writer.WriteLine($"Vk{name}.HandleType Handle {{ get; }}");
+                        if (isDevice)
+                            writer.WriteLine("VkDevice.DirectFunctions Direct { get; }");
                         if (isAllocatable)
                             writer.WriteLine("IVkAllocationCallbacks Allocator { get; }");
-                        foreach (var wm in wrapperMethods)
+                        if (isDevice)
+                            writer.WriteLine("IVkQueue GetDeviceQueue(int queueFamilyIndex, int queueIndex);");
+                        foreach (var wm in wrapperMethods.Where(x => x.Name != "Dispose"))
                         {
-                            var paramStrings = wm.Parameters.Select(wp => $"{wp.TypeStr} {wp.Name}").ToArray();
-                            var paramsLine = string.Join(", ", paramStrings);
-                            writer.WriteLine($"{wm.ReturnTypeStr} {wm.Name}({paramsLine})");
+                            var paramsStr = string.Join(", ", wm.Parameters.Where(x => !x.IsFromProperty).Select(x => $"{x.TypeStr} {x.Name}"));
+                            var paramsLine = string.Join(", ", paramsStr);
+                            writer.WriteLine($"{wm.ReturnTypeStr} {wm.Name}({paramsLine});");
                         }
                     }
                     writer.WriteLine();
@@ -321,10 +336,14 @@ namespace VulkaNetGenerator
 
                         if (isDevice)
                         {
+                            writer.WriteLine("public IVkInstance Instance { get; }");
+                            writer.WriteLine("public IVkPhysicalDevice PhysicalDevice { get; }");
                             writer.WriteLine("public HandleType Handle { get; }");
                             writer.WriteLine("public IVkAllocationCallbacks Allocator { get; }");
-                            writer.WriteLine("public IVkInstance Instance { get; }");
                             writer.WriteLine("public DirectFunctions Direct { get; }");
+                            writer.WriteLine();
+
+                            writer.WriteLine("public IntPtr RawHandle => Handle.InternalHandle;");
                             writer.WriteLine();
 
                             writer.WriteLine("private readonly ConcurrentDictionary<ValuePair<int, int>, IVkQueue> queues;");
@@ -347,10 +366,10 @@ namespace VulkaNetGenerator
                             writer.WriteLine("public IVkDevice Device { get; }");
                             writer.WriteLine("public HandleType Handle { get; }");
                             if (isAllocatable)
-                                writer.WriteLine("IVkAllocationCallbacks Allocator { get; }");
+                                writer.WriteLine("public IVkAllocationCallbacks Allocator { get; }");
                             writer.WriteLine();
 
-                            writer.WriteLine("private VkDevice.DirectFunction Direct => Device.Direct;");
+                            writer.WriteLine("private VkDevice.DirectFunctions Direct => Device.Direct;");
                             writer.WriteLine();
 
                             writer.WriteLine($"public {rawHandleTypeStr} RawHandle => Handle.InternalHandle;");
@@ -405,7 +424,7 @@ namespace VulkaNetGenerator
                                 writer.WriteLine("byte* pName);");
                                 writer.UnTab();
                                 writer.WriteLine();
-
+                                
                                 writer.WriteLine("public GetDeviceQueueDelegate GetDeviceQueue { get; }");
                                 writer.WriteLine("public delegate VkResult GetDeviceQueueDelegate(");
                                 writer.Tab();
@@ -424,7 +443,10 @@ namespace VulkaNetGenerator
                                         writer.WriteLine($"public delegate {func.ReturnTypeStr} {func.Name}Delegate(");
                                         writer.Tab();
                                         foreach (var parameter in func.Parameters.Take(func.Parameters.Count - 1))
-                                            writer.WriteLine($"{parameter.TypeStr} {parameter.Name},");
+                                        {
+                                            var typeStr = parameter.TypeStr == "VkDevice.HandleType" ? "HandleType" : parameter.TypeStr;
+                                            writer.WriteLine($"{typeStr} {parameter.Name},");
+                                        }
                                         var lastParam = func.Parameters.Last();
                                         writer.WriteLine($"{lastParam.TypeStr} {lastParam.Name});");
                                         writer.UnTab();
@@ -443,13 +465,41 @@ namespace VulkaNetGenerator
                                     writer.WriteLine();
 
                                     writer.WriteLine("GetDeviceProcAddr = VkHelpers.GetInstanceDelegate<GetDeviceProcAddrDelegate>(device.Instance, \"vkGetDeviceProcAddr\");");
+                                    writer.WriteLine("GetDeviceQueue = GetDeviceDelegate<GetDeviceQueueDelegate>(\"vkGetDeviceQueue\");");
                                     foreach (var func in allRawFunctions)
                                         writer.WriteLine($"{func.Name} = GetDeviceDelegate<{func.Name}Delegate>(\"vk{func.Name}\");");
                                 }
+                                writer.WriteLine();
+
+                                writer.WriteLine("public TDelegate GetDeviceDelegate<TDelegate>(string name)");
+                                using (writer.Curly())
+                                {
+                                    writer.WriteLine("IntPtr funPtr;");
+                                    writer.WriteLine("fixed (byte* pName = name.ToAnsiArray())");
+                                    writer.Tab();
+                                    writer.WriteLine("funPtr = GetDeviceProcAddr(device.Handle, pName);");
+                                    writer.UnTab();
+                                    writer.WriteLine("return Marshal.GetDelegateForFunctionPointer<TDelegate>(funPtr);");
+                                }
+                            }
+                            writer.WriteLine();
+
+                            writer.WriteLine("public IVkQueue GetDeviceQueue(int queueFamilyIndex, int queueIndex) =>");
+                            writer.Tab();
+                            writer.WriteLine("queues.GetOrAdd(new ValuePair<int, int>(queueFamilyIndex, queueIndex), DoGetDeviceQueue);");
+                            writer.UnTab();
+                            writer.WriteLine();
+
+                            writer.WriteLine("private IVkQueue DoGetDeviceQueue(ValuePair<int, int> key)");
+                            using (writer.Curly())
+                            {
+                                writer.WriteLine("VkQueue.HandleType handle;");
+                                writer.WriteLine("Direct.GetDeviceQueue(Handle, (uint)key.First, (uint)key.Second, &handle).CheckSuccess();");
+                                writer.WriteLine("return new VkQueue(handle, this);");
                             }
                             writer.WriteLine();
                         }
-
+                        
                         foreach (var wrapper in wrapperMethods)
                         {
                             var raw = wrapper.Raw;
@@ -468,10 +518,10 @@ namespace VulkaNetGenerator
                                     writer.WriteLine($"{lastParam.Name}.{lastParam.SizeMethod}();");
                                     writer.UnTab();
                                     writer.WriteLine("var unmanagedArray = new byte[unmanagedSize];");
-                                    writer.WriteLine("fixed (byte* unmanagedStart = unamangedArray)");
+                                    writer.WriteLine("fixed (byte* unmanagedStart = unmanagedArray)");
                                     writer.WriteLine("{");
                                     writer.Tab();
-                                    writer.WriteLine("var unamanged = unmanagedStart;");
+                                    writer.WriteLine("var unmanaged = unmanagedStart;");
                                 }
 
                                 foreach (var rParam in raw.Parameters)
@@ -512,7 +562,7 @@ namespace VulkaNetGenerator
                                     if (wrapper.Parameters.Any(x => x.Name == "allocator"))
                                         ctrParams.Add("allocator");
                                     var ctrParamsStr = string.Join(", ", ctrParams);
-                                    writer.WriteLine($"var instance = result == VkResult.Success ? new {objTypeStr}({ctrParamsStr}) : null;");
+                                    writer.WriteLine($"var instance = result == VkResult.Success ? new {objTypeStr.Substring(1)}({ctrParamsStr}) : null;");
                                     writer.WriteLine($"return new VkObjectResult<{objTypeStr}>(result, instance);");
                                 }
                                 else

@@ -24,6 +24,8 @@ namespace VulkaNetGenerator
             //if (TypeStr == "VkAllocationCallbacks.Raw*")
             //    IgnoreInWrapper = true;
             FromProperty = GetAttrValue<FromPropertyAttribute>(attributes);
+            if (TypeStr.StartsWith("VkDevice.HandleType") && parameterInfo.Member.DeclaringType == typeof(GenDevice))
+                TypeStr = TypeStr.Substring("VkDevice.".Length);
         }
     }
 }

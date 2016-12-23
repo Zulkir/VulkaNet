@@ -73,14 +73,14 @@ namespace VulkaNet
 
         public void Dispose()
         {
-            var size = Allocator.SafeMarshalSize();
+            var size = Allocator.SizeOfMarshalIndirect();
             VkHelpers.RunWithUnamangedData(size, DisposeInternal);
         }
 
         private unsafe void DisposeInternal(IntPtr data)
         {
             var unmanaged = (byte*)data;
-            var pAllocator = Allocator.SafeMarshalTo(ref unmanaged);
+            var pAllocator = Allocator.MarshalIndirect(ref unmanaged);
             Direct.DestroyInstance(RawHandle, pAllocator);
         }
 

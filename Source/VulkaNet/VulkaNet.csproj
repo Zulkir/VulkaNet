@@ -48,7 +48,7 @@
     <Compile Include="InternalHelpers\VkBlob64.cs" />
     <Compile Include="IVkDeviceChild.cs" />
     <Compile Include="IVkInstanceChild.cs" />
-    <Compile Include="IVkNonDisptatchableHandledObject.cs" />
+    <Compile Include="IVkNonDispatchableHandledObject.cs" />
     <Compile Include="VkAccessFlagBits.cs" />
     <Compile Include="VkCommandBuffer.cs" />
     <Compile Include="VkCommandBufferAllocateInfo.cs" />

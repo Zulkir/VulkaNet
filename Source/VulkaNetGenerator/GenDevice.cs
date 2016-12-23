@@ -3,7 +3,7 @@
 namespace VulkaNetGenerator
 {
     [Handled]
-    public unsafe struct GenDevice
+    public unsafe struct GenDevice : IGenHandledObject, IGenAllocatable
     {
         [MethodName("Dispose")]
         public void DestroyDevice(
@@ -11,6 +11,7 @@ namespace VulkaNetGenerator
             [FromProperty("Allocator")] GenAllocationCallbacks* pAllocator)
         { }
 
+        [MethodName("WaitIdle")]
         public VkResult DeviceWaitIdle(
             [FromProperty("this")] GenDevice device)
             => default(VkResult);

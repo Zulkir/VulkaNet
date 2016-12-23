@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 /*
 Copyright (c) 2016 VulkaNet Project - Daniil Rodin
 
@@ -27,27 +27,28 @@ using System.Collections.Generic;
 
 namespace VulkaNet
 {
-    public interface IVkFence : IVkNonDisptatchableHandledObject, IVkDeviceChild, IDisposable
+    public interface IVkFence : IVkNonDispatchableHandledObject, IVkDeviceChild, IDisposable
     {
         VkFence.HandleType Handle { get; }
+        IVkAllocationCallbacks Allocator { get; }
         VkResult GetStatus();
     }
 
     public unsafe class VkFence : IVkFence
     {
-        public HandleType Handle { get; }
         public IVkDevice Device { get; }
+        public HandleType Handle { get; }
         public IVkAllocationCallbacks Allocator { get; }
-        public DirectFunctions Direct { get; }
+
+        private VkDevice.DirectFunctions Direct => Device.Direct;
 
         public ulong RawHandle => Handle.InternalHandle;
 
-        public VkFence(HandleType handle, IVkDevice device, IVkAllocationCallbacks allocator)
+        public VkFence(IVkDevice device, HandleType handle, IVkAllocationCallbacks allocator)
         {
-            Handle = handle;
             Device = device;
+            Handle = handle;
             Allocator = allocator;
-            Direct = new DirectFunctions(device);
         }
 
         public struct HandleType
@@ -58,42 +59,28 @@ namespace VulkaNet
             public static int SizeInBytes { get; } = sizeof(ulong);
         }
 
-        public class DirectFunctions
-        {
-            public DestroyFenceDelegate DestroyFence { get; }
-            public delegate void DestroyFenceDelegate(
-                VkDevice.HandleType device,
-                HandleType fence,
-                VkAllocationCallbacks.Raw* pAllocator);
-
-            public GetFenceStatusDelegate GetFenceStatus { get; }
-            public delegate VkResult GetFenceStatusDelegate(
-                VkDevice.HandleType device,
-                HandleType fence);
-
-            public DirectFunctions(IVkDevice device)
-            {
-                DestroyFence = device.GetDeviceDelegate<DestroyFenceDelegate>("vkDestroyFence");
-                GetFenceStatus = device.GetDeviceDelegate<GetFenceStatusDelegate>("vkGetFenceStatus");
-            }
-        }
-
         public void Dispose()
         {
-            var unmanagedSize = Allocator.SafeMarshalSize();
-            var unamangedArray = new byte[unmanagedSize];
-            fixed (byte* unmanagedStart = unamangedArray)
+            var unmanagedSize =
+                Allocator.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
             {
-                var unamanged = unmanagedStart;
-                var pAllocator = Allocator.SafeMarshalTo(ref unamanged);
-                Direct.DestroyFence(Device.Handle, Handle, pAllocator);
+                var unmanaged = unmanagedStart;
+                var _device = Device.Handle;
+                var _fence = Handle;
+                var _pAllocator = Allocator.MarshalIndirect(ref unmanaged);
+                Direct.DestroyFence(_device, _fence, _pAllocator);
             }
         }
 
         public VkResult GetStatus()
         {
-            return Direct.GetFenceStatus(Device.Handle, Handle);
+            var _device = Device.Handle;
+            var _fence = Handle;
+            return Direct.GetFenceStatus(_device, _fence);
         }
+
     }
 
     public static unsafe class VkFenceExtensions

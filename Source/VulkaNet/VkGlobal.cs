@@ -129,7 +129,7 @@ namespace VulkaNet
         {
             var size =
                 createInfo.SizeOfMarshalIndirect() +
-                allocator.SafeMarshalSize();
+                allocator.SizeOfMarshalIndirect();
             return VkHelpers.RunWithUnamangedData(size, u => CreateInstanceInternal(u, createInfo, allocator));
         }
 
@@ -137,7 +137,7 @@ namespace VulkaNet
         {
             var unmanaged = (byte*)data;
             var pCreateInfo = createInfo.MarshalIndirect(ref unmanaged);
-            var pAllocator = allocator.SafeMarshalTo(ref unmanaged);
+            var pAllocator = allocator.MarshalIndirect(ref unmanaged);
             IntPtr handle;
             var result = Direct.CreateInstance(pCreateInfo, pAllocator, &handle);
             var instance = result == VkResult.Success ? new VkInstance(handle, allocator) : null;

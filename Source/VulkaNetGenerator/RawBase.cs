@@ -31,7 +31,7 @@ namespace VulkaNetGenerator
 {
     public class RawBase
     {
-        public string TypeStr { get; }
+        public string TypeStr { get; protected set; }
         public string Name { get; }
         public bool IgnoreInWrapper { get; protected set; }
         public bool IsUnmanagedPtr { get; }

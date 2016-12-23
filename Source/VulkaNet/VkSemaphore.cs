@@ -26,7 +26,7 @@ using System.Collections.Generic;
 
 namespace VulkaNet
 {
-    public interface IVkSemaphore : IVkNonDisptatchableHandledObject
+    public interface IVkSemaphore : IVkNonDispatchableHandledObject
     {
         VkSemaphore.HandleType Handle { get; }
     }

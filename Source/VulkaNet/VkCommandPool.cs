@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 /*
 Copyright (c) 2016 VulkaNet Project - Daniil Rodin
 
@@ -24,34 +24,32 @@ THE SOFTWARE.
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace VulkaNet
 {
-    public interface IVkCommandPool : IVkDeviceChild, IDisposable
+    public interface IVkCommandPool : IVkNonDispatchableHandledObject, IVkDeviceChild, IDisposable
     {
         VkCommandPool.HandleType Handle { get; }
         IVkAllocationCallbacks Allocator { get; }
-        VkCommandPool.DirectFunctions Direct { get; }
-
         VkResult Reset(VkCommandPoolResetFlags flags);
-        VkObjectResult<IVkCommandBuffer[]> AllocateCommandBuffers(IVkCommandBufferAllocateInfo allocateInfo);
         void FreeCommandBuffers(IReadOnlyList<IVkCommandBuffer> commandBuffers);
     }
 
     public unsafe class VkCommandPool : IVkCommandPool
     {
-        public HandleType Handle { get; }
         public IVkDevice Device { get; }
+        public HandleType Handle { get; }
         public IVkAllocationCallbacks Allocator { get; }
-        public DirectFunctions Direct { get; }
-        
+
+        private VkDevice.DirectFunctions Direct => Device.Direct;
+
+        public ulong RawHandle => Handle.InternalHandle;
+
         public VkCommandPool(IVkDevice device, HandleType handle, IVkAllocationCallbacks allocator)
         {
-            Handle = handle;
             Device = device;
+            Handle = handle;
             Allocator = allocator;
-            Direct = new DirectFunctions(device);
         }
 
         public struct HandleType
@@ -59,86 +57,57 @@ namespace VulkaNet
             public readonly ulong InternalHandle;
             public HandleType(ulong internalHandle) { InternalHandle = internalHandle; }
             public override string ToString() => InternalHandle.ToString();
-            public static HandleType Null => new HandleType(0);
+            public static int SizeInBytes { get; } = sizeof(ulong);
+            public static HandleType Null => new HandleType(default(ulong));
         }
-
-        public class DirectFunctions
-        {
-            public ResetCommandPoolDelegate ResetCommandPool { get; }
-            public delegate VkResult ResetCommandPoolDelegate(
-                VkDevice.HandleType device,
-                HandleType commandPool,
-                VkCommandPoolResetFlags flags);
-
-            public DestroyCommandPoolDelegate DestroyCommandPool { get; }
-            public delegate void DestroyCommandPoolDelegate(
-                VkDevice.HandleType device,
-                HandleType commandPool,
-                VkAllocationCallbacks.Raw* pAllocator);
-
-            public AllocateCommandBuffersDelegate AllocateCommandBuffers { get; }
-            public delegate VkResult AllocateCommandBuffersDelegate(
-                VkDevice.HandleType device,
-                VkCommandBufferAllocateInfo.Raw* pAllocateInfo,
-                VkCommandBuffer.HandleType* pCommandBuffers);
-
-            public FreeCommandBuffersDelegate FreeCommandBuffers { get; }
-            public delegate void FreeCommandBuffersDelegate(
-                VkDevice.HandleType device,
-                HandleType commandPool,
-                int commandBufferCount,
-                VkCommandBuffer.HandleType* pCommandBuffers);
-
-            public DirectFunctions(IVkDevice device)
-            {
-                ResetCommandPool = device.GetDeviceDelegate<ResetCommandPoolDelegate>("vkResetCommandPool");
-                DestroyCommandPool = device.GetDeviceDelegate<DestroyCommandPoolDelegate>("vkDestroyCommandPool");
-                AllocateCommandBuffers = device.GetDeviceDelegate<AllocateCommandBuffersDelegate>("vkAllocateCommandBuffers");
-                FreeCommandBuffers = device.GetDeviceDelegate<FreeCommandBuffersDelegate>("vkFreeCommandBuffers");
-            }
-        }
-
-        public VkResult Reset(VkCommandPoolResetFlags flags) => 
-            Direct.ResetCommandPool(Device.Handle, Handle, flags);
 
         public void Dispose()
         {
-            var unmanagedSize = Allocator.SafeMarshalSize();
-            var unamangedArray = new byte[unmanagedSize];
-            fixed (byte* unmanagedStart = unamangedArray)
+            var unmanagedSize =
+                Allocator.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
             {
-                var unamanged = unmanagedStart;
-                var pAllocator = Allocator.SafeMarshalTo(ref unamanged);
-                Direct.DestroyCommandPool(Device.Handle, Handle, pAllocator);
+                var unmanaged = unmanagedStart;
+                var _device = Device.Handle;
+                var _commandPool = Handle;
+                var _pAllocator = Allocator.MarshalIndirect(ref unmanaged);
+                Direct.DestroyCommandPool(_device, _commandPool, _pAllocator);
             }
         }
 
-        public VkObjectResult<IVkCommandBuffer[]> AllocateCommandBuffers(IVkCommandBufferAllocateInfo allocateInfo)
+        public VkResult Reset(VkCommandPoolResetFlags flags)
         {
-            var unmanagedSize = allocateInfo.SizeOfMarshalIndirect();
-            var unamangedArray = new byte[unmanagedSize];
-            fixed (byte* unmanagedStart = unamangedArray)
-            {
-                var unamanged = unmanagedStart;
-                var pAllocateInfo = allocateInfo.MarshalIndirect(ref unamanged);
-                pAllocateInfo->commandPool = Handle;
-                var commandBufferHandles = new VkCommandBuffer.HandleType[allocateInfo.CommandBufferCount];
-                fixed (VkCommandBuffer.HandleType* pCommandBuffers = commandBufferHandles)
-                {
-                    var result = Direct.AllocateCommandBuffers(Device.Handle, pAllocateInfo, pCommandBuffers);
-                    if (result != VkResult.Success)
-                        return new VkObjectResult<IVkCommandBuffer[]>(result, null);
-                    var commandBuffers = commandBufferHandles.Select(x => (IVkCommandBuffer)new VkCommandBuffer(x, Device)).ToArray();
-                    return new VkObjectResult<IVkCommandBuffer[]>(result, commandBuffers);
-                }
-            }
+            var _device = Device.Handle;
+            var _commandPool = Handle;
+            var _flags = flags;
+            return Direct.ResetCommandPool(_device, _commandPool, _flags);
         }
 
         public void FreeCommandBuffers(IReadOnlyList<IVkCommandBuffer> commandBuffers)
         {
-            var commandBufferHandles = commandBuffers.Select(x => x.Handle).ToArray();
-            fixed (VkCommandBuffer.HandleType* pCommandBuffers = commandBufferHandles)
-                Direct.FreeCommandBuffers(Device.Handle, Handle, commandBuffers.Count, pCommandBuffers);
+            var unmanagedSize =
+                commandBuffers.SizeOfMarshalDirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _device = Device.Handle;
+                var _commandPool = Handle;
+                var _commandBufferCount = commandBuffers?.Count ?? 0;
+                var _pCommandBuffers = commandBuffers.MarshalDirect(ref unmanaged);
+                Direct.FreeCommandBuffers(_device, _commandPool, _commandBufferCount, _pCommandBuffers);
+            }
         }
+
+    }
+
+    public static unsafe class VkCommandPoolExtensions
+    {
+        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkCommandPool> list) =>
+            list.SizeOfMarshalDirectNonDispatchable();
+
+        public static VkCommandPool.HandleType* MarshalDirect(this IReadOnlyList<IVkCommandPool> list, ref byte* unmanaged) =>
+            (VkCommandPool.HandleType*)list.MarshalDirectNonDispatchable(ref unmanaged);
     }
 }

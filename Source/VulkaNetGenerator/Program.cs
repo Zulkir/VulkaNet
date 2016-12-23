@@ -44,6 +44,9 @@ namespace VulkaNetGenerator
             generator.GenerateStruct<GenDeviceCreateInfo>(true, false);
             generator.GenerateStruct<GenFenceCreateInfo>(true, false);
 
+            generator.GenerateClass<GenQueue>();
+            generator.GenerateClass<GenCommandPool>();
+            generator.GenerateClass<GenCommandBuffer>();
             generator.GenerateClass<GenFence>();
 
             generator.GenerateClass<GenDevice>();

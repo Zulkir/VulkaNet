@@ -38,17 +38,17 @@ namespace VulkaNet
 
     public unsafe class VkCommandBuffer : IVkCommandBuffer
     {
-        public HandleType Handle { get; }
         public IVkDevice Device { get; }
-        public DirectFunctions Direct { get; }
+        public HandleType Handle { get; }
+
+        private VkDevice.DirectFunctions Direct => Device.Direct;
 
         public IntPtr RawHandle => Handle.InternalHandle;
 
-        public VkCommandBuffer(HandleType handle, IVkDevice device)
+        public VkCommandBuffer(IVkDevice device, HandleType handle)
         {
-            Handle = handle;
             Device = device;
-            Direct = new DirectFunctions(device);
+            Handle = handle;
         }
 
         public struct HandleType
@@ -57,72 +57,51 @@ namespace VulkaNet
             public HandleType(IntPtr internalHandle) { InternalHandle = internalHandle; }
             public override string ToString() => InternalHandle.ToString();
             public static int SizeInBytes { get; } = IntPtr.Size;
-        }
-
-        public class DirectFunctions
-        {
-            public ResetCommandBufferDelegate ResetCommandBuffer { get; }
-            public delegate VkResult ResetCommandBufferDelegate(
-                HandleType commandBuffer,
-                VkCommandBufferResetFlags flags);
-
-            public BeginCommandBufferDelegate BeginCommandBuffer { get; }
-            public delegate VkResult BeginCommandBufferDelegate(
-                HandleType commandBuffer,
-                VkCommandBufferBeginInfo.Raw* pBeginInfo);
-
-            public EndCommandBufferDelegate EndCommandBuffer { get; }
-            public delegate VkResult EndCommandBufferDelegate(
-                HandleType commandBuffer);
-
-            public CmdExecuteCommandsDelegate CmdExecuteCommands { get; }
-            public delegate void CmdExecuteCommandsDelegate(
-                HandleType commandBuffer,
-                int commandBufferCount,
-                HandleType* pCommandBuffers);
-
-            public DirectFunctions(IVkDevice device)
-            {
-                ResetCommandBuffer = device.GetDeviceDelegate<ResetCommandBufferDelegate>("vkResetCommandBuffer");
-                BeginCommandBuffer = device.GetDeviceDelegate<BeginCommandBufferDelegate>("vkBeginCommandBuffer");
-                EndCommandBuffer = device.GetDeviceDelegate<EndCommandBufferDelegate>("vkEndCommandBuffer");
-                CmdExecuteCommands = device.GetDeviceDelegate<CmdExecuteCommandsDelegate>("vkCmdExecuteCommands");
-            }
+            public static HandleType Null => new HandleType(default(IntPtr));
         }
 
         public VkResult Reset(VkCommandBufferResetFlags flags)
         {
-            return Direct.ResetCommandBuffer(Handle, flags);
+            var _commandBuffer = Handle;
+            var _flags = flags;
+            return Direct.ResetCommandBuffer(_commandBuffer, _flags);
         }
 
         public VkResult Begin(IVkCommandBufferBeginInfo beginInfo)
         {
-            var unmanagedSize = beginInfo.SizeOfMarshalIndirect();
-            var unamangedArray = new byte[unmanagedSize];
-            fixed (byte* unmanagedStart = unamangedArray)
+            var unmanagedSize =
+                beginInfo.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
             {
-                var unamanged = unmanagedStart;
-                var pBeginInfo = beginInfo.MarshalIndirect(ref unamanged);
-                return Direct.BeginCommandBuffer(Handle, pBeginInfo);
+                var unmanaged = unmanagedStart;
+                var _commandBuffer = Handle;
+                var _pBeginInfo = beginInfo.MarshalIndirect(ref unmanaged);
+                return Direct.BeginCommandBuffer(_commandBuffer, _pBeginInfo);
             }
         }
 
         public VkResult End()
         {
-            return Direct.EndCommandBuffer(Handle);
+            var _commandBuffer = Handle;
+            return Direct.EndCommandBuffer(_commandBuffer);
         }
 
         public void CmdExecuteCommands(IReadOnlyList<IVkCommandBuffer> commandBuffers)
         {
-            var unmanagedSize = commandBuffers.SizeOfMarshalDirect();
-            var unamangedArray = new byte[unmanagedSize];
-            fixed (byte* unmanagedStart = unamangedArray)
+            var unmanagedSize =
+                commandBuffers.SizeOfMarshalDirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
             {
-                var unamanged = unmanagedStart;
-                var pCommandBuffers = commandBuffers.MarshalDirect(ref unamanged);
-                Direct.CmdExecuteCommands(Handle, commandBuffers.Count, pCommandBuffers);
+                var unmanaged = unmanagedStart;
+                var _commandBuffer = Handle;
+                var _commandBufferCount = commandBuffers?.Count ?? 0;
+                var _pCommandBuffers = commandBuffers.MarshalDirect(ref unmanaged);
+                Direct.CmdExecuteCommands(_commandBuffer, _commandBufferCount, _pCommandBuffers);
             }
         }
+
     }
 
     public static unsafe class VkCommandBufferExtensions

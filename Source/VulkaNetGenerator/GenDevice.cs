@@ -23,6 +23,12 @@ namespace VulkaNetGenerator
             [Return] GenCommandPool* pCommandPool)
             => default(VkResult);
 
+        public VkResult AllocateCommandBuffers(
+            [FromProperty("this")] GenDevice device,
+            GenCommandBufferAllocateInfo* pAllocateInfo,
+            [Return, IsArray, ReturnCount("allocateInfo.CommandBufferCount")] GenCommandBuffer* pCommandBuffers)
+            => default(VkResult);
+
         public VkResult CreateFence(
             [FromProperty("this")] GenDevice device,
             GenFenceCreateInfo* pCreateInfo,

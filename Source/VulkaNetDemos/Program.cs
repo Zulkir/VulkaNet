@@ -76,8 +76,9 @@ namespace VulkaNetDemos
                         QueueFamilyIndex = 0
                     }, null).Object;
 
-                    var commandBuffer = commandPool.AllocateCommandBuffers(new VkCommandBufferAllocateInfo
+                    var commandBuffer = device.AllocateCommandBuffers(new VkCommandBufferAllocateInfo
                     {
+                        CommandPool = commandPool,
                         Level = VkCommandBufferLevel.Primary,
                         CommandBufferCount = 1
                     }).Object.Single();

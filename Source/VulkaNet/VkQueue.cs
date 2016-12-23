@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 /*
 Copyright (c) 2016 VulkaNet Project - Daniil Rodin
 
@@ -27,22 +27,25 @@ using System.Collections.Generic;
 
 namespace VulkaNet
 {
-    public interface IVkQueue : IVkDeviceChild
+    public interface IVkQueue : IVkHandledObject, IVkDeviceChild
     {
-        VkResult Submit(IReadOnlyList<IVkSubmitInfo> submits, IVkFence fence);
+        VkQueue.HandleType Handle { get; }
+        VkResult QueueSubmitDelegate(IReadOnlyList<IVkSubmitInfo> submits, IVkFence fence);
     }
 
     public unsafe class VkQueue : IVkQueue
     {
-        public HandleType Handle { get; }
         public IVkDevice Device { get; }
-        public DirectFunctions Direct { get; }
+        public HandleType Handle { get; }
 
-        public VkQueue(HandleType handle, IVkDevice device)
+        private VkDevice.DirectFunctions Direct => Device.Direct;
+
+        public IntPtr RawHandle => Handle.InternalHandle;
+
+        public VkQueue(IVkDevice device, HandleType handle)
         {
-            Handle = handle;
             Device = device;
-            Direct = new DirectFunctions(device);
+            Handle = handle;
         }
 
         public struct HandleType
@@ -50,25 +53,11 @@ namespace VulkaNet
             public readonly IntPtr InternalHandle;
             public HandleType(IntPtr internalHandle) { InternalHandle = internalHandle; }
             public override string ToString() => InternalHandle.ToString();
-            public static int SizeInBytes { get; } = sizeof(IntPtr);
+            public static int SizeInBytes { get; } = IntPtr.Size;
+            public static HandleType Null => new HandleType(default(IntPtr));
         }
 
-        public class DirectFunctions
-        {
-            public QueueSubmitDelegate QueueSubmit { get; }
-            public delegate VkResult QueueSubmitDelegate(
-                HandleType queue,
-                int submitCount,
-                VkSubmitInfo.Raw* pSubmits,
-                VkFence.HandleType fence);
-            
-            public DirectFunctions(IVkDevice device)
-            {
-                QueueSubmit = device.GetDeviceDelegate<QueueSubmitDelegate>("vkQueueSubmit");
-            }
-        }
-
-        public VkResult Submit(IReadOnlyList<IVkSubmitInfo> submits, IVkFence fence)
+        public VkResult QueueSubmitDelegate(IReadOnlyList<IVkSubmitInfo> submits, IVkFence fence)
         {
             var unmanagedSize =
                 submits.SizeOfMarshalDirect();
@@ -76,9 +65,22 @@ namespace VulkaNet
             fixed (byte* unmanagedStart = unmanagedArray)
             {
                 var unmanaged = unmanagedStart;
-                var pSubmits = submits.MarshalDirect(ref unmanaged);
-                return Direct.QueueSubmit(Handle, submits?.Count ?? 0, pSubmits, fence.Handle);
+                var _queue = Handle;
+                var _submitCount = submits?.Count ?? 0;
+                var _pSubmits = submits.MarshalDirect(ref unmanaged);
+                var _fence = fence?.Handle ?? VkFence.HandleType.Null;
+                return Direct.QueueSubmitDelegate(_queue, _submitCount, _pSubmits, _fence);
             }
         }
+
+    }
+
+    public static unsafe class VkQueueExtensions
+    {
+        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkQueue> list) =>
+            list.SizeOfMarshalDirectDispatchable();
+
+        public static VkQueue.HandleType* MarshalDirect(this IReadOnlyList<IVkQueue> list, ref byte* unmanaged) =>
+            (VkQueue.HandleType*)list.MarshalDirectDispatchable(ref unmanaged);
     }
 }

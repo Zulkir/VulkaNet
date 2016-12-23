@@ -57,6 +57,7 @@ namespace VulkaNet
             public HandleType(ulong internalHandle) { InternalHandle = internalHandle; }
             public override string ToString() => InternalHandle.ToString();
             public static int SizeInBytes { get; } = sizeof(ulong);
+            public static HandleType Null => new HandleType(default(ulong));
         }
 
         public void Dispose()

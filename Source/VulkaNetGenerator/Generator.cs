@@ -32,7 +32,7 @@ namespace VulkaNetGenerator
 {
     public class Generator
     {
-        private List<RawFunction> allRawFunctions = new List<RawFunction>();
+        private readonly List<RawFunction> allRawFunctions = new List<RawFunction>();
 
         public void GenerateStruct<T>(bool input, bool output)
         {
@@ -280,7 +280,8 @@ namespace VulkaNetGenerator
                 if (isDevice)
                     writer.WriteLine("using System.Collections.Concurrent;");
                 writer.WriteLine("using System.Collections.Generic;");
-                //writer.WriteLine("using System.Linq;");
+                if (rawFunctions.SelectMany(x => x.Parameters).Any(x => x.IsReturnParam && x.IsArray))
+                    writer.WriteLine("using System.Linq;");
                 if (isDevice)
                     writer.WriteLine("using System.Runtime.InteropServices;");
                 if (isDevice)
@@ -406,6 +407,7 @@ namespace VulkaNetGenerator
                             writer.WriteLine("public override string ToString() => InternalHandle.ToString();");
                             var sizeString = isDispatchable ? "IntPtr.Size" : "sizeof(ulong)";
                             writer.WriteLine($"public static int SizeInBytes {{ get; }} = {sizeString};");
+                            writer.WriteLine($"public static HandleType Null => new HandleType(default({rawHandleTypeStr}));");
                         }
                         writer.WriteLine();
 
@@ -495,7 +497,7 @@ namespace VulkaNetGenerator
                             {
                                 writer.WriteLine("VkQueue.HandleType handle;");
                                 writer.WriteLine("Direct.GetDeviceQueue(Handle, (uint)key.First, (uint)key.Second, &handle).CheckSuccess();");
-                                writer.WriteLine("return new VkQueue(handle, this);");
+                                writer.WriteLine("return new VkQueue(this, handle);");
                             }
                             writer.WriteLine();
                         }
@@ -524,26 +526,40 @@ namespace VulkaNetGenerator
                                     writer.WriteLine("var unmanaged = unmanagedStart;");
                                 }
 
+                                var rawReturnParam = raw.Parameters.SingleOrDefault(x => x.IsReturnParam);
+
                                 foreach (var rParam in raw.Parameters)
                                 {
                                     if (rParam.IsReturnParam)
+                                        continue;
+
+                                    var wParam = wrapper.Parameters.SingleOrDefault(x => x.Raw == rParam);
+                                    var rval = wParam != null && wParam.MarshalledAsUnmanaged ? $"{wParam.Name}.{wParam.MarshalMethod}(ref unmanaged)" :
+                                               rParam.FromProperty == "Device" ? "Device.Handle" :
+                                               rParam.FromProperty == "this" ? "Handle" :
+                                               rParam.IsHandle ? $"{wParam?.Name}?.Handle ?? {rParam.TypeStr}.Null" :
+                                               rParam.IsCountFor != null ? $"{rParam.IsCountFor}?.Count ?? 0" :
+                                               rParam.TypeStr == "VkBool32" ? $"new VkBool32({wParam?.Name})" :
+                                               $"{wParam?.Name}";
+                                    writer.WriteLine($"var _{rParam.Name} = {rval};");
+                                }
+
+                                if (rawReturnParam != null)
+                                {
+                                    if (rawReturnParam.IsArray)
                                     {
-                                        writer.WriteLine($"{rParam.TypeStr.Substring(0, rParam.TypeStr.Length - 1)} _{rParam.Name};");
+                                        var rawElementTypeStr = rawReturnParam.TypeStr.Substring(0, rawReturnParam.TypeStr.Length - 1);
+                                        writer.WriteLine($"var handleArray = new {rawElementTypeStr}[{rawReturnParam.ReturnCount}];");
+                                        writer.WriteLine($"fixed ({rawElementTypeStr}* _{rawReturnParam.Name} = handleArray)");
+                                        writer.WriteLine("{");
+                                        writer.Tab();
                                     }
                                     else
-                                    {
-                                        var wParam = wrapper.Parameters.SingleOrDefault(x => x.Raw == rParam);
-                                        var rval = wParam != null && wParam.MarshalledAsUnmanaged ? $"{wParam.Name}.{wParam.MarshalMethod}(ref unmanaged)" :
-                                                   rParam.FromProperty == "Device" ? "Device.Handle" :
-                                                   rParam.FromProperty == "this" ? "Handle" :
-                                                   rParam.IsHandle ? $"{wParam?.Name}?.Handle ?? {rParam.TypeStr}.Null" :
-                                                   rParam.IsCountFor != null ? $"{rParam.IsCountFor}?.Count ?? 0" :
-                                                   rParam.TypeStr == "VkBool32" ? $"new VkBool32({wParam?.Name})" :
-                                                   $"{wParam?.Name}";
-                                        writer.WriteLine($"var _{rParam.Name} = {rval};");
-                                    }
+                                        writer.WriteLine($"{rawReturnParam.TypeStr.Substring(0, rawReturnParam.TypeStr.Length - 1)} _{rawReturnParam.Name};");
                                 }
-                                var rawParamsStr = string.Join(", ", raw.Parameters.Select(x => (x.IsReturnParam ? "&_" : "_") + x.Name));
+
+                                var rawParamsStr = string.Join(", ", raw.Parameters.Select(x => (x.IsReturnParam && !x.IsArray ? "&_" : "_") + x.Name));
+
                                 if (wrapper.ReturnTypeStr == "void" && raw.ReturnTypeStr == "void")
                                 {
                                     writer.WriteLine($"Direct.{raw.Name}({rawParamsStr});");
@@ -552,22 +568,38 @@ namespace VulkaNetGenerator
                                 {
                                     writer.WriteLine($"return Direct.{raw.Name}({rawParamsStr});");
                                 }
-                                else if (wrapper.ReturnTypeStr.StartsWith("VkObjectResult") && raw.ReturnTypeStr == "VkResult")
+                                else if (rawReturnParam != null && raw.ReturnTypeStr == "VkResult")
                                 {
-                                    var objTypeStr = Regex.Match(wrapper.ReturnTypeStr, @"VkObjectResult<([\w]+)>").Groups[1].Value;
+                                    var objTypeStr = Regex.Match(wrapper.ReturnTypeStr, @"^VkObjectResult<(.+)>$").Groups[1].Value;
                                     writer.WriteLine($"var result = Direct.{raw.Name}({rawParamsStr});");
                                     var ctrParams = new List<string>();
                                     ctrParams.Add(isDevice ? "this" : "Device");
-                                    ctrParams.Add("_" + raw.Parameters.Single(x => x.IsReturnParam).Name);
+                                    if (rawReturnParam.IsArray)
+                                        ctrParams.Add($"handleArray[i]");
+                                    else
+                                        ctrParams.Add($"_{rawReturnParam.Name}");
                                     if (wrapper.Parameters.Any(x => x.Name == "allocator"))
                                         ctrParams.Add("allocator");
                                     var ctrParamsStr = string.Join(", ", ctrParams);
-                                    writer.WriteLine($"var instance = result == VkResult.Success ? new {objTypeStr.Substring(1)}({ctrParamsStr}) : null;");
+                                    var interfaceTypeStr = rawReturnParam.IsArray
+                                        ? Regex.Match(objTypeStr, @"^IReadOnlyList<(.+)>$").Groups[1].Value
+                                        : objTypeStr;
+                                    var classTypeStr = interfaceTypeStr.Substring(1);
+                                    var ctrString = rawReturnParam.IsArray
+                                        ? $"Enumerable.Range(0, handleArray.Length).Select(i => ({interfaceTypeStr})new {classTypeStr}({ctrParamsStr})).ToArray()"
+                                        : $"new {classTypeStr}({ctrParamsStr})";
+                                    writer.WriteLine($"var instance = result == VkResult.Success ? {ctrString} : null;");
                                     writer.WriteLine($"return new VkObjectResult<{objTypeStr}>(result, instance);");
                                 }
                                 else
                                 {
                                     throw new NotSupportedException("Unexpected return type combination.");
+                                }
+
+                                if (rawReturnParam?.IsArray ?? false)
+                                {
+                                    writer.UnTab();
+                                    writer.WriteLine("}");
                                 }
 
                                 if (unmanagedParams.Any())

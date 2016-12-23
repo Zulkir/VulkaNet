@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="Attributes\AsTypeAttribute.cs" />
     <Compile Include="Attributes\DisposeAttribute.cs" />
+    <Compile Include="Attributes\ReturnCountAttribute.cs" />
     <Compile Include="Attributes\FromPropertyAttribute.cs" />
     <Compile Include="Attributes\HandledAttribute.cs" />
     <Compile Include="CodeWriter.cs" />
@@ -74,6 +75,7 @@
     <Compile Include="GenPhysicalDeviceLimits.cs" />
     <Compile Include="GenPhysicalDeviceProperties.cs" />
     <Compile Include="GenPhysicalDeviceSparseProperties.cs" />
+    <Compile Include="GenQueue.cs" />
     <Compile Include="GenRenderPass.cs" />
     <Compile Include="GenSemaphore.cs" />
     <Compile Include="GenSubmitInfo.cs" />

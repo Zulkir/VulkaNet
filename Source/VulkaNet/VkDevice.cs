@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 /*
 Copyright (c) 2016 VulkaNet Project - Daniil Rodin
 
@@ -25,6 +25,7 @@ THE SOFTWARE.
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using VulkaNet.InternalHelpers;
 
@@ -39,6 +40,7 @@ namespace VulkaNet
         IVkQueue GetDeviceQueue(int queueFamilyIndex, int queueIndex);
         VkResult WaitIdle();
         VkObjectResult<IVkCommandPool> CreateCommandPool(IVkCommandPoolCreateInfo createInfo, IVkAllocationCallbacks allocator);
+        VkObjectResult<IReadOnlyList<IVkCommandBuffer>> AllocateCommandBuffers(IVkCommandBufferAllocateInfo allocateInfo);
         VkObjectResult<IVkFence> CreateFence(IVkFenceCreateInfo createInfo, IVkAllocationCallbacks allocator);
         VkResult ResetFences(IReadOnlyList<IVkFence> fences);
         VkResult WaitForFences(IReadOnlyList<IVkFence> fences, bool waitAll, ulong timeout);
@@ -72,6 +74,7 @@ namespace VulkaNet
             public HandleType(IntPtr internalHandle) { InternalHandle = internalHandle; }
             public override string ToString() => InternalHandle.ToString();
             public static int SizeInBytes { get; } = IntPtr.Size;
+            public static HandleType Null => new HandleType(default(IntPtr));
         }
 
         public class DirectFunctions
@@ -89,6 +92,52 @@ namespace VulkaNet
                 uint queueFamilyIndex,
                 uint queueIndex,
                 VkQueue.HandleType* pQueue);
+
+            public QueueSubmitDelegateDelegate QueueSubmitDelegate { get; }
+            public delegate VkResult QueueSubmitDelegateDelegate(
+                VkQueue.HandleType queue,
+                int submitCount,
+                VkSubmitInfo.Raw* pSubmits,
+                VkFence.HandleType fence);
+
+            public DestroyCommandPoolDelegate DestroyCommandPool { get; }
+            public delegate void DestroyCommandPoolDelegate(
+                HandleType device,
+                VkCommandPool.HandleType commandPool,
+                VkAllocationCallbacks.Raw* pAllocator);
+
+            public ResetCommandPoolDelegate ResetCommandPool { get; }
+            public delegate VkResult ResetCommandPoolDelegate(
+                HandleType device,
+                VkCommandPool.HandleType commandPool,
+                VkCommandPoolResetFlags flags);
+
+            public FreeCommandBuffersDelegate FreeCommandBuffers { get; }
+            public delegate void FreeCommandBuffersDelegate(
+                HandleType device,
+                VkCommandPool.HandleType commandPool,
+                int commandBufferCount,
+                VkCommandBuffer.HandleType* pCommandBuffers);
+
+            public ResetCommandBufferDelegate ResetCommandBuffer { get; }
+            public delegate VkResult ResetCommandBufferDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                VkCommandBufferResetFlags flags);
+
+            public BeginCommandBufferDelegate BeginCommandBuffer { get; }
+            public delegate VkResult BeginCommandBufferDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                VkCommandBufferBeginInfo.Raw* pBeginInfo);
+
+            public EndCommandBufferDelegate EndCommandBuffer { get; }
+            public delegate VkResult EndCommandBufferDelegate(
+                VkCommandBuffer.HandleType commandBuffer);
+
+            public CmdExecuteCommandsDelegate CmdExecuteCommands { get; }
+            public delegate void CmdExecuteCommandsDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                int commandBufferCount,
+                VkCommandBuffer.HandleType* pCommandBuffers);
 
             public DestroyFenceDelegate DestroyFence { get; }
             public delegate void DestroyFenceDelegate(
@@ -117,6 +166,12 @@ namespace VulkaNet
                 VkAllocationCallbacks.Raw* pAllocator,
                 VkCommandPool.HandleType* pCommandPool);
 
+            public AllocateCommandBuffersDelegate AllocateCommandBuffers { get; }
+            public delegate VkResult AllocateCommandBuffersDelegate(
+                HandleType device,
+                VkCommandBufferAllocateInfo.Raw* pAllocateInfo,
+                VkCommandBuffer.HandleType* pCommandBuffers);
+
             public CreateFenceDelegate CreateFence { get; }
             public delegate VkResult CreateFenceDelegate(
                 HandleType device,
@@ -144,11 +199,20 @@ namespace VulkaNet
 
                 GetDeviceProcAddr = VkHelpers.GetInstanceDelegate<GetDeviceProcAddrDelegate>(device.Instance, "vkGetDeviceProcAddr");
                 GetDeviceQueue = GetDeviceDelegate<GetDeviceQueueDelegate>("vkGetDeviceQueue");
+                QueueSubmitDelegate = GetDeviceDelegate<QueueSubmitDelegateDelegate>("vkQueueSubmitDelegate");
+                DestroyCommandPool = GetDeviceDelegate<DestroyCommandPoolDelegate>("vkDestroyCommandPool");
+                ResetCommandPool = GetDeviceDelegate<ResetCommandPoolDelegate>("vkResetCommandPool");
+                FreeCommandBuffers = GetDeviceDelegate<FreeCommandBuffersDelegate>("vkFreeCommandBuffers");
+                ResetCommandBuffer = GetDeviceDelegate<ResetCommandBufferDelegate>("vkResetCommandBuffer");
+                BeginCommandBuffer = GetDeviceDelegate<BeginCommandBufferDelegate>("vkBeginCommandBuffer");
+                EndCommandBuffer = GetDeviceDelegate<EndCommandBufferDelegate>("vkEndCommandBuffer");
+                CmdExecuteCommands = GetDeviceDelegate<CmdExecuteCommandsDelegate>("vkCmdExecuteCommands");
                 DestroyFence = GetDeviceDelegate<DestroyFenceDelegate>("vkDestroyFence");
                 GetFenceStatus = GetDeviceDelegate<GetFenceStatusDelegate>("vkGetFenceStatus");
                 DestroyDevice = GetDeviceDelegate<DestroyDeviceDelegate>("vkDestroyDevice");
                 DeviceWaitIdle = GetDeviceDelegate<DeviceWaitIdleDelegate>("vkDeviceWaitIdle");
                 CreateCommandPool = GetDeviceDelegate<CreateCommandPoolDelegate>("vkCreateCommandPool");
+                AllocateCommandBuffers = GetDeviceDelegate<AllocateCommandBuffersDelegate>("vkAllocateCommandBuffers");
                 CreateFence = GetDeviceDelegate<CreateFenceDelegate>("vkCreateFence");
                 ResetFences = GetDeviceDelegate<ResetFencesDelegate>("vkResetFences");
                 WaitForFences = GetDeviceDelegate<WaitForFencesDelegate>("vkWaitForFences");
@@ -170,7 +234,7 @@ namespace VulkaNet
         {
             VkQueue.HandleType handle;
             Direct.GetDeviceQueue(Handle, (uint)key.First, (uint)key.Second, &handle).CheckSuccess();
-            return new VkQueue(handle, this);
+            return new VkQueue(this, handle);
         }
 
         public void Dispose()
@@ -209,6 +273,26 @@ namespace VulkaNet
                 var result = Direct.CreateCommandPool(_device, _pCreateInfo, _pAllocator, &_pCommandPool);
                 var instance = result == VkResult.Success ? new VkCommandPool(this, _pCommandPool, allocator) : null;
                 return new VkObjectResult<IVkCommandPool>(result, instance);
+            }
+        }
+
+        public VkObjectResult<IReadOnlyList<IVkCommandBuffer>> AllocateCommandBuffers(IVkCommandBufferAllocateInfo allocateInfo)
+        {
+            var unmanagedSize =
+                allocateInfo.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _device = Handle;
+                var _pAllocateInfo = allocateInfo.MarshalIndirect(ref unmanaged);
+                var handleArray = new VkCommandBuffer.HandleType[allocateInfo.CommandBufferCount];
+                fixed (VkCommandBuffer.HandleType* _pCommandBuffers = handleArray)
+                {
+                    var result = Direct.AllocateCommandBuffers(_device, _pAllocateInfo, _pCommandBuffers);
+                    var instance = result == VkResult.Success ? Enumerable.Range(0, handleArray.Length).Select(i => (IVkCommandBuffer)new VkCommandBuffer(this, handleArray[i])).ToArray() : null;
+                    return new VkObjectResult<IReadOnlyList<IVkCommandBuffer>>(result, instance);
+                }
             }
         }
 

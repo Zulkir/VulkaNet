@@ -32,6 +32,7 @@ namespace VulkaNet
 {
     public interface IVkDevice : IVkInstanceChild, IDisposable
     {
+        IVkPhysicalDevice PhysicalDevice { get; }
         VkDevice.HandleType Handle { get; }
         TDelegate GetDeviceDelegate<TDelegate>(string name);
         VkResult WaitIdle();
@@ -44,6 +45,7 @@ namespace VulkaNet
 
     public unsafe class VkDevice : IVkDevice
     {
+        public IVkPhysicalDevice PhysicalDevice { get; }
         public HandleType Handle { get; }
         public IVkAllocationCallbacks Allocator { get; }
         public IVkInstance Instance { get; }
@@ -51,11 +53,12 @@ namespace VulkaNet
 
         private readonly ConcurrentDictionary<ValuePair<int, int>, IVkQueue> queues;
 
-        public VkDevice(HandleType handle, IVkAllocationCallbacks allocator, IVkPhysicalDevice physicalDevice)
+        public VkDevice(IVkPhysicalDevice physicalDevice, HandleType handle, IVkAllocationCallbacks allocator)
         {
+            PhysicalDevice = physicalDevice;
+            Instance = physicalDevice.Instance;
             Handle = handle;
             Allocator = allocator;
-            Instance = physicalDevice.Instance;
             Direct = new DirectFunctions(this);
             queues = new ConcurrentDictionary<ValuePair<int, int>, IVkQueue>();
         }

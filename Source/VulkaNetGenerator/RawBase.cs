@@ -33,7 +33,7 @@ namespace VulkaNetGenerator
     {
         public string TypeStr { get; }
         public string Name { get; }
-        public bool IgnoreInWrapper { get; }
+        public bool IgnoreInWrapper { get; protected set; }
         public bool IsUnmanagedPtr { get; }
         public string IsCountFor { get; }
         public string ExplicitWrapperType { get; }
@@ -48,34 +48,34 @@ namespace VulkaNetGenerator
         {
             this.genType = genType;
             this.attributes = attributes;
-
-            FixedArraySize = GetAttrValue<FixedArrayAttribute>(attributes);
-            TypeStr = DeriveTypeStr(genType, FixedArraySize);
+            
             Name = name;
+            IsHandle = DeriveIsHandle(genType);
+            FixedArraySize = GetAttrValue<FixedArrayAttribute>(attributes);
+            TypeStr = DeriveTypeStr(genType, FixedArraySize, IsHandle);
             
             IsUnmanagedPtr = genType.IsPointer;
             IsCountFor = GetAttrValue<CountForAttribute>(attributes);
             IgnoreInWrapper = Name == "sType" || IsCountFor != null;
             ExplicitWrapperType = DeriveExplicitWrapperType(genType, attributes);
             IsArray = DeriveIsArray(attributes);
-            IsHandle = DeriveIsHandle(genType);
         }
         
-        private static string DeriveTypeStr(Type type, string fixedBufferSize)
+        private static string DeriveTypeStr(Type type, string fixedBufferSize, bool isHandle)
         {
             if (fixedBufferSize != null)
-                return DeriveTypeStr(type.GetElementType(), null);
-            if (type.Name.StartsWith("Gen"))
-                if (type.IsPointer)
-                    return $"Vk{type.Name.Substring(3, type.Name.Length - 4)}.Raw*";
-                else
-                    return $"Vk{type.Name.Substring(3, type.Name.Length - 3)}.Raw";
-            if (type.Name.StartsWith("Hnd"))
-                if (type.IsPointer)
-                    return $"Vk{type.Name.Substring(3, type.Name.Length - 4)}.HandleType*";
-                else
-                    return $"Vk{type.Name.Substring(3, type.Name.Length - 3)}.HandleType";
+                return DeriveTypeStr(type.GetElementType(), null, isHandle);
 
+            if (isHandle)
+                return type.IsPointer 
+                    ? $"Vk{type.Name.Substring(3, type.Name.Length - 4)}.HandleType*" 
+                    : $"Vk{type.Name.Substring(3, type.Name.Length - 3)}.HandleType";
+
+            if (type.Name.StartsWith("Gen"))
+                return type.IsPointer 
+                    ? $"Vk{type.Name.Substring(3, type.Name.Length - 4)}.Raw*" 
+                    : $"Vk{type.Name.Substring(3, type.Name.Length - 3)}.Raw";
+            
             switch (type.Name)
             {
                 case "StrByte": return "byte";
@@ -119,8 +119,11 @@ namespace VulkaNetGenerator
             HasAttribute<IsArrayAttribute>(attributes) ||
             HasAttribute<FixedArrayAttribute>(attributes);
 
-        private static bool DeriveIsHandle(Type genType) =>
-            genType.Name.StartsWith("Hnd");
+        private static bool DeriveIsHandle(Type genType)
+        {
+            var internalType = genType.IsPointer ? genType.GetElementType() : genType;
+            return HasAttribute<HandledAttribute>(internalType.CustomAttributes.ToArray());
+        }
 
         protected static bool HasAttribute<T>(CustomAttributeData[] attributes) =>
             attributes.Any(x => x.AttributeType == typeof(T));

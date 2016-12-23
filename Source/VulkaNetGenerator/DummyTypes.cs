@@ -42,9 +42,9 @@ namespace VulkaNetGenerator
     public enum VkDeviceCreateFlags { }
     public enum VkFenceCreateFlags { }
 
-    public struct HndCommandPool { }
-    public struct HndRenderPass { }
-    public struct HndFramebuffer { }
-    public struct HndCommandBuffer { }
-    public struct HndSemaphore { }
+    //public struct HndCommandPool { }
+    //public struct HndRenderPass { }
+    //public struct HndFramebuffer { }
+    //public struct HndCommandBuffer { }
+    //public struct HndSemaphore { }
 }

@@ -33,16 +33,16 @@ namespace VulkaNetGenerator
         [CountFor("WaitSemaphores")]
         public int waitSemaphoreCount;
         [IsArray]
-        public HndSemaphore* pWaitSemaphores;
+        public GenSemaphore* pWaitSemaphores;
         [IsArray]
         public VkPipelineStageFlags* pWaitDstStageMask;
         [CountFor("CommandBuffers")]
         public int commandBufferCount;
         [IsArray]
-        public HndCommandBuffer* pCommandBuffers;
+        public GenCommandBuffer* pCommandBuffers;
         [CountFor("SignalSemaphores")]
         public int signalSemaphoreCount;
         [IsArray]
-        public HndSemaphore* pSignalSemaphores;
+        public GenSemaphore* pSignalSemaphores;
     }
 }

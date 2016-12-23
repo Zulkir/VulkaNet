@@ -2,18 +2,21 @@
 
 namespace VulkaNetGenerator
 {
-    public unsafe interface GenFence : IGenDeviceChild, IGenNonDispatchableHandledObject, IGenAllocatable
+    [Handled]
+    public unsafe struct GenFence : IGenDeviceChild, IGenNonDispatchableHandledObject, IGenAllocatable
     {
         [Dispose]
         [MethodName("Dispose")]
-        void DestroyFence(
-            GenDevice device,
-            [Self] GenFence fence,
-            GenAllocationCallbacks* pAllocator);
+        public void DestroyFence(
+            [FromProperty("Device")] GenDevice device,
+            [FromProperty("this")] GenFence fence,
+            [FromProperty("Allocator")] GenAllocationCallbacks* pAllocator)
+        { }
 
         [MethodName("GetStatus")]
-        VkResult GetFenceStatus(
-            GenDevice device, 
-            [Self] GenFence fence);
+        public VkResult GetFenceStatus(
+            [FromProperty("Device")] GenDevice device,
+            [FromProperty("this")] GenFence fence)
+            => default(VkResult);
     }
 }

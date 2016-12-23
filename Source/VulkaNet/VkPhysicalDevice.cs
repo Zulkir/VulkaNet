@@ -127,7 +127,7 @@ namespace VulkaNet
             var pAllocator = allocator.SafeMarshalTo(ref unmanaged);
             VkDevice.HandleType handle;
             var result = Direct.CreateDevice(Handle, &createInfoRaw, pAllocator, &handle);
-            var device = result == VkResult.Success ? new VkDevice(handle, allocator, this) : null;
+            var device = result == VkResult.Success ? new VkDevice(this, handle, allocator) : null;
             return new VkObjectResult<IVkDevice>(result, device);
         }
 

@@ -28,7 +28,7 @@ namespace VulkaNetGenerator
     {
         public VkStructureType sType;
         public void* pNext;
-        public HndCommandPool commandPool;
+        public GenCommandPool commandPool;
         public VkCommandBufferLevel level;
         public int commandBufferCount;
     }

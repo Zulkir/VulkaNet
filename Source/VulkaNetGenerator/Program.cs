@@ -45,6 +45,8 @@ namespace VulkaNetGenerator
             generator.GenerateStruct<GenFenceCreateInfo>(true, false);
 
             generator.GenerateClass<GenFence>();
+
+            generator.GenerateClass<GenDevice>();
         }
     }
 }

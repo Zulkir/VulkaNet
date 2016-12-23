@@ -21,7 +21,7 @@ namespace VulkaNetGenerator
             Parameters = methodInfo.GetParameters().Select(x => new RawParameter(x)).ToArray();
             ReturnGenType = methodInfo.ReturnType;
             ReturnTypeStr = DeriveReturnTypeStr(ReturnGenType);
-            WrapperName = GetAttrValue<MethodNameAttribute>(methodInfo.CustomAttributes.ToArray());
+            WrapperName = GetAttrValue<MethodNameAttribute>(methodInfo.CustomAttributes.ToArray()) ?? Name;
             IsDispose = HasAttribute<DisposeAttribute>(methodInfo.CustomAttributes.ToArray());
         }
 

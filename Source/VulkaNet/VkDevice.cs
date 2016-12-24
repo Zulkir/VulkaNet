@@ -47,6 +47,7 @@ namespace VulkaNet
         VkObjectResult<IVkSemaphore> CreateSemaphore(IVkSemaphoreCreateInfo createInfo, IVkAllocationCallbacks allocator);
         VkObjectResult<IVkEvent> CreateEvent(IVkEventCreateInfo createInfo, IVkAllocationCallbacks allocator);
         VkObjectResult<IVkRenderPass> CreateRenderPass(IVkRenderPassCreateInfo createInfo, IVkAllocationCallbacks allocator);
+        VkObjectResult<IVkFramebuffer> CreateFramebuffer(IVkFramebufferCreateInfo createInfo, IVkAllocationCallbacks allocator);
     }
 
     public unsafe class VkDevice : IVkDevice
@@ -229,6 +230,12 @@ namespace VulkaNet
                 VkRenderPass.HandleType renderPass,
                 VkAllocationCallbacks.Raw* pAllocator);
 
+            public DestroyFramebufferDelegate DestroyFramebuffer { get; }
+            public delegate void DestroyFramebufferDelegate(
+                HandleType device,
+                VkFramebuffer.HandleType framebuffer,
+                VkAllocationCallbacks.Raw* pAllocator);
+
             public DestroyDeviceDelegate DestroyDevice { get; }
             public delegate void DestroyDeviceDelegate(
                 HandleType device,
@@ -293,6 +300,13 @@ namespace VulkaNet
                 VkAllocationCallbacks.Raw* pAllocator,
                 VkRenderPass.HandleType* pRenderPass);
 
+            public CreateFramebufferDelegate CreateFramebuffer { get; }
+            public delegate VkResult CreateFramebufferDelegate(
+                HandleType device,
+                VkFramebufferCreateInfo.Raw* pCreateInfo,
+                VkAllocationCallbacks.Raw* pAllocator,
+                VkFramebuffer.HandleType* pFramebuffer);
+
             public DirectFunctions(IVkDevice device)
             {
                 this.device = device;
@@ -320,6 +334,7 @@ namespace VulkaNet
                 SetEvent = GetDeviceDelegate<SetEventDelegate>("vkSetEvent");
                 ResetEvent = GetDeviceDelegate<ResetEventDelegate>("vkResetEvent");
                 DestroyRenderPass = GetDeviceDelegate<DestroyRenderPassDelegate>("vkDestroyRenderPass");
+                DestroyFramebuffer = GetDeviceDelegate<DestroyFramebufferDelegate>("vkDestroyFramebuffer");
                 DestroyDevice = GetDeviceDelegate<DestroyDeviceDelegate>("vkDestroyDevice");
                 DeviceWaitIdle = GetDeviceDelegate<DeviceWaitIdleDelegate>("vkDeviceWaitIdle");
                 CreateCommandPool = GetDeviceDelegate<CreateCommandPoolDelegate>("vkCreateCommandPool");
@@ -330,6 +345,7 @@ namespace VulkaNet
                 CreateSemaphore = GetDeviceDelegate<CreateSemaphoreDelegate>("vkCreateSemaphore");
                 CreateEvent = GetDeviceDelegate<CreateEventDelegate>("vkCreateEvent");
                 CreateRenderPass = GetDeviceDelegate<CreateRenderPassDelegate>("vkCreateRenderPass");
+                CreateFramebuffer = GetDeviceDelegate<CreateFramebufferDelegate>("vkCreateFramebuffer");
             }
 
             public TDelegate GetDeviceDelegate<TDelegate>(string name)
@@ -515,6 +531,25 @@ namespace VulkaNet
                 var result = Direct.CreateRenderPass(_device, _pCreateInfo, _pAllocator, &_pRenderPass);
                 var instance = result == VkResult.Success ? new VkRenderPass(this, _pRenderPass, allocator) : null;
                 return new VkObjectResult<IVkRenderPass>(result, instance);
+            }
+        }
+
+        public VkObjectResult<IVkFramebuffer> CreateFramebuffer(IVkFramebufferCreateInfo createInfo, IVkAllocationCallbacks allocator)
+        {
+            var unmanagedSize =
+                createInfo.SizeOfMarshalIndirect() +
+                allocator.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _device = Handle;
+                var _pCreateInfo = createInfo.MarshalIndirect(ref unmanaged);
+                var _pAllocator = allocator.MarshalIndirect(ref unmanaged);
+                VkFramebuffer.HandleType _pFramebuffer;
+                var result = Direct.CreateFramebuffer(_device, _pCreateInfo, _pAllocator, &_pFramebuffer);
+                var instance = result == VkResult.Success ? new VkFramebuffer(this, _pFramebuffer, allocator) : null;
+                return new VkObjectResult<IVkFramebuffer>(result, instance);
             }
         }
 

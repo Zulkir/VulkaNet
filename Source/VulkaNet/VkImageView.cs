@@ -22,32 +22,28 @@ THE SOFTWARE.
 */
 #endregion
 
-using System;
 using System.Collections.Generic;
 
 namespace VulkaNet
 {
-    public interface IVkFramebuffer : IVkNonDispatchableHandledObject, IVkDeviceChild, IDisposable
+    public interface IVkImageView : IVkNonDispatchableHandledObject, IVkDeviceChild
     {
-        VkFramebuffer.HandleType Handle { get; }
-        IVkAllocationCallbacks Allocator { get; }
+        VkImageView.HandleType Handle { get; }
     }
 
-    public unsafe class VkFramebuffer : IVkFramebuffer
+    public unsafe class VkImageView : IVkImageView
     {
         public IVkDevice Device { get; }
         public HandleType Handle { get; }
-        public IVkAllocationCallbacks Allocator { get; }
 
         private VkDevice.DirectFunctions Direct => Device.Direct;
 
         public ulong RawHandle => Handle.InternalHandle;
 
-        public VkFramebuffer(IVkDevice device, HandleType handle, IVkAllocationCallbacks allocator)
+        public VkImageView(IVkDevice device, HandleType handle)
         {
             Device = device;
             Handle = handle;
-            Allocator = allocator;
         }
 
         public struct HandleType
@@ -59,29 +55,14 @@ namespace VulkaNet
             public static HandleType Null => new HandleType(default(ulong));
         }
 
-        public void Dispose()
-        {
-            var unmanagedSize =
-                Allocator.SizeOfMarshalIndirect();
-            var unmanagedArray = new byte[unmanagedSize];
-            fixed (byte* unmanagedStart = unmanagedArray)
-            {
-                var unmanaged = unmanagedStart;
-                var _device = Device.Handle;
-                var _framebuffer = Handle;
-                var _pAllocator = Allocator.MarshalIndirect(ref unmanaged);
-                Direct.DestroyFramebuffer(_device, _framebuffer, _pAllocator);
-            }
-        }
-
     }
 
-    public static unsafe class VkFramebufferExtensions
+    public static unsafe class VkImageViewExtensions
     {
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkFramebuffer> list) =>
+        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkImageView> list) =>
             list.SizeOfMarshalDirectNonDispatchable();
 
-        public static VkFramebuffer.HandleType* MarshalDirect(this IReadOnlyList<IVkFramebuffer> list, ref byte* unmanaged) =>
-            (VkFramebuffer.HandleType*)list.MarshalDirectNonDispatchable(ref unmanaged);
+        public static VkImageView.HandleType* MarshalDirect(this IReadOnlyList<IVkImageView> list, ref byte* unmanaged) =>
+            (VkImageView.HandleType*)list.MarshalDirectNonDispatchable(ref unmanaged);
     }
 }

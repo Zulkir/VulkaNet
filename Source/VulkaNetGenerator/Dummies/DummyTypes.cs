@@ -61,6 +61,7 @@ namespace VulkaNetGenerator.Dummies
     public enum VkSubpassDescriptionFlags { }
     public enum VkPipelineBindPoint { }
     public enum VkFormat { }
+    public enum VkFramebufferCreateFlags { }
 
     //public struct HndCommandPool { }
     //public struct HndRenderPass { }

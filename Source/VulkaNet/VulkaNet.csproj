@@ -78,11 +78,14 @@
     <Compile Include="VkFenceCreateInfo.cs" />
     <Compile Include="VkFormat.cs" />
     <Compile Include="VkFramebuffer.cs" />
+    <Compile Include="VkFramebufferCreateFlags.cs" />
+    <Compile Include="VkFramebufferCreateInfo.cs" />
     <Compile Include="VkImage.cs" />
     <Compile Include="VkImageAspectFlags.cs" />
     <Compile Include="VkImageLayout.cs" />
     <Compile Include="VkImageMemoryBarrier.cs" />
     <Compile Include="VkImageSubresourceRange.cs" />
+    <Compile Include="VkImageView.cs" />
     <Compile Include="VkMemoryBarrier.cs" />
     <Compile Include="VkPipelineBindPoint .cs" />
     <Compile Include="VkPipelineStageFlagBits.cs" />

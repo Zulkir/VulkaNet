@@ -186,6 +186,17 @@ namespace VulkaNet
                 int imageMemoryBarrierCount,
                 VkImageMemoryBarrier.Raw* pImageMemoryBarriers);
 
+            public CmdBeginRenderPassDelegate CmdBeginRenderPass { get; }
+            public delegate void CmdBeginRenderPassDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                VkRenderPassBeginInfo.Raw* pRenderPassBegin,
+                VkSubpassContents contents);
+
+            public CmdNextSubpassDelegate CmdNextSubpass { get; }
+            public delegate void CmdNextSubpassDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                VkSubpassContents contents);
+
             public DestroyFenceDelegate DestroyFence { get; }
             public delegate void DestroyFenceDelegate(
                 HandleType device,
@@ -229,6 +240,12 @@ namespace VulkaNet
                 HandleType device,
                 VkRenderPass.HandleType renderPass,
                 VkAllocationCallbacks.Raw* pAllocator);
+
+            public GetRenderAreaGranularityDelegate GetRenderAreaGranularity { get; }
+            public delegate void GetRenderAreaGranularityDelegate(
+                HandleType device,
+                VkRenderPass.HandleType renderPass,
+                VkExtent2D* pGranularity);
 
             public DestroyFramebufferDelegate DestroyFramebuffer { get; }
             public delegate void DestroyFramebufferDelegate(
@@ -326,6 +343,8 @@ namespace VulkaNet
                 CmdResetEvent = GetDeviceDelegate<CmdResetEventDelegate>("vkCmdResetEvent");
                 CmdWaitEvents = GetDeviceDelegate<CmdWaitEventsDelegate>("vkCmdWaitEvents");
                 CmdPipelineBarrier = GetDeviceDelegate<CmdPipelineBarrierDelegate>("vkCmdPipelineBarrier");
+                CmdBeginRenderPass = GetDeviceDelegate<CmdBeginRenderPassDelegate>("vkCmdBeginRenderPass");
+                CmdNextSubpass = GetDeviceDelegate<CmdNextSubpassDelegate>("vkCmdNextSubpass");
                 DestroyFence = GetDeviceDelegate<DestroyFenceDelegate>("vkDestroyFence");
                 GetFenceStatus = GetDeviceDelegate<GetFenceStatusDelegate>("vkGetFenceStatus");
                 DestroySemaphore = GetDeviceDelegate<DestroySemaphoreDelegate>("vkDestroySemaphore");
@@ -334,6 +353,7 @@ namespace VulkaNet
                 SetEvent = GetDeviceDelegate<SetEventDelegate>("vkSetEvent");
                 ResetEvent = GetDeviceDelegate<ResetEventDelegate>("vkResetEvent");
                 DestroyRenderPass = GetDeviceDelegate<DestroyRenderPassDelegate>("vkDestroyRenderPass");
+                GetRenderAreaGranularity = GetDeviceDelegate<GetRenderAreaGranularityDelegate>("vkGetRenderAreaGranularity");
                 DestroyFramebuffer = GetDeviceDelegate<DestroyFramebufferDelegate>("vkDestroyFramebuffer");
                 DestroyDevice = GetDeviceDelegate<DestroyDeviceDelegate>("vkDestroyDevice");
                 DeviceWaitIdle = GetDeviceDelegate<DeviceWaitIdleDelegate>("vkDeviceWaitIdle");

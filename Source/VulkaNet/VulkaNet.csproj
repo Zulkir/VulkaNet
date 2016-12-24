@@ -50,6 +50,7 @@
     <Compile Include="VkAttachmentStoreOp.cs" />
     <Compile Include="VkBuffer.cs" />
     <Compile Include="VkBufferMemoryBarrier.cs" />
+    <Compile Include="VkClearValue.cs" />
     <Compile Include="VkDependencyFlags.cs" />
     <Compile Include="VkEvent.cs" />
     <Compile Include="VkEventCreateFlags.cs" />
@@ -133,6 +134,7 @@
     <Compile Include="VkQueueFlags.cs" />
     <Compile Include="VkRect2D.cs" />
     <Compile Include="VkRenderPass.cs" />
+    <Compile Include="VkRenderPassBeginInfo.cs" />
     <Compile Include="VkRenderPassCreateFlags.cs" />
     <Compile Include="VkRenderPassCreateInfo.cs" />
     <Compile Include="VkResult.cs" />
@@ -144,6 +146,7 @@
     <Compile Include="VkSemaphoreCreateInfo.cs" />
     <Compile Include="VkStructureType.cs" />
     <Compile Include="VkSubmitInfo.cs" />
+    <Compile Include="VkSubpassContents.cs" />
     <Compile Include="VkSubpassDependency.cs" />
     <Compile Include="VkSubpassDescription.cs" />
     <Compile Include="VkSubpassDescriptionFlags.cs" />

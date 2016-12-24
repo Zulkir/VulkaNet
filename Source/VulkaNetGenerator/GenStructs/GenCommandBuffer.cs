@@ -66,5 +66,16 @@ namespace VulkaNetGenerator.GenStructs
             [CountFor("imageMemoryBarriers")] int imageMemoryBarrierCount,
             [IsArray] GenImageMemoryBarrier* pImageMemoryBarriers)
         { }
+
+        public void CmdBeginRenderPass(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            GenRenderPassBeginInfo* pRenderPassBegin,
+            VkSubpassContents contents)
+        { }
+
+        public void CmdNextSubpass(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            VkSubpassContents contents)
+        { }
     }
 }

@@ -30,6 +30,9 @@ namespace VulkaNetGenerator.Dummies
     //public struct VkAttachmentDescription { }
     public struct VkAttachmentReference { }
     //public struct VkSubpassDependency { }
+    public struct VkRect2D { }
+    public struct VkClearValue { }
+    public struct VkExtent2D { }
     
     public enum VkResult { }
     public enum VkStructureType { }
@@ -62,6 +65,7 @@ namespace VulkaNetGenerator.Dummies
     public enum VkPipelineBindPoint { }
     public enum VkFormat { }
     public enum VkFramebufferCreateFlags { }
+    public enum VkSubpassContents { }
 
     //public struct HndCommandPool { }
     //public struct HndRenderPass { }

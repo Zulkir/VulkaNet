@@ -31,6 +31,7 @@ namespace VulkaNet
     {
         VkRenderPass.HandleType Handle { get; }
         IVkAllocationCallbacks Allocator { get; }
+        VkExtent2D GetGranularity();
     }
 
     public unsafe class VkRenderPass : IVkRenderPass
@@ -72,6 +73,15 @@ namespace VulkaNet
                 var _pAllocator = Allocator.MarshalIndirect(ref unmanaged);
                 Direct.DestroyRenderPass(_device, _renderPass, _pAllocator);
             }
+        }
+
+        public VkExtent2D GetGranularity()
+        {
+            var _device = Device.Handle;
+            var _renderPass = Handle;
+            VkExtent2D _pGranularity;
+            Direct.GetRenderAreaGranularity(_device, _renderPass, &_pGranularity);
+            return _pGranularity;
         }
 
     }

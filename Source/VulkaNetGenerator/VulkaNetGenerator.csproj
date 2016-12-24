@@ -86,6 +86,7 @@
     <Compile Include="GenStructs\GenPhysicalDeviceSparseProperties.cs" />
     <Compile Include="GenStructs\GenQueue.cs" />
     <Compile Include="GenStructs\GenRenderPass.cs" />
+    <Compile Include="GenStructs\GenRenderPassBeginInfo.cs" />
     <Compile Include="GenStructs\GenRenderPassCreateInfo.cs" />
     <Compile Include="GenStructs\GenSemaphore.cs" />
     <Compile Include="GenStructs\GenSemaphoreCreateInfo.cs" />

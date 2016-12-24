@@ -38,6 +38,8 @@ namespace VulkaNet
         void CmdResetEvent(IVkEvent eventObj, VkPipelineStageFlags stageMask);
         void CmdWaitEvents(IReadOnlyList<IVkEvent> events, VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, IReadOnlyList<IVkMemoryBarrier> memoryBarriers, IReadOnlyList<IVkBufferMemoryBarrier> bufferMemoryBarriers, IReadOnlyList<IVkImageMemoryBarrier> imageMemoryBarriers);
         void CmdPipelineBarrier(VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags, IReadOnlyList<IVkMemoryBarrier> memoryBarriers, IReadOnlyList<IVkBufferMemoryBarrier> bufferMemoryBarriers, IReadOnlyList<IVkImageMemoryBarrier> imageMemoryBarriers);
+        void CmdBeginRenderPass(IVkRenderPassBeginInfo renderPassBegin, VkSubpassContents contents);
+        void CmdNextSubpass(VkSubpassContents contents);
     }
 
     public unsafe class VkCommandBuffer : IVkCommandBuffer
@@ -170,6 +172,28 @@ namespace VulkaNet
                 var _pImageMemoryBarriers = imageMemoryBarriers.MarshalDirect(ref unmanaged);
                 Direct.CmdPipelineBarrier(_commandBuffer, _srcStageMask, _dstStageMask, _dependencyFlags, _memoryBarrierCount, _pMemoryBarriers, _bufferMemoryBarrierCount, _pBufferMemoryBarriers, _imageMemoryBarrierCount, _pImageMemoryBarriers);
             }
+        }
+
+        public void CmdBeginRenderPass(IVkRenderPassBeginInfo renderPassBegin, VkSubpassContents contents)
+        {
+            var unmanagedSize =
+                renderPassBegin.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _commandBuffer = Handle;
+                var _pRenderPassBegin = renderPassBegin.MarshalIndirect(ref unmanaged);
+                var _contents = contents;
+                Direct.CmdBeginRenderPass(_commandBuffer, _pRenderPassBegin, _contents);
+            }
+        }
+
+        public void CmdNextSubpass(VkSubpassContents contents)
+        {
+            var _commandBuffer = Handle;
+            var _contents = contents;
+            Direct.CmdNextSubpass(_commandBuffer, _contents);
         }
 
     }

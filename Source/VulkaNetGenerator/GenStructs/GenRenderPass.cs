@@ -11,5 +11,12 @@ namespace VulkaNetGenerator.GenStructs
             [FromProperty("this")] GenRenderPass renderPass,
             [FromProperty("Allocator")] GenAllocationCallbacks* pAllocator)
         { }
+
+        [MethodName("GetGranularity")]
+        public void GetRenderAreaGranularity(
+            [FromProperty("Device")] GenDevice device,
+            [FromProperty("this")] GenRenderPass renderPass,
+            [Return] VkExtent2D* pGranularity)
+        { }
     }
 }

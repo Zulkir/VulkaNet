@@ -55,6 +55,7 @@ namespace VulkaNetGenerator
             generator.GenerateStruct<GenSubpassDescription>(true, false);
             generator.GenerateStruct<GenSubpassDependency>(true, false);
             generator.GenerateStruct<GenFramebufferCreateInfo>(true, false);
+            generator.GenerateStruct<GenRenderPassBeginInfo>(true, false);
 
             generator.GenerateClass<GenQueue>();
             generator.GenerateClass<GenCommandPool>();

@@ -598,6 +598,11 @@ namespace VulkaNetGenerator
                                     writer.WriteLine($"var instance = result == VkResult.Success ? {ctrString} : null;");
                                     writer.WriteLine($"return new VkObjectResult<{objTypeStr}>(result, instance);");
                                 }
+                                else if (rawReturnParam != null && raw.ReturnTypeStr == "void")
+                                {
+                                    writer.WriteLine($"Direct.{raw.Name}({rawParamsStr});");
+                                    writer.WriteLine($"return _{rawReturnParam.Name};");
+                                }
                                 else
                                 {
                                     throw new NotSupportedException("Unexpected return type combination.");

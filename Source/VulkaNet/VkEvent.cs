@@ -31,6 +31,9 @@ namespace VulkaNet
     {
         VkEvent.HandleType Handle { get; }
         IVkAllocationCallbacks Allocator { get; }
+        VkResult GetStatus();
+        VkResult Set();
+        VkResult Reset();
     }
 
     public unsafe class VkEvent : IVkEvent
@@ -72,6 +75,27 @@ namespace VulkaNet
                 var _pAllocator = Allocator.MarshalIndirect(ref unmanaged);
                 Direct.DestroyEvent(_device, _eventObj, _pAllocator);
             }
+        }
+
+        public VkResult GetStatus()
+        {
+            var _device = Device.Handle;
+            var _eventObj = Handle;
+            return Direct.GetEventStatus(_device, _eventObj);
+        }
+
+        public VkResult Set()
+        {
+            var _device = Device.Handle;
+            var _eventObj = Handle;
+            return Direct.SetEvent(_device, _eventObj);
+        }
+
+        public VkResult Reset()
+        {
+            var _device = Device.Handle;
+            var _eventObj = Handle;
+            return Direct.ResetEvent(_device, _eventObj);
         }
 
     }

@@ -141,6 +141,32 @@ namespace VulkaNet
                 int commandBufferCount,
                 VkCommandBuffer.HandleType* pCommandBuffers);
 
+            public CmdSetEventDelegate CmdSetEvent { get; }
+            public delegate void CmdSetEventDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                VkEvent.HandleType eventObj,
+                VkPipelineStageFlags stageMask);
+
+            public CmdResetEventDelegate CmdResetEvent { get; }
+            public delegate void CmdResetEventDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                VkEvent.HandleType eventObj,
+                VkPipelineStageFlags stageMask);
+
+            public CmdWaitEventsDelegate CmdWaitEvents { get; }
+            public delegate void CmdWaitEventsDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                int eventCount,
+                VkEvent.HandleType* pEvents,
+                VkPipelineStageFlags srcStageMask,
+                VkPipelineStageFlags dstStageMask,
+                int memoryBarrierCount,
+                VkMemoryBarrier.Raw* pMemoryBarriers,
+                int bufferMemoryBarrierCount,
+                VkBufferMemoryBarrier.Raw* pBufferMemoryBarriers,
+                int imageMemoryBarrierCount,
+                VkImageMemoryBarrier.Raw* pImageMemoryBarriers);
+
             public DestroyFenceDelegate DestroyFence { get; }
             public delegate void DestroyFenceDelegate(
                 HandleType device,
@@ -163,6 +189,21 @@ namespace VulkaNet
                 HandleType device,
                 VkEvent.HandleType eventObj,
                 VkAllocationCallbacks.Raw* pAllocator);
+
+            public GetEventStatusDelegate GetEventStatus { get; }
+            public delegate VkResult GetEventStatusDelegate(
+                HandleType device,
+                VkEvent.HandleType eventObj);
+
+            public SetEventDelegate SetEvent { get; }
+            public delegate VkResult SetEventDelegate(
+                HandleType device,
+                VkEvent.HandleType eventObj);
+
+            public ResetEventDelegate ResetEvent { get; }
+            public delegate VkResult ResetEventDelegate(
+                HandleType device,
+                VkEvent.HandleType eventObj);
 
             public DestroyDeviceDelegate DestroyDevice { get; }
             public delegate void DestroyDeviceDelegate(
@@ -235,10 +276,16 @@ namespace VulkaNet
                 BeginCommandBuffer = GetDeviceDelegate<BeginCommandBufferDelegate>("vkBeginCommandBuffer");
                 EndCommandBuffer = GetDeviceDelegate<EndCommandBufferDelegate>("vkEndCommandBuffer");
                 CmdExecuteCommands = GetDeviceDelegate<CmdExecuteCommandsDelegate>("vkCmdExecuteCommands");
+                CmdSetEvent = GetDeviceDelegate<CmdSetEventDelegate>("vkCmdSetEvent");
+                CmdResetEvent = GetDeviceDelegate<CmdResetEventDelegate>("vkCmdResetEvent");
+                CmdWaitEvents = GetDeviceDelegate<CmdWaitEventsDelegate>("vkCmdWaitEvents");
                 DestroyFence = GetDeviceDelegate<DestroyFenceDelegate>("vkDestroyFence");
                 GetFenceStatus = GetDeviceDelegate<GetFenceStatusDelegate>("vkGetFenceStatus");
                 DestroySemaphore = GetDeviceDelegate<DestroySemaphoreDelegate>("vkDestroySemaphore");
                 DestroyEvent = GetDeviceDelegate<DestroyEventDelegate>("vkDestroyEvent");
+                GetEventStatus = GetDeviceDelegate<GetEventStatusDelegate>("vkGetEventStatus");
+                SetEvent = GetDeviceDelegate<SetEventDelegate>("vkSetEvent");
+                ResetEvent = GetDeviceDelegate<ResetEventDelegate>("vkResetEvent");
                 DestroyDevice = GetDeviceDelegate<DestroyDeviceDelegate>("vkDestroyDevice");
                 DeviceWaitIdle = GetDeviceDelegate<DeviceWaitIdleDelegate>("vkDeviceWaitIdle");
                 CreateCommandPool = GetDeviceDelegate<CreateCommandPoolDelegate>("vkCreateCommandPool");

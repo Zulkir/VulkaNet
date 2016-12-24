@@ -27,5 +27,31 @@ namespace VulkaNetGenerator.GenStructs
             [CountFor("commandBuffers")] int commandBufferCount,
             [IsArray] GenCommandBuffer* pCommandBuffers)
         { }
+
+        public void CmdSetEvent(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            GenEvent eventObj,
+            VkPipelineStageFlags stageMask)
+        { }
+
+        public void CmdResetEvent(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            GenEvent eventObj,
+            VkPipelineStageFlags stageMask)
+        { }
+
+        public void CmdWaitEvents(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            [CountFor("events")] int eventCount,
+            [IsArray] GenEvent* pEvents,
+            VkPipelineStageFlags srcStageMask,
+            VkPipelineStageFlags dstStageMask,
+            [CountFor("memoryBarriers")] int memoryBarrierCount,
+            [IsArray] GenMemoryBarrier* pMemoryBarriers,
+            [CountFor("bufferMemoryBarriers")] int bufferMemoryBarrierCount,
+            [IsArray] GenBufferMemoryBarrier* pBufferMemoryBarriers,
+            [CountFor("imageMemoryBarriers")] int imageMemoryBarrierCount,
+            [IsArray] GenImageMemoryBarrier* pImageMemoryBarriers)
+        { }
     }
 }

@@ -47,6 +47,9 @@ namespace VulkaNetGenerator
             generator.GenerateStruct<GenFenceCreateInfo>(true, false);
             generator.GenerateStruct<GenSemaphoreCreateInfo>(true, false);
             generator.GenerateStruct<GenEventCreateInfo>(true, false);
+            generator.GenerateStruct<GenMemoryBarrier>(true, false);
+            generator.GenerateStruct<GenBufferMemoryBarrier>(true, false);
+            generator.GenerateStruct<GenImageMemoryBarrier>(true, false);
 
             generator.GenerateClass<GenQueue>();
             generator.GenerateClass<GenCommandPool>();

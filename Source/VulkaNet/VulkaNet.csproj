@@ -51,6 +51,7 @@
     <Compile Include="VkBuffer.cs" />
     <Compile Include="VkBufferMemoryBarrier.cs" />
     <Compile Include="VkClearValue.cs" />
+    <Compile Include="VkComputePipelineCreateInfo.cs" />
     <Compile Include="VkDependencyFlags.cs" />
     <Compile Include="VkEvent.cs" />
     <Compile Include="VkEventCreateFlags.cs" />
@@ -88,7 +89,13 @@
     <Compile Include="VkImageSubresourceRange.cs" />
     <Compile Include="VkImageView.cs" />
     <Compile Include="VkMemoryBarrier.cs" />
+    <Compile Include="VkPipeline.cs" />
     <Compile Include="VkPipelineBindPoint .cs" />
+    <Compile Include="VkPipelineCache.cs" />
+    <Compile Include="VkPipelineCreateFlags.cs" />
+    <Compile Include="VkPipelineLayout.cs" />
+    <Compile Include="VkPipelineShaderStageCreateFlags.cs" />
+    <Compile Include="VkPipelineShaderStageCreateInfo.cs" />
     <Compile Include="VkPipelineStageFlagBits.cs" />
     <Compile Include="VkPipelineStageFlags.cs" />
     <Compile Include="VkQueryControlFlags.cs" />
@@ -147,6 +154,9 @@
     <Compile Include="VkShaderModule.cs" />
     <Compile Include="VkShaderModuleCreateFlags.cs" />
     <Compile Include="VkShaderModuleCreateInfo.cs" />
+    <Compile Include="VkShaderStageFlagBits.cs" />
+    <Compile Include="VkSpecializationInfo.cs" />
+    <Compile Include="VkSpecializationMapEntry.cs" />
     <Compile Include="VkStructureType.cs" />
     <Compile Include="VkSubmitInfo.cs" />
     <Compile Include="VkSubpassContents.cs" />

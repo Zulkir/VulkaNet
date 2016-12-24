@@ -33,6 +33,7 @@ namespace VulkaNetGenerator.Dummies
     public struct VkRect2D { }
     public struct VkClearValue { }
     public struct VkExtent2D { }
+    public struct VkSpecializationMapEntry { }
     
     public enum VkResult { }
     public enum VkStructureType { }
@@ -67,6 +68,9 @@ namespace VulkaNetGenerator.Dummies
     public enum VkFramebufferCreateFlags { }
     public enum VkSubpassContents { }
     public enum VkShaderModuleCreateFlags { }
+    public enum VkPipelineCreateFlags { }
+    public enum VkPipelineShaderStageCreateFlags { }
+    public enum VkShaderStageFlagBits { }
 
     //public struct HndCommandPool { }
     //public struct HndRenderPass { }

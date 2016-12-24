@@ -18,7 +18,7 @@
             Raw = raw;
             TypeStr = DeriveTypeStr(raw);
             Name = DeriveName(raw);
-            MarshalledAsUnmanaged = IsMarshalledAsUnamanaged(raw);
+            
             NeedsCast = DeriveNeedsCast(raw.TypeStr, TypeStr);
             CreatorFunc = DeriveCreatorFunc(raw, TypeStr);
             CreatorFuncTakesPtr = DeriveCreatorFuncTakesPtr(raw);
@@ -26,6 +26,7 @@
             DeriveMarshalMethods(raw, out sizeMethod, out marshalMethod);
             SizeMethod = sizeMethod;
             MarshalMethod = marshalMethod;
+            MarshalledAsUnmanaged = IsMarshalledAsUnamanaged(raw);
         }
 
         private static string DeriveTypeStr(TRaw raw)
@@ -132,6 +133,6 @@
             name[0] == 'p' && char.IsUpper(name[1]);
 
         private static bool IsMarshalledAsUnamanaged(TRaw raw) => 
-            raw.IsUnmanagedPtr;
+            raw.ShouldMarshal;
     }
 }

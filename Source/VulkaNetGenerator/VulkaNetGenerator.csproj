@@ -66,6 +66,7 @@
     <Compile Include="GenStructs\GenCommandBufferInheritanceInfo.cs" />
     <Compile Include="GenStructs\GenCommandPool.cs" />
     <Compile Include="GenStructs\GenCommandPoolCreateInfo.cs" />
+    <Compile Include="GenStructs\GenComputePipelineCreateInfo.cs" />
     <Compile Include="GenStructs\GenDevice.cs" />
     <Compile Include="GenStructs\GenDeviceCreateInfo.cs" />
     <Compile Include="GenStructs\GenDeviceQueueCreateInfo.cs" />
@@ -84,6 +85,9 @@
     <Compile Include="GenStructs\GenPhysicalDeviceLimits.cs" />
     <Compile Include="GenStructs\GenPhysicalDeviceProperties.cs" />
     <Compile Include="GenStructs\GenPhysicalDeviceSparseProperties.cs" />
+    <Compile Include="GenStructs\GenPipeline.cs" />
+    <Compile Include="GenStructs\GenPipelineCache.cs" />
+    <Compile Include="GenStructs\GenPipelineShaderStageCreateInfo.cs" />
     <Compile Include="GenStructs\GenQueue.cs" />
     <Compile Include="GenStructs\GenRenderPass.cs" />
     <Compile Include="GenStructs\GenRenderPassBeginInfo.cs" />
@@ -91,6 +95,7 @@
     <Compile Include="GenStructs\GenSemaphore.cs" />
     <Compile Include="GenStructs\GenSemaphoreCreateInfo.cs" />
     <Compile Include="GenStructs\GenShaderModuleCreateInfo.cs" />
+    <Compile Include="GenStructs\GenSpecializationInfo.cs" />
     <Compile Include="GenStructs\GenSubmitInfo.cs" />
     <Compile Include="Dummies\IGenHandledObject.cs" />
     <Compile Include="Attributes\IsArrayAttribute.cs" />
@@ -99,6 +104,7 @@
     <Compile Include="GenStructs\GenSubpassDependency.cs" />
     <Compile Include="GenStructs\GenSubpassDescription.cs" />
     <Compile Include="GenStructs\GenShaderModule.cs" />
+    <Compile Include="GenStructs\GenPipelineLayout.cs" />
     <Compile Include="Reflection\RawField.cs" />
     <Compile Include="Reflection\RawFunction.cs" />
     <Compile Include="Reflection\RawParameter.cs" />

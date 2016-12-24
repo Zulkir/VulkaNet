@@ -84,5 +84,14 @@ namespace VulkaNetGenerator.GenStructs
             GenAllocationCallbacks* pAllocator,
             [Return] GenShaderModule* pShaderModule)
             => default(VkResult);
+
+        public VkResult CreateComputePipelines(
+            [FromProperty("this")] GenDevice device,
+            GenPipelineCache pipelineCache,
+            [CountFor("createInfos")] int createInfoCount,
+            [IsArray] GenComputePipelineCreateInfo* pCreateInfos,
+            GenAllocationCallbacks* pAllocator,
+            [Return] GenPipeline* pPipelines)
+            => default(VkResult);
     }
 }

@@ -57,6 +57,9 @@ namespace VulkaNetGenerator
             generator.GenerateStruct<GenFramebufferCreateInfo>(true, false);
             generator.GenerateStruct<GenRenderPassBeginInfo>(true, false);
             generator.GenerateStruct<GenShaderModuleCreateInfo>(true, false);
+            generator.GenerateStruct<GenComputePipelineCreateInfo>(true, false);
+            generator.GenerateStruct<GenPipelineShaderStageCreateInfo>(true, false);
+            generator.GenerateStruct<GenSpecializationInfo>(true, false);
 
             generator.GenerateClass<GenQueue>();
             generator.GenerateClass<GenCommandPool>();
@@ -70,6 +73,9 @@ namespace VulkaNetGenerator
             generator.GenerateClass<GenFramebuffer>();
             generator.GenerateClass<GenImageView>();
             generator.GenerateClass<GenShaderModule>();
+            generator.GenerateClass<GenPipeline>();
+            generator.GenerateClass<GenPipelineLayout>();
+            generator.GenerateClass<GenPipelineCache>();
 
             generator.GenerateClass<GenDevice>();
         }

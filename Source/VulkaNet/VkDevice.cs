@@ -49,6 +49,7 @@ namespace VulkaNet
         VkObjectResult<IVkRenderPass> CreateRenderPass(IVkRenderPassCreateInfo createInfo, IVkAllocationCallbacks allocator);
         VkObjectResult<IVkFramebuffer> CreateFramebuffer(IVkFramebufferCreateInfo createInfo, IVkAllocationCallbacks allocator);
         VkObjectResult<IVkShaderModule> CreateShaderModule(IVkShaderModuleCreateInfo createInfo, IVkAllocationCallbacks allocator);
+        VkObjectResult<IVkPipeline> CreateComputePipelines(IVkPipelineCache pipelineCache, IReadOnlyList<IVkComputePipelineCreateInfo> createInfos, IVkAllocationCallbacks allocator);
     }
 
     public unsafe class VkDevice : IVkDevice
@@ -260,6 +261,12 @@ namespace VulkaNet
                 VkShaderModule.HandleType shaderModule,
                 VkAllocationCallbacks.Raw* pAllocator);
 
+            public DestroyPipelineDelegate DestroyPipeline { get; }
+            public delegate void DestroyPipelineDelegate(
+                HandleType device,
+                VkPipeline.HandleType pipeline,
+                VkAllocationCallbacks.Raw* pAllocator);
+
             public DestroyDeviceDelegate DestroyDevice { get; }
             public delegate void DestroyDeviceDelegate(
                 HandleType device,
@@ -338,6 +345,15 @@ namespace VulkaNet
                 VkAllocationCallbacks.Raw* pAllocator,
                 VkShaderModule.HandleType* pShaderModule);
 
+            public CreateComputePipelinesDelegate CreateComputePipelines { get; }
+            public delegate VkResult CreateComputePipelinesDelegate(
+                HandleType device,
+                VkPipelineCache.HandleType pipelineCache,
+                int createInfoCount,
+                VkComputePipelineCreateInfo.Raw* pCreateInfos,
+                VkAllocationCallbacks.Raw* pAllocator,
+                VkPipeline.HandleType* pPipelines);
+
             public DirectFunctions(IVkDevice device)
             {
                 this.device = device;
@@ -370,6 +386,7 @@ namespace VulkaNet
                 GetRenderAreaGranularity = GetDeviceDelegate<GetRenderAreaGranularityDelegate>("vkGetRenderAreaGranularity");
                 DestroyFramebuffer = GetDeviceDelegate<DestroyFramebufferDelegate>("vkDestroyFramebuffer");
                 DestroyShaderModule = GetDeviceDelegate<DestroyShaderModuleDelegate>("vkDestroyShaderModule");
+                DestroyPipeline = GetDeviceDelegate<DestroyPipelineDelegate>("vkDestroyPipeline");
                 DestroyDevice = GetDeviceDelegate<DestroyDeviceDelegate>("vkDestroyDevice");
                 DeviceWaitIdle = GetDeviceDelegate<DeviceWaitIdleDelegate>("vkDeviceWaitIdle");
                 CreateCommandPool = GetDeviceDelegate<CreateCommandPoolDelegate>("vkCreateCommandPool");
@@ -382,6 +399,7 @@ namespace VulkaNet
                 CreateRenderPass = GetDeviceDelegate<CreateRenderPassDelegate>("vkCreateRenderPass");
                 CreateFramebuffer = GetDeviceDelegate<CreateFramebufferDelegate>("vkCreateFramebuffer");
                 CreateShaderModule = GetDeviceDelegate<CreateShaderModuleDelegate>("vkCreateShaderModule");
+                CreateComputePipelines = GetDeviceDelegate<CreateComputePipelinesDelegate>("vkCreateComputePipelines");
             }
 
             public TDelegate GetDeviceDelegate<TDelegate>(string name)
@@ -605,6 +623,27 @@ namespace VulkaNet
                 var result = Direct.CreateShaderModule(_device, _pCreateInfo, _pAllocator, &_pShaderModule);
                 var instance = result == VkResult.Success ? new VkShaderModule(this, _pShaderModule, allocator) : null;
                 return new VkObjectResult<IVkShaderModule>(result, instance);
+            }
+        }
+
+        public VkObjectResult<IVkPipeline> CreateComputePipelines(IVkPipelineCache pipelineCache, IReadOnlyList<IVkComputePipelineCreateInfo> createInfos, IVkAllocationCallbacks allocator)
+        {
+            var unmanagedSize =
+                createInfos.SizeOfMarshalDirect() +
+                allocator.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _device = Handle;
+                var _pipelineCache = pipelineCache?.Handle ?? VkPipelineCache.HandleType.Null;
+                var _createInfoCount = createInfos?.Count ?? 0;
+                var _pCreateInfos = createInfos.MarshalDirect(ref unmanaged);
+                var _pAllocator = allocator.MarshalIndirect(ref unmanaged);
+                VkPipeline.HandleType _pPipelines;
+                var result = Direct.CreateComputePipelines(_device, _pipelineCache, _createInfoCount, _pCreateInfos, _pAllocator, &_pPipelines);
+                var instance = result == VkResult.Success ? new VkPipeline(this, _pPipelines, allocator) : null;
+                return new VkObjectResult<IVkPipeline>(result, instance);
             }
         }
 

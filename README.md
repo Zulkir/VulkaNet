@@ -1,2 +1,2 @@
 # VulkaNet
-.NET wrapper for the Vulkan graphics API
+.NET / C# wrapper for the Vulkan graphics API

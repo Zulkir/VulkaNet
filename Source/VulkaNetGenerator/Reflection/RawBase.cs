@@ -26,6 +26,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using VulkaNetGenerator.Attributes;
+using VulkaNetGenerator.Dummies;
 
 namespace VulkaNetGenerator.Reflection
 {
@@ -122,7 +123,9 @@ namespace VulkaNetGenerator.Reflection
         private static bool DeriveIsHandle(Type genType)
         {
             var internalType = genType.IsPointer ? genType.GetElementType() : genType;
-            return HasAttribute<HandledAttribute>(internalType.CustomAttributes.ToArray());
+            return
+                typeof(IGenHandledObject).IsAssignableFrom(internalType) ||
+                typeof(IGenNonDispatchableHandledObject).IsAssignableFrom(internalType);
         }
 
         protected static bool HasAttribute<T>(CustomAttributeData[] attributes) =>

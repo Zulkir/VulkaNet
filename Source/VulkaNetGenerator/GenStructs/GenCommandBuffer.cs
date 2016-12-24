@@ -3,8 +3,7 @@ using VulkaNetGenerator.Dummies;
 
 namespace VulkaNetGenerator.GenStructs
 {
-    [Handled]
-    public unsafe struct GenCommandBuffer : IGenHandledObject, IGenDeviceChild
+    public unsafe struct GenCommandBuffer : IGenHandledObject
     {
         [MethodName("Reset")]
         public VkResult ResetCommandBuffer(

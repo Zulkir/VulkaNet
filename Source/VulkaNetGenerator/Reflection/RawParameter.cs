@@ -9,7 +9,6 @@ namespace VulkaNetGenerator.Reflection
     {
         public bool IsReturnParam { get; }
         public string ReturnCount { get; }
-        public bool IsSelf { get; }
         public string FromProperty { get; }
 
         public RawParameter(ParameterInfo parameterInfo)
@@ -17,9 +16,6 @@ namespace VulkaNetGenerator.Reflection
         {
             IsReturnParam = HasAttribute<ReturnAttribute>(attributes);
             ReturnCount = GetAttrValue<ReturnCountAttribute>(attributes);
-            IsSelf = HasAttribute<SelfAttribute>(attributes);
-            if (IsSelf/* || TypeStr == $"Vk{Name}.Handle"*/)
-                IgnoreInWrapper = true;
             if (IsReturnParam)
                 IgnoreInWrapper = true;
             FromProperty = GetAttrValue<FromPropertyAttribute>(attributes);

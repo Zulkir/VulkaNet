@@ -3,7 +3,6 @@ using VulkaNetGenerator.Dummies;
 
 namespace VulkaNetGenerator.GenStructs
 {
-    [Handled]
     public unsafe struct GenDevice : IGenHandledObject
     {
         [MethodName("Dispose")]

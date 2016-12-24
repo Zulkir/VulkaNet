@@ -3,8 +3,7 @@ using VulkaNetGenerator.Dummies;
 
 namespace VulkaNetGenerator.GenStructs
 {
-    [Handled]
-    public unsafe struct GenCommandPool : IGenNonDispatchableHandledObject, IGenDeviceChild
+    public unsafe struct GenCommandPool : IGenNonDispatchableHandledObject
     {
         [MethodName("Dispose")]
         public void DestroyCommandPool(

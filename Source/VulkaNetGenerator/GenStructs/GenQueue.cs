@@ -3,8 +3,7 @@ using VulkaNetGenerator.Dummies;
 
 namespace VulkaNetGenerator.GenStructs
 {
-    [Handled]
-    public unsafe struct GenQueue : IGenHandledObject, IGenDeviceChild
+    public unsafe struct GenQueue : IGenHandledObject
     {
         public VkResult QueueSubmitDelegate(
             [FromProperty("this")] GenQueue queue,

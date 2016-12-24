@@ -51,7 +51,6 @@
     <Compile Include="Attributes\DisposeAttribute.cs" />
     <Compile Include="Attributes\ReturnCountAttribute.cs" />
     <Compile Include="Attributes\FromPropertyAttribute.cs" />
-    <Compile Include="Attributes\HandledAttribute.cs" />
     <Compile Include="CodeWriter.cs" />
     <Compile Include="Attributes\CountForAttribute.cs" />
     <Compile Include="Dummies\DummyTypes.cs" />
@@ -67,6 +66,7 @@
     <Compile Include="GenStructs\GenDevice.cs" />
     <Compile Include="GenStructs\GenDeviceCreateInfo.cs" />
     <Compile Include="GenStructs\GenDeviceQueueCreateInfo.cs" />
+    <Compile Include="GenStructs\GenEvent.cs" />
     <Compile Include="GenStructs\GenFence.cs" />
     <Compile Include="GenStructs\GenFenceCreateInfo.cs" />
     <Compile Include="GenStructs\GenFramebuffer.cs" />
@@ -80,7 +80,6 @@
     <Compile Include="GenStructs\GenSemaphore.cs" />
     <Compile Include="GenStructs\GenSemaphoreCreateInfo.cs" />
     <Compile Include="GenStructs\GenSubmitInfo.cs" />
-    <Compile Include="Dummies\IGenDeviceChild.cs" />
     <Compile Include="Dummies\IGenHandledObject.cs" />
     <Compile Include="Attributes\IsArrayAttribute.cs" />
     <Compile Include="Attributes\MethodNameAttribute.cs" />
@@ -89,7 +88,6 @@
     <Compile Include="Reflection\RawFunction.cs" />
     <Compile Include="Reflection\RawParameter.cs" />
     <Compile Include="Attributes\ReturnAttribute.cs" />
-    <Compile Include="Attributes\SelfAttribute.cs" />
     <Compile Include="Dummies\StrByte.cs" />
     <Compile Include="Generator.cs" />
     <Compile Include="Program.cs" />

@@ -3,8 +3,7 @@ using VulkaNetGenerator.Dummies;
 
 namespace VulkaNetGenerator.GenStructs
 {
-    [Handled]
-    public unsafe struct GenSemaphore : IGenNonDispatchableHandledObject, IGenDeviceChild
+    public unsafe struct GenSemaphore : IGenNonDispatchableHandledObject
     {
         [MethodName("Dispose")]
         public void DestroySemaphore(

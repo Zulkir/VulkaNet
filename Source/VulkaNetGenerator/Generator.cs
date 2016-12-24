@@ -301,7 +301,7 @@ namespace VulkaNetGenerator
                         interfaces.Add("IVkHandledObject");
                     if (typeof(IGenNonDispatchableHandledObject).IsAssignableFrom(type))
                         interfaces.Add("IVkNonDispatchableHandledObject");
-                    if (typeof(IGenDeviceChild).IsAssignableFrom(type))
+                    if (!isDevice)
                         interfaces.Add("IVkDeviceChild");
                     if (wrapperMethods.Any(x => x.Name == "Dispose"))
                         interfaces.Add("IDisposable");

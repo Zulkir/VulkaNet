@@ -1,9 +1,8 @@
-﻿using VulkaNetGenerator.Attributes;
+﻿using VulkaNetGenerator.Dummies;
 
 namespace VulkaNetGenerator.GenStructs
 {
-    [Handled]
-    public struct GenRenderPass
+    public struct GenRenderPass : IGenNonDispatchableHandledObject
     {
         
     }

@@ -22,6 +22,8 @@ THE SOFTWARE.
 */
 #endregion
 
+using VulkaNetGenerator.GenStructs;
+
 namespace VulkaNetGenerator
 {
     class Program

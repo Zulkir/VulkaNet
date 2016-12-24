@@ -77,5 +77,12 @@ namespace VulkaNetGenerator.GenStructs
             GenAllocationCallbacks* pAllocator,
             [Return] GenFramebuffer* pFramebuffer)
             => default(VkResult);
+
+        public VkResult CreateShaderModule(
+            [FromProperty("this")] GenDevice device,
+            GenShaderModuleCreateInfo* pCreateInfo,
+            GenAllocationCallbacks* pAllocator,
+            [Return] GenShaderModule* pShaderModule)
+            => default(VkResult);
     }
 }

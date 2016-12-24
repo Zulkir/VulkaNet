@@ -19,7 +19,7 @@
             TypeStr = DeriveTypeStr(raw);
             Name = DeriveName(raw);
             MarshalledAsUnmanaged = IsMarshalledAsUnamanaged(raw);
-            NeedsCast = DeriveNeedsCast(raw);
+            NeedsCast = DeriveNeedsCast(raw.TypeStr, TypeStr);
             CreatorFunc = DeriveCreatorFunc(raw, TypeStr);
             CreatorFuncTakesPtr = DeriveCreatorFuncTakesPtr(raw);
             string sizeMethod, marshalMethod;
@@ -86,9 +86,11 @@
         private static bool DeriveCreatorFuncTakesPtr(TRaw rawField) => 
             !rawField.TypeStr.EndsWith("*") && rawField.FixedArraySize == null;
 
-        private static bool DeriveNeedsCast(TRaw rawField)
+        private static bool DeriveNeedsCast(string rawTypeStr, string thisTypeStr)
         {
-            if (rawField.TypeStr == "VkBool32")
+            if (rawTypeStr == "VkBool32")
+                return true;
+            if (rawTypeStr == "IntPtr" && thisTypeStr == "int")
                 return true;
             return false;
         }

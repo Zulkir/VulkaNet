@@ -22,7 +22,6 @@ THE SOFTWARE.
 */
 #endregion
 
-using System;
 using VulkaNetGenerator.Attributes;
 using VulkaNetGenerator.Dummies;
 
@@ -100,7 +99,7 @@ namespace VulkaNetGenerator.GenStructs
         [AsType("VkVector2"), FixedArray("2")]
         public float* viewportBoundsRange;
         public uint viewportSubPixelBits;
-        public IntPtr minMemoryMapAlignment;
+        public Sizet minMemoryMapAlignment;
         public ulong minTexelBufferOffsetAlignment;
         public ulong minUniformBufferOffsetAlignment;
         public ulong minStorageBufferOffsetAlignment;

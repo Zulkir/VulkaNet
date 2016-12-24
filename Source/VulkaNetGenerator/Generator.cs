@@ -53,7 +53,7 @@ namespace VulkaNetGenerator
                 var rawFields = BuildRawFields(type);
                 var wrapperProperties = BuildWrapperProps(rawFields);
 
-                if (input || wrapperProperties.Any(x => x.TypeStr == "IntPtr"))
+                if (input || rawFields.Any(x => x.TypeStr == "IntPtr") || wrapperProperties.Any(x => x.TypeStr == "IntPtr"))
                     writer.WriteLine("using System;");
                 if (input || wrapperProperties.Any(x => x.TypeStr.Contains("ReadOnlyList")))
                 {
@@ -174,6 +174,7 @@ namespace VulkaNetGenerator
                                                field.IsHandle ? $"s.{prop?.Name}?.Handle ?? {field.TypeStr}.Null" :
                                                field.IsCountFor != null ? $"s.{field.IsCountFor}?.Count ?? 0" :
                                                field.TypeStr == "VkBool32" ? $"new VkBool32(s.{prop?.Name})" :
+                                               (prop?.NeedsCast ?? false) ? $"({field.TypeStr})s.{prop.Name}" :
                                                $"s.{prop?.Name}";
                                     writer.WriteLine($"result.{field.Name} = {rval};");
                                 }

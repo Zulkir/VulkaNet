@@ -54,6 +54,7 @@
     <Compile Include="Attributes\CountForAttribute.cs" />
     <Compile Include="Dummies\DummyTypes.cs" />
     <Compile Include="Attributes\FixedArrayAttribute.cs" />
+    <Compile Include="Dummies\Sizet.cs" />
     <Compile Include="GenStructs\GenAllocationCallbacks.cs" />
     <Compile Include="GenStructs\GenApplicationInfo.cs" />
     <Compile Include="GenStructs\GenAttachmentDescription.cs" />
@@ -89,6 +90,7 @@
     <Compile Include="GenStructs\GenRenderPassCreateInfo.cs" />
     <Compile Include="GenStructs\GenSemaphore.cs" />
     <Compile Include="GenStructs\GenSemaphoreCreateInfo.cs" />
+    <Compile Include="GenStructs\GenShaderModuleCreateInfo.cs" />
     <Compile Include="GenStructs\GenSubmitInfo.cs" />
     <Compile Include="Dummies\IGenHandledObject.cs" />
     <Compile Include="Attributes\IsArrayAttribute.cs" />
@@ -96,6 +98,7 @@
     <Compile Include="Dummies\IGenNonDispatchableHandledObject.cs" />
     <Compile Include="GenStructs\GenSubpassDependency.cs" />
     <Compile Include="GenStructs\GenSubpassDescription.cs" />
+    <Compile Include="GenStructs\GenShaderModule.cs" />
     <Compile Include="Reflection\RawField.cs" />
     <Compile Include="Reflection\RawFunction.cs" />
     <Compile Include="Reflection\RawParameter.cs" />

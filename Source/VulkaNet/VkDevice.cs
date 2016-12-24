@@ -48,6 +48,7 @@ namespace VulkaNet
         VkObjectResult<IVkEvent> CreateEvent(IVkEventCreateInfo createInfo, IVkAllocationCallbacks allocator);
         VkObjectResult<IVkRenderPass> CreateRenderPass(IVkRenderPassCreateInfo createInfo, IVkAllocationCallbacks allocator);
         VkObjectResult<IVkFramebuffer> CreateFramebuffer(IVkFramebufferCreateInfo createInfo, IVkAllocationCallbacks allocator);
+        VkObjectResult<IVkShaderModule> CreateShaderModule(IVkShaderModuleCreateInfo createInfo, IVkAllocationCallbacks allocator);
     }
 
     public unsafe class VkDevice : IVkDevice
@@ -253,6 +254,12 @@ namespace VulkaNet
                 VkFramebuffer.HandleType framebuffer,
                 VkAllocationCallbacks.Raw* pAllocator);
 
+            public DestroyShaderModuleDelegate DestroyShaderModule { get; }
+            public delegate void DestroyShaderModuleDelegate(
+                HandleType device,
+                VkShaderModule.HandleType shaderModule,
+                VkAllocationCallbacks.Raw* pAllocator);
+
             public DestroyDeviceDelegate DestroyDevice { get; }
             public delegate void DestroyDeviceDelegate(
                 HandleType device,
@@ -324,6 +331,13 @@ namespace VulkaNet
                 VkAllocationCallbacks.Raw* pAllocator,
                 VkFramebuffer.HandleType* pFramebuffer);
 
+            public CreateShaderModuleDelegate CreateShaderModule { get; }
+            public delegate VkResult CreateShaderModuleDelegate(
+                HandleType device,
+                VkShaderModuleCreateInfo.Raw* pCreateInfo,
+                VkAllocationCallbacks.Raw* pAllocator,
+                VkShaderModule.HandleType* pShaderModule);
+
             public DirectFunctions(IVkDevice device)
             {
                 this.device = device;
@@ -355,6 +369,7 @@ namespace VulkaNet
                 DestroyRenderPass = GetDeviceDelegate<DestroyRenderPassDelegate>("vkDestroyRenderPass");
                 GetRenderAreaGranularity = GetDeviceDelegate<GetRenderAreaGranularityDelegate>("vkGetRenderAreaGranularity");
                 DestroyFramebuffer = GetDeviceDelegate<DestroyFramebufferDelegate>("vkDestroyFramebuffer");
+                DestroyShaderModule = GetDeviceDelegate<DestroyShaderModuleDelegate>("vkDestroyShaderModule");
                 DestroyDevice = GetDeviceDelegate<DestroyDeviceDelegate>("vkDestroyDevice");
                 DeviceWaitIdle = GetDeviceDelegate<DeviceWaitIdleDelegate>("vkDeviceWaitIdle");
                 CreateCommandPool = GetDeviceDelegate<CreateCommandPoolDelegate>("vkCreateCommandPool");
@@ -366,6 +381,7 @@ namespace VulkaNet
                 CreateEvent = GetDeviceDelegate<CreateEventDelegate>("vkCreateEvent");
                 CreateRenderPass = GetDeviceDelegate<CreateRenderPassDelegate>("vkCreateRenderPass");
                 CreateFramebuffer = GetDeviceDelegate<CreateFramebufferDelegate>("vkCreateFramebuffer");
+                CreateShaderModule = GetDeviceDelegate<CreateShaderModuleDelegate>("vkCreateShaderModule");
             }
 
             public TDelegate GetDeviceDelegate<TDelegate>(string name)
@@ -570,6 +586,25 @@ namespace VulkaNet
                 var result = Direct.CreateFramebuffer(_device, _pCreateInfo, _pAllocator, &_pFramebuffer);
                 var instance = result == VkResult.Success ? new VkFramebuffer(this, _pFramebuffer, allocator) : null;
                 return new VkObjectResult<IVkFramebuffer>(result, instance);
+            }
+        }
+
+        public VkObjectResult<IVkShaderModule> CreateShaderModule(IVkShaderModuleCreateInfo createInfo, IVkAllocationCallbacks allocator)
+        {
+            var unmanagedSize =
+                createInfo.SizeOfMarshalIndirect() +
+                allocator.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _device = Handle;
+                var _pCreateInfo = createInfo.MarshalIndirect(ref unmanaged);
+                var _pAllocator = allocator.MarshalIndirect(ref unmanaged);
+                VkShaderModule.HandleType _pShaderModule;
+                var result = Direct.CreateShaderModule(_device, _pCreateInfo, _pAllocator, &_pShaderModule);
+                var instance = result == VkResult.Success ? new VkShaderModule(this, _pShaderModule, allocator) : null;
+                return new VkObjectResult<IVkShaderModule>(result, instance);
             }
         }
 

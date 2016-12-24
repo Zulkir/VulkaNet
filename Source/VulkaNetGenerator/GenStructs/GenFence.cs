@@ -4,7 +4,7 @@ using VulkaNetGenerator.Dummies;
 namespace VulkaNetGenerator.GenStructs
 {
     [Handled]
-    public unsafe struct GenFence : IGenDeviceChild, IGenNonDispatchableHandledObject, IGenAllocatable
+    public unsafe struct GenFence : IGenDeviceChild, IGenNonDispatchableHandledObject
     {
         [Dispose]
         [MethodName("Dispose")]

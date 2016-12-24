@@ -114,6 +114,8 @@
     <Compile Include="VkResultExtensions.cs" />
     <Compile Include="VkSampleCountFlags.cs" />
     <Compile Include="VkSemaphore.cs" />
+    <Compile Include="VkSemaphoreCreateFlags.cs" />
+    <Compile Include="VkSemaphoreCreateInfo.cs" />
     <Compile Include="VkStructureType.cs" />
     <Compile Include="VkSubmitInfo.cs" />
     <Compile Include="VkSystemAllocationScope.cs" />

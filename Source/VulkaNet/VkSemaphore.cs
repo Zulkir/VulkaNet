@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 /*
 Copyright (c) 2016 VulkaNet Project - Daniil Rodin
 
@@ -22,23 +22,33 @@ THE SOFTWARE.
 */
 #endregion
 
+using System;
 using System.Collections.Generic;
 
 namespace VulkaNet
 {
-    public interface IVkSemaphore : IVkNonDispatchableHandledObject
+    public interface IVkSemaphore : IVkNonDispatchableHandledObject, IVkDeviceChild, IDisposable
     {
         VkSemaphore.HandleType Handle { get; }
+        IVkAllocationCallbacks Allocator { get; }
     }
 
-    public class VkSemaphore : IVkSemaphore
+    public unsafe class VkSemaphore : IVkSemaphore
     {
-        public HandleType Handle { get; }
         public IVkDevice Device { get; }
+        public HandleType Handle { get; }
         public IVkAllocationCallbacks Allocator { get; }
-        //public DirectFunctions Direct { get; }
+
+        private VkDevice.DirectFunctions Direct => Device.Direct;
 
         public ulong RawHandle => Handle.InternalHandle;
+
+        public VkSemaphore(IVkDevice device, HandleType handle, IVkAllocationCallbacks allocator)
+        {
+            Device = device;
+            Handle = handle;
+            Allocator = allocator;
+        }
 
         public struct HandleType
         {
@@ -46,7 +56,24 @@ namespace VulkaNet
             public HandleType(ulong internalHandle) { InternalHandle = internalHandle; }
             public override string ToString() => InternalHandle.ToString();
             public static int SizeInBytes { get; } = sizeof(ulong);
+            public static HandleType Null => new HandleType(default(ulong));
         }
+
+        public void Dispose()
+        {
+            var unmanagedSize =
+                Allocator.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _device = Device.Handle;
+                var _semaphore = Handle;
+                var _pAllocator = Allocator.MarshalIndirect(ref unmanaged);
+                Direct.DestroySemaphore(_device, _semaphore, _pAllocator);
+            }
+        }
+
     }
 
     public static unsafe class VkSemaphoreExtensions

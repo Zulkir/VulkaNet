@@ -45,11 +45,13 @@ namespace VulkaNetGenerator
             generator.GenerateStruct<GenPhysicalDeviceFeatures>(true, true);
             generator.GenerateStruct<GenDeviceCreateInfo>(true, false);
             generator.GenerateStruct<GenFenceCreateInfo>(true, false);
+            generator.GenerateStruct<GenSemaphoreCreateInfo>(true, false);
 
             generator.GenerateClass<GenQueue>();
             generator.GenerateClass<GenCommandPool>();
             generator.GenerateClass<GenCommandBuffer>();
             generator.GenerateClass<GenFence>();
+            generator.GenerateClass<GenSemaphore>();
 
             generator.GenerateClass<GenDevice>();
         }

@@ -53,7 +53,8 @@ namespace VulkaNetGenerator
                 var rawFields = BuildRawFields(type);
                 var wrapperProperties = BuildWrapperProps(rawFields);
 
-                writer.WriteLine("using System;");
+                if (input || wrapperProperties.Any(x => x.TypeStr == "IntPtr"))
+                    writer.WriteLine("using System;");
                 if (input || wrapperProperties.Any(x => x.TypeStr.Contains("ReadOnlyList")))
                 {
                     writer.WriteLine("using System.Collections.Generic;");
@@ -293,7 +294,7 @@ namespace VulkaNetGenerator
                 writer.WriteLine("namespace VulkaNet");
                 using (writer.Curly())
                 {
-                    var isAllocatable = typeof(IGenAllocatable).IsAssignableFrom(type);
+                    var isAllocatable = rawFunctions.SelectMany(x => x.Parameters).Any(x => x.FromProperty == "Allocator");
 
                     var interfaces = new List<string>();
                     if (typeof(IGenHandledObject).IsAssignableFrom(type))

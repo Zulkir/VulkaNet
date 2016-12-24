@@ -4,7 +4,7 @@ using VulkaNetGenerator.Dummies;
 namespace VulkaNetGenerator.GenStructs
 {
     [Handled]
-    public unsafe struct GenDevice : IGenHandledObject, IGenAllocatable
+    public unsafe struct GenDevice : IGenHandledObject
     {
         [MethodName("Dispose")]
         public void DestroyDevice(
@@ -49,6 +49,13 @@ namespace VulkaNetGenerator.GenStructs
             [IsArray] GenFence* pFences,
             VkBool32 waitAll,
             ulong timeout)
+            => default(VkResult);
+
+        public VkResult CreateSemaphore(
+            [FromProperty("this")] GenDevice device,
+            GenSemaphoreCreateInfo* pCreateInfo,
+            GenAllocationCallbacks* pAllocator,
+            [Return] GenSemaphore* pSemaphore)
             => default(VkResult);
     }
 }

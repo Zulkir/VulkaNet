@@ -53,5 +53,18 @@ namespace VulkaNetGenerator.GenStructs
             [CountFor("imageMemoryBarriers")] int imageMemoryBarrierCount,
             [IsArray] GenImageMemoryBarrier* pImageMemoryBarriers)
         { }
+
+        public void CmdPipelineBarrier(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            VkPipelineStageFlags srcStageMask,
+            VkPipelineStageFlags dstStageMask,
+            VkDependencyFlags dependencyFlags,
+            [CountFor("memoryBarriers")] int memoryBarrierCount,
+            [IsArray] GenMemoryBarrier* pMemoryBarriers,
+            [CountFor("bufferMemoryBarriers")] int bufferMemoryBarrierCount,
+            [IsArray] GenBufferMemoryBarrier* pBufferMemoryBarriers,
+            [CountFor("imageMemoryBarriers")] int imageMemoryBarrierCount,
+            [IsArray] GenImageMemoryBarrier* pImageMemoryBarriers)
+        { }
     }
 }

@@ -26,6 +26,7 @@ namespace VulkaNetGenerator.Dummies
 {
     public struct VkApiVersion { }
     public struct VkBool32 { }
+    public struct VkImageSubresourceRange { }
     
     public enum VkResult { }
     public enum VkStructureType { }
@@ -45,6 +46,10 @@ namespace VulkaNetGenerator.Dummies
     public enum VkCommandPoolResetFlags { }
     public enum VkSemaphoreCreateFlags { }
     public enum VkEventCreateFlags { }
+    public enum VkDependencyFlags { }
+    public enum VkAccessFlags { }
+    public enum VkImageLayout { }
+    public enum VkImageAspectFlags { }
 
     //public struct HndCommandPool { }
     //public struct HndRenderPass { }

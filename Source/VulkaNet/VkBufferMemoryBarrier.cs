@@ -31,14 +31,39 @@ namespace VulkaNet
 {
     public interface IVkBufferMemoryBarrier
     {
+        IVkStructWrapper Next { get; }
+        VkAccessFlags SrcAccessMask { get; }
+        VkAccessFlags DstAccessMask { get; }
+        int SrcQueueFamilyIndex { get; }
+        int DstQueueFamilyIndex { get; }
+        IVkBuffer Buffer { get; }
+        ulong Offset { get; }
+        ulong Size { get; }
     }
 
     public unsafe class VkBufferMemoryBarrier : IVkBufferMemoryBarrier
     {
+        public IVkStructWrapper Next { get; set; }
+        public VkAccessFlags SrcAccessMask { get; set; }
+        public VkAccessFlags DstAccessMask { get; set; }
+        public int SrcQueueFamilyIndex { get; set; }
+        public int DstQueueFamilyIndex { get; set; }
+        public IVkBuffer Buffer { get; set; }
+        public ulong Offset { get; set; }
+        public ulong Size { get; set; }
 
         [StructLayout(LayoutKind.Sequential)]
         public struct Raw
         {
+            public VkStructureType sType;
+            public void* pNext;
+            public VkAccessFlags srcAccessMask;
+            public VkAccessFlags dstAccessMask;
+            public int srcQueueFamilyIndex;
+            public int dstQueueFamilyIndex;
+            public VkBuffer.HandleType buffer;
+            public ulong offset;
+            public ulong size;
 
             public static int SizeInBytes { get; } = Marshal.SizeOf<Raw>();
         }
@@ -51,7 +76,8 @@ namespace VulkaNet
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
 
-            return 0;
+            return
+                s.Next.SizeOfMarshalIndirect();
         }
 
         public static VkBufferMemoryBarrier.Raw MarshalDirect(this IVkBufferMemoryBarrier s, ref byte* unmanaged)
@@ -59,8 +85,18 @@ namespace VulkaNet
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
 
+            var pNext = s.Next.MarshalIndirect(ref unmanaged);
 
             VkBufferMemoryBarrier.Raw result;
+            result.sType = VkStructureType.BufferMemoryBarrier;
+            result.pNext = pNext;
+            result.srcAccessMask = s.SrcAccessMask;
+            result.dstAccessMask = s.DstAccessMask;
+            result.srcQueueFamilyIndex = s.SrcQueueFamilyIndex;
+            result.dstQueueFamilyIndex = s.DstQueueFamilyIndex;
+            result.buffer = s.Buffer?.Handle ?? VkBuffer.HandleType.Null;
+            result.offset = s.Offset;
+            result.size = s.Size;
             return result;
         }
 

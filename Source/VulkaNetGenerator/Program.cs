@@ -57,6 +57,8 @@ namespace VulkaNetGenerator
             generator.GenerateClass<GenFence>();
             generator.GenerateClass<GenSemaphore>();
             generator.GenerateClass<GenEvent>();
+            generator.GenerateClass<GenBuffer>();
+            generator.GenerateClass<GenImage>();
 
             generator.GenerateClass<GenDevice>();
         }

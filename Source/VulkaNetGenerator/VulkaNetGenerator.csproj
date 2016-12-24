@@ -57,6 +57,7 @@
     <Compile Include="Attributes\FixedArrayAttribute.cs" />
     <Compile Include="GenStructs\GenAllocationCallbacks.cs" />
     <Compile Include="GenStructs\GenApplicationInfo.cs" />
+    <Compile Include="GenStructs\GenBuffer.cs" />
     <Compile Include="GenStructs\GenBufferMemoryBarrier.cs" />
     <Compile Include="GenStructs\GenCommandBuffer.cs" />
     <Compile Include="GenStructs\GenCommandBufferAllocateInfo.cs" />
@@ -72,6 +73,7 @@
     <Compile Include="GenStructs\GenFence.cs" />
     <Compile Include="GenStructs\GenFenceCreateInfo.cs" />
     <Compile Include="GenStructs\GenFramebuffer.cs" />
+    <Compile Include="GenStructs\GenImage.cs" />
     <Compile Include="GenStructs\GenImageMemoryBarrier.cs" />
     <Compile Include="GenStructs\GenInstanceCreateInfo.cs" />
     <Compile Include="GenStructs\GenMemoryBarrier.cs" />

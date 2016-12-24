@@ -265,11 +265,14 @@ namespace VulkaNetGenerator
             var name = type.Name.Substring(3);
             var isDevice = name == "Device";
             var isDispatchable = typeof(IGenHandledObject).IsAssignableFrom(type);
+            var isNonDispatchable = typeof(IGenNonDispatchableHandledObject).IsAssignableFrom(type);
 
             var rawFunctions = BuildRawFunctions(type);
             allRawFunctions.AddRange(rawFunctions);
             var wrapperMethods = BuildWrapperMethods(rawFunctions);
-            
+
+            var isDisposable = wrapperMethods.Any(x => x.Name == "Dispose");
+
             if (!Directory.Exists("GeneratedSource"))
                 Directory.CreateDirectory("GeneratedSource");
 
@@ -279,7 +282,8 @@ namespace VulkaNetGenerator
                 WriteLicense(writer);
                 writer.WriteLine();
                 
-                writer.WriteLine("using System;");
+                if (isDispatchable || isDisposable)
+                    writer.WriteLine("using System;");
                 if (isDevice)
                     writer.WriteLine("using System.Collections.Concurrent;");
                 writer.WriteLine("using System.Collections.Generic;");
@@ -297,13 +301,13 @@ namespace VulkaNetGenerator
                     var isAllocatable = rawFunctions.SelectMany(x => x.Parameters).Any(x => x.FromProperty == "Allocator");
 
                     var interfaces = new List<string>();
-                    if (typeof(IGenHandledObject).IsAssignableFrom(type))
+                    if (isDispatchable)
                         interfaces.Add("IVkHandledObject");
-                    if (typeof(IGenNonDispatchableHandledObject).IsAssignableFrom(type))
+                    if (isNonDispatchable)
                         interfaces.Add("IVkNonDispatchableHandledObject");
                     if (!isDevice)
                         interfaces.Add("IVkDeviceChild");
-                    if (wrapperMethods.Any(x => x.Name == "Dispose"))
+                    if (isDisposable)
                         interfaces.Add("IDisposable");
                     if (isDevice)
                         interfaces.Add("IVkInstanceChild");

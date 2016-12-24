@@ -42,6 +42,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="VkAccessFlags.cs" />
+    <Compile Include="VkBuffer.cs" />
+    <Compile Include="VkBufferMemoryBarrier.cs" />
+    <Compile Include="VkDependencyFlags.cs" />
     <Compile Include="VkEvent.cs" />
     <Compile Include="VkEventCreateFlags.cs" />
     <Compile Include="InternalHelpers\ValuePair.cs" />
@@ -68,6 +72,12 @@
     <Compile Include="VkFenceCreateFlags.cs" />
     <Compile Include="VkFenceCreateInfo.cs" />
     <Compile Include="VkFramebuffer.cs" />
+    <Compile Include="VkImage.cs" />
+    <Compile Include="VkImageAspectFlags.cs" />
+    <Compile Include="VkImageLayout.cs" />
+    <Compile Include="VkImageMemoryBarrier.cs" />
+    <Compile Include="VkImageSubresourceRange.cs" />
+    <Compile Include="VkMemoryBarrier.cs" />
     <Compile Include="VkPipelineStageFlagBits.cs" />
     <Compile Include="VkPipelineStageFlags.cs" />
     <Compile Include="VkQueryControlFlags.cs" />

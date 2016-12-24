@@ -31,14 +31,42 @@ namespace VulkaNet
 {
     public interface IVkImageMemoryBarrier
     {
+        IVkStructWrapper Next { get; }
+        VkAccessFlags SrcAccessMask { get; }
+        VkAccessFlags DstAccessMask { get; }
+        VkImageLayout OldLayout { get; }
+        VkImageLayout NewLayout { get; }
+        int SrcQueueFamilyIndex { get; }
+        int DstQueueFamilyIndex { get; }
+        IVkImage Image { get; }
+        VkImageSubresourceRange SubresourceRange { get; }
     }
 
     public unsafe class VkImageMemoryBarrier : IVkImageMemoryBarrier
     {
+        public IVkStructWrapper Next { get; set; }
+        public VkAccessFlags SrcAccessMask { get; set; }
+        public VkAccessFlags DstAccessMask { get; set; }
+        public VkImageLayout OldLayout { get; set; }
+        public VkImageLayout NewLayout { get; set; }
+        public int SrcQueueFamilyIndex { get; set; }
+        public int DstQueueFamilyIndex { get; set; }
+        public IVkImage Image { get; set; }
+        public VkImageSubresourceRange SubresourceRange { get; set; }
 
         [StructLayout(LayoutKind.Sequential)]
         public struct Raw
         {
+            public VkStructureType sType;
+            public void* pNext;
+            public VkAccessFlags srcAccessMask;
+            public VkAccessFlags dstAccessMask;
+            public VkImageLayout oldLayout;
+            public VkImageLayout newLayout;
+            public int srcQueueFamilyIndex;
+            public int dstQueueFamilyIndex;
+            public VkImage.HandleType image;
+            public VkImageSubresourceRange subresourceRange;
 
             public static int SizeInBytes { get; } = Marshal.SizeOf<Raw>();
         }
@@ -51,7 +79,8 @@ namespace VulkaNet
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
 
-            return 0;
+            return
+                s.Next.SizeOfMarshalIndirect();
         }
 
         public static VkImageMemoryBarrier.Raw MarshalDirect(this IVkImageMemoryBarrier s, ref byte* unmanaged)
@@ -59,8 +88,19 @@ namespace VulkaNet
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
 
+            var pNext = s.Next.MarshalIndirect(ref unmanaged);
 
             VkImageMemoryBarrier.Raw result;
+            result.sType = VkStructureType.ImageMemoryBarrier;
+            result.pNext = pNext;
+            result.srcAccessMask = s.SrcAccessMask;
+            result.dstAccessMask = s.DstAccessMask;
+            result.oldLayout = s.OldLayout;
+            result.newLayout = s.NewLayout;
+            result.srcQueueFamilyIndex = s.SrcQueueFamilyIndex;
+            result.dstQueueFamilyIndex = s.DstQueueFamilyIndex;
+            result.image = s.Image?.Handle ?? VkImage.HandleType.Null;
+            result.subresourceRange = s.SubresourceRange;
             return result;
         }
 

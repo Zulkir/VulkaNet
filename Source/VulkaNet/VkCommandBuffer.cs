@@ -37,6 +37,7 @@ namespace VulkaNet
         void CmdSetEvent(IVkEvent eventObj, VkPipelineStageFlags stageMask);
         void CmdResetEvent(IVkEvent eventObj, VkPipelineStageFlags stageMask);
         void CmdWaitEvents(IReadOnlyList<IVkEvent> events, VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, IReadOnlyList<IVkMemoryBarrier> memoryBarriers, IReadOnlyList<IVkBufferMemoryBarrier> bufferMemoryBarriers, IReadOnlyList<IVkImageMemoryBarrier> imageMemoryBarriers);
+        void CmdPipelineBarrier(VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags, IReadOnlyList<IVkMemoryBarrier> memoryBarriers, IReadOnlyList<IVkBufferMemoryBarrier> bufferMemoryBarriers, IReadOnlyList<IVkImageMemoryBarrier> imageMemoryBarriers);
     }
 
     public unsafe class VkCommandBuffer : IVkCommandBuffer
@@ -144,6 +145,30 @@ namespace VulkaNet
                 var _imageMemoryBarrierCount = imageMemoryBarriers?.Count ?? 0;
                 var _pImageMemoryBarriers = imageMemoryBarriers.MarshalDirect(ref unmanaged);
                 Direct.CmdWaitEvents(_commandBuffer, _eventCount, _pEvents, _srcStageMask, _dstStageMask, _memoryBarrierCount, _pMemoryBarriers, _bufferMemoryBarrierCount, _pBufferMemoryBarriers, _imageMemoryBarrierCount, _pImageMemoryBarriers);
+            }
+        }
+
+        public void CmdPipelineBarrier(VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags, IReadOnlyList<IVkMemoryBarrier> memoryBarriers, IReadOnlyList<IVkBufferMemoryBarrier> bufferMemoryBarriers, IReadOnlyList<IVkImageMemoryBarrier> imageMemoryBarriers)
+        {
+            var unmanagedSize =
+                memoryBarriers.SizeOfMarshalDirect() +
+                bufferMemoryBarriers.SizeOfMarshalDirect() +
+                imageMemoryBarriers.SizeOfMarshalDirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _commandBuffer = Handle;
+                var _srcStageMask = srcStageMask;
+                var _dstStageMask = dstStageMask;
+                var _dependencyFlags = dependencyFlags;
+                var _memoryBarrierCount = memoryBarriers?.Count ?? 0;
+                var _pMemoryBarriers = memoryBarriers.MarshalDirect(ref unmanaged);
+                var _bufferMemoryBarrierCount = bufferMemoryBarriers?.Count ?? 0;
+                var _pBufferMemoryBarriers = bufferMemoryBarriers.MarshalDirect(ref unmanaged);
+                var _imageMemoryBarrierCount = imageMemoryBarriers?.Count ?? 0;
+                var _pImageMemoryBarriers = imageMemoryBarriers.MarshalDirect(ref unmanaged);
+                Direct.CmdPipelineBarrier(_commandBuffer, _srcStageMask, _dstStageMask, _dependencyFlags, _memoryBarrierCount, _pMemoryBarriers, _bufferMemoryBarrierCount, _pBufferMemoryBarriers, _imageMemoryBarrierCount, _pImageMemoryBarriers);
             }
         }
 

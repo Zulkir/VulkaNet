@@ -95,12 +95,16 @@ namespace VulkaNet
                 uint queueIndex,
                 VkQueue.HandleType* pQueue);
 
-            public QueueSubmitDelegateDelegate QueueSubmitDelegate { get; }
-            public delegate VkResult QueueSubmitDelegateDelegate(
+            public QueueSubmitDelegate QueueSubmit { get; }
+            public delegate VkResult QueueSubmitDelegate(
                 VkQueue.HandleType queue,
                 int submitCount,
                 VkSubmitInfo.Raw* pSubmits,
                 VkFence.HandleType fence);
+
+            public QueueWaitIdleDelegate QueueWaitIdle { get; }
+            public delegate VkResult QueueWaitIdleDelegate(
+                VkQueue.HandleType queue);
 
             public DestroyCommandPoolDelegate DestroyCommandPool { get; }
             public delegate void DestroyCommandPoolDelegate(
@@ -160,6 +164,19 @@ namespace VulkaNet
                 VkEvent.HandleType* pEvents,
                 VkPipelineStageFlags srcStageMask,
                 VkPipelineStageFlags dstStageMask,
+                int memoryBarrierCount,
+                VkMemoryBarrier.Raw* pMemoryBarriers,
+                int bufferMemoryBarrierCount,
+                VkBufferMemoryBarrier.Raw* pBufferMemoryBarriers,
+                int imageMemoryBarrierCount,
+                VkImageMemoryBarrier.Raw* pImageMemoryBarriers);
+
+            public CmdPipelineBarrierDelegate CmdPipelineBarrier { get; }
+            public delegate void CmdPipelineBarrierDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                VkPipelineStageFlags srcStageMask,
+                VkPipelineStageFlags dstStageMask,
+                VkDependencyFlags dependencyFlags,
                 int memoryBarrierCount,
                 VkMemoryBarrier.Raw* pMemoryBarriers,
                 int bufferMemoryBarrierCount,
@@ -268,7 +285,8 @@ namespace VulkaNet
 
                 GetDeviceProcAddr = VkHelpers.GetInstanceDelegate<GetDeviceProcAddrDelegate>(device.Instance, "vkGetDeviceProcAddr");
                 GetDeviceQueue = GetDeviceDelegate<GetDeviceQueueDelegate>("vkGetDeviceQueue");
-                QueueSubmitDelegate = GetDeviceDelegate<QueueSubmitDelegateDelegate>("vkQueueSubmitDelegate");
+                QueueSubmit = GetDeviceDelegate<QueueSubmitDelegate>("vkQueueSubmit");
+                QueueWaitIdle = GetDeviceDelegate<QueueWaitIdleDelegate>("vkQueueWaitIdle");
                 DestroyCommandPool = GetDeviceDelegate<DestroyCommandPoolDelegate>("vkDestroyCommandPool");
                 ResetCommandPool = GetDeviceDelegate<ResetCommandPoolDelegate>("vkResetCommandPool");
                 FreeCommandBuffers = GetDeviceDelegate<FreeCommandBuffersDelegate>("vkFreeCommandBuffers");
@@ -279,6 +297,7 @@ namespace VulkaNet
                 CmdSetEvent = GetDeviceDelegate<CmdSetEventDelegate>("vkCmdSetEvent");
                 CmdResetEvent = GetDeviceDelegate<CmdResetEventDelegate>("vkCmdResetEvent");
                 CmdWaitEvents = GetDeviceDelegate<CmdWaitEventsDelegate>("vkCmdWaitEvents");
+                CmdPipelineBarrier = GetDeviceDelegate<CmdPipelineBarrierDelegate>("vkCmdPipelineBarrier");
                 DestroyFence = GetDeviceDelegate<DestroyFenceDelegate>("vkDestroyFence");
                 GetFenceStatus = GetDeviceDelegate<GetFenceStatusDelegate>("vkGetFenceStatus");
                 DestroySemaphore = GetDeviceDelegate<DestroySemaphoreDelegate>("vkDestroySemaphore");

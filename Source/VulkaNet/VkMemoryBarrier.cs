@@ -31,14 +31,24 @@ namespace VulkaNet
 {
     public interface IVkMemoryBarrier
     {
+        IVkStructWrapper Next { get; }
+        VkAccessFlags SrcAccessMask { get; }
+        VkAccessFlags DstAccessMask { get; }
     }
 
     public unsafe class VkMemoryBarrier : IVkMemoryBarrier
     {
+        public IVkStructWrapper Next { get; set; }
+        public VkAccessFlags SrcAccessMask { get; set; }
+        public VkAccessFlags DstAccessMask { get; set; }
 
         [StructLayout(LayoutKind.Sequential)]
         public struct Raw
         {
+            public VkStructureType sType;
+            public void* pNext;
+            public VkAccessFlags srcAccessMask;
+            public VkAccessFlags dstAccessMask;
 
             public static int SizeInBytes { get; } = Marshal.SizeOf<Raw>();
         }
@@ -51,7 +61,8 @@ namespace VulkaNet
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
 
-            return 0;
+            return
+                s.Next.SizeOfMarshalIndirect();
         }
 
         public static VkMemoryBarrier.Raw MarshalDirect(this IVkMemoryBarrier s, ref byte* unmanaged)
@@ -59,8 +70,13 @@ namespace VulkaNet
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
 
+            var pNext = s.Next.MarshalIndirect(ref unmanaged);
 
             VkMemoryBarrier.Raw result;
+            result.sType = VkStructureType.MemoryBarrier;
+            result.pNext = pNext;
+            result.srcAccessMask = s.SrcAccessMask;
+            result.dstAccessMask = s.DstAccessMask;
             return result;
         }
 

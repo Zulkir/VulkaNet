@@ -30,7 +30,8 @@ namespace VulkaNet
     public interface IVkQueue : IVkHandledObject, IVkDeviceChild
     {
         VkQueue.HandleType Handle { get; }
-        VkResult QueueSubmitDelegate(IReadOnlyList<IVkSubmitInfo> submits, IVkFence fence);
+        VkResult Submit(IReadOnlyList<IVkSubmitInfo> submits, IVkFence fence);
+        VkResult WaitIdle();
     }
 
     public unsafe class VkQueue : IVkQueue
@@ -57,7 +58,7 @@ namespace VulkaNet
             public static HandleType Null => new HandleType(default(IntPtr));
         }
 
-        public VkResult QueueSubmitDelegate(IReadOnlyList<IVkSubmitInfo> submits, IVkFence fence)
+        public VkResult Submit(IReadOnlyList<IVkSubmitInfo> submits, IVkFence fence)
         {
             var unmanagedSize =
                 submits.SizeOfMarshalDirect();
@@ -69,8 +70,14 @@ namespace VulkaNet
                 var _submitCount = submits?.Count ?? 0;
                 var _pSubmits = submits.MarshalDirect(ref unmanaged);
                 var _fence = fence?.Handle ?? VkFence.HandleType.Null;
-                return Direct.QueueSubmitDelegate(_queue, _submitCount, _pSubmits, _fence);
+                return Direct.QueueSubmit(_queue, _submitCount, _pSubmits, _fence);
             }
+        }
+
+        public VkResult WaitIdle()
+        {
+            var _queue = Handle;
+            return Direct.QueueWaitIdle(_queue);
         }
 
     }

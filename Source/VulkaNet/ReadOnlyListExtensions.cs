@@ -78,6 +78,14 @@ namespace VulkaNet
             return result;
         }
 
+        // Int
+
+        public static int SizeOfMarshalDirect(this IReadOnlyList<int> list) =>
+        SizeOfMarshalDirect(list, sizeof(int), x => 0);
+
+        public static int* MarshalDirect(this IReadOnlyList<int> list, ref byte* unmanaged) =>
+            (int*)MarshalDirect(list, ref unmanaged, (e, d) => { *(int*)d = e; }, sizeof(int));
+
         // Float
 
         public static int SizeOfMarshalDirect(this IReadOnlyList<float> list) =>

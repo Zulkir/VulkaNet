@@ -46,6 +46,7 @@ namespace VulkaNet
         VkResult WaitForFences(IReadOnlyList<IVkFence> fences, bool waitAll, ulong timeout);
         VkObjectResult<IVkSemaphore> CreateSemaphore(IVkSemaphoreCreateInfo createInfo, IVkAllocationCallbacks allocator);
         VkObjectResult<IVkEvent> CreateEvent(IVkEventCreateInfo createInfo, IVkAllocationCallbacks allocator);
+        VkObjectResult<IVkRenderPass> CreateRenderPass(IVkRenderPassCreateInfo createInfo, IVkAllocationCallbacks allocator);
     }
 
     public unsafe class VkDevice : IVkDevice
@@ -222,6 +223,12 @@ namespace VulkaNet
                 HandleType device,
                 VkEvent.HandleType eventObj);
 
+            public DestroyRenderPassDelegate DestroyRenderPass { get; }
+            public delegate void DestroyRenderPassDelegate(
+                HandleType device,
+                VkRenderPass.HandleType renderPass,
+                VkAllocationCallbacks.Raw* pAllocator);
+
             public DestroyDeviceDelegate DestroyDevice { get; }
             public delegate void DestroyDeviceDelegate(
                 HandleType device,
@@ -279,6 +286,13 @@ namespace VulkaNet
                 VkAllocationCallbacks.Raw* pAllocator,
                 VkEvent.HandleType* pEvent);
 
+            public CreateRenderPassDelegate CreateRenderPass { get; }
+            public delegate VkResult CreateRenderPassDelegate(
+                HandleType device,
+                VkRenderPassCreateInfo.Raw* pCreateInfo,
+                VkAllocationCallbacks.Raw* pAllocator,
+                VkRenderPass.HandleType* pRenderPass);
+
             public DirectFunctions(IVkDevice device)
             {
                 this.device = device;
@@ -305,6 +319,7 @@ namespace VulkaNet
                 GetEventStatus = GetDeviceDelegate<GetEventStatusDelegate>("vkGetEventStatus");
                 SetEvent = GetDeviceDelegate<SetEventDelegate>("vkSetEvent");
                 ResetEvent = GetDeviceDelegate<ResetEventDelegate>("vkResetEvent");
+                DestroyRenderPass = GetDeviceDelegate<DestroyRenderPassDelegate>("vkDestroyRenderPass");
                 DestroyDevice = GetDeviceDelegate<DestroyDeviceDelegate>("vkDestroyDevice");
                 DeviceWaitIdle = GetDeviceDelegate<DeviceWaitIdleDelegate>("vkDeviceWaitIdle");
                 CreateCommandPool = GetDeviceDelegate<CreateCommandPoolDelegate>("vkCreateCommandPool");
@@ -314,6 +329,7 @@ namespace VulkaNet
                 WaitForFences = GetDeviceDelegate<WaitForFencesDelegate>("vkWaitForFences");
                 CreateSemaphore = GetDeviceDelegate<CreateSemaphoreDelegate>("vkCreateSemaphore");
                 CreateEvent = GetDeviceDelegate<CreateEventDelegate>("vkCreateEvent");
+                CreateRenderPass = GetDeviceDelegate<CreateRenderPassDelegate>("vkCreateRenderPass");
             }
 
             public TDelegate GetDeviceDelegate<TDelegate>(string name)
@@ -480,6 +496,25 @@ namespace VulkaNet
                 var result = Direct.CreateEvent(_device, _pCreateInfo, _pAllocator, &_pEvent);
                 var instance = result == VkResult.Success ? new VkEvent(this, _pEvent, allocator) : null;
                 return new VkObjectResult<IVkEvent>(result, instance);
+            }
+        }
+
+        public VkObjectResult<IVkRenderPass> CreateRenderPass(IVkRenderPassCreateInfo createInfo, IVkAllocationCallbacks allocator)
+        {
+            var unmanagedSize =
+                createInfo.SizeOfMarshalIndirect() +
+                allocator.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _device = Handle;
+                var _pCreateInfo = createInfo.MarshalIndirect(ref unmanaged);
+                var _pAllocator = allocator.MarshalIndirect(ref unmanaged);
+                VkRenderPass.HandleType _pRenderPass;
+                var result = Direct.CreateRenderPass(_device, _pCreateInfo, _pAllocator, &_pRenderPass);
+                var instance = result == VkResult.Success ? new VkRenderPass(this, _pRenderPass, allocator) : null;
+                return new VkObjectResult<IVkRenderPass>(result, instance);
             }
         }
 

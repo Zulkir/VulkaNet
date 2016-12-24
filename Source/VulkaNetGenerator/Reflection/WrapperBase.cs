@@ -56,6 +56,8 @@
                 return "I" + rawTypeStr.Substring(0, rawTypeStr.Length - ".HandleType".Length);
             if (rawTypeStr == "VkBool32")
                 return "bool";
+            if (rawTypeStr.EndsWith("*"))
+                return rawTypeStr.Substring(0, rawTypeStr.Length - 1);
             return rawTypeStr;
         }
 

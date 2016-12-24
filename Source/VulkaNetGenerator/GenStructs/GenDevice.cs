@@ -63,5 +63,12 @@ namespace VulkaNetGenerator.GenStructs
             GenAllocationCallbacks* pAllocator,
             [Return] GenEvent* pEvent)
             => default(VkResult);
+
+        public VkResult CreateRenderPass(
+            [FromProperty("this")] GenDevice device,
+            GenRenderPassCreateInfo* pCreateInfo,
+            GenAllocationCallbacks* pAllocator,
+            [Return] GenRenderPass* pRenderPass)
+            => default(VkResult);
     }
 }

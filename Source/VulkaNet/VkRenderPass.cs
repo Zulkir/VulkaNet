@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 /*
 Copyright (c) 2016 VulkaNet Project - Daniil Rodin
 
@@ -22,20 +22,32 @@ THE SOFTWARE.
 */
 #endregion
 
+using System;
+using System.Collections.Generic;
+
 namespace VulkaNet
 {
-    public interface IVkRenderPass
+    public interface IVkRenderPass : IVkNonDispatchableHandledObject, IVkDeviceChild, IDisposable
     {
         VkRenderPass.HandleType Handle { get; }
+        IVkAllocationCallbacks Allocator { get; }
     }
 
-    public class VkRenderPass : IVkRenderPass
+    public unsafe class VkRenderPass : IVkRenderPass
     {
+        public IVkDevice Device { get; }
         public HandleType Handle { get; }
+        public IVkAllocationCallbacks Allocator { get; }
 
-        public VkRenderPass(HandleType handle)
+        private VkDevice.DirectFunctions Direct => Device.Direct;
+
+        public ulong RawHandle => Handle.InternalHandle;
+
+        public VkRenderPass(IVkDevice device, HandleType handle, IVkAllocationCallbacks allocator)
         {
+            Device = device;
             Handle = handle;
+            Allocator = allocator;
         }
 
         public struct HandleType
@@ -43,7 +55,33 @@ namespace VulkaNet
             public readonly ulong InternalHandle;
             public HandleType(ulong internalHandle) { InternalHandle = internalHandle; }
             public override string ToString() => InternalHandle.ToString();
-            public static HandleType Null => new HandleType(0);
+            public static int SizeInBytes { get; } = sizeof(ulong);
+            public static HandleType Null => new HandleType(default(ulong));
         }
+
+        public void Dispose()
+        {
+            var unmanagedSize =
+                Allocator.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _device = Device.Handle;
+                var _renderPass = Handle;
+                var _pAllocator = Allocator.MarshalIndirect(ref unmanaged);
+                Direct.DestroyRenderPass(_device, _renderPass, _pAllocator);
+            }
+        }
+
+    }
+
+    public static unsafe class VkRenderPassExtensions
+    {
+        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkRenderPass> list) =>
+            list.SizeOfMarshalDirectNonDispatchable();
+
+        public static VkRenderPass.HandleType* MarshalDirect(this IReadOnlyList<IVkRenderPass> list, ref byte* unmanaged) =>
+            (VkRenderPass.HandleType*)list.MarshalDirectNonDispatchable(ref unmanaged);
     }
 }

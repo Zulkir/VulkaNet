@@ -57,6 +57,7 @@
     <Compile Include="Attributes\FixedArrayAttribute.cs" />
     <Compile Include="GenStructs\GenAllocationCallbacks.cs" />
     <Compile Include="GenStructs\GenApplicationInfo.cs" />
+    <Compile Include="GenStructs\GenAttachmentDescription.cs" />
     <Compile Include="GenStructs\GenBuffer.cs" />
     <Compile Include="GenStructs\GenBufferMemoryBarrier.cs" />
     <Compile Include="GenStructs\GenCommandBuffer.cs" />
@@ -83,6 +84,7 @@
     <Compile Include="GenStructs\GenPhysicalDeviceSparseProperties.cs" />
     <Compile Include="GenStructs\GenQueue.cs" />
     <Compile Include="GenStructs\GenRenderPass.cs" />
+    <Compile Include="GenStructs\GenRenderPassCreateInfo.cs" />
     <Compile Include="GenStructs\GenSemaphore.cs" />
     <Compile Include="GenStructs\GenSemaphoreCreateInfo.cs" />
     <Compile Include="GenStructs\GenSubmitInfo.cs" />
@@ -90,6 +92,8 @@
     <Compile Include="Attributes\IsArrayAttribute.cs" />
     <Compile Include="Attributes\MethodNameAttribute.cs" />
     <Compile Include="Dummies\IGenNonDispatchableHandledObject.cs" />
+    <Compile Include="GenStructs\GenSubpassDependency.cs" />
+    <Compile Include="GenStructs\GenSubpassDescription.cs" />
     <Compile Include="Reflection\RawField.cs" />
     <Compile Include="Reflection\RawFunction.cs" />
     <Compile Include="Reflection\RawParameter.cs" />

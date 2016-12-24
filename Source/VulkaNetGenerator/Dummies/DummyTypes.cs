@@ -27,6 +27,9 @@ namespace VulkaNetGenerator.Dummies
     public struct VkApiVersion { }
     public struct VkBool32 { }
     public struct VkImageSubresourceRange { }
+    //public struct VkAttachmentDescription { }
+    public struct VkAttachmentReference { }
+    //public struct VkSubpassDependency { }
     
     public enum VkResult { }
     public enum VkStructureType { }
@@ -50,6 +53,14 @@ namespace VulkaNetGenerator.Dummies
     public enum VkAccessFlags { }
     public enum VkImageLayout { }
     public enum VkImageAspectFlags { }
+    public enum VkRenderPassCreateFlags { }
+    public enum VkAttachmentDescriptionFlags { }
+    public enum VkSampleCountFlagBits { }
+    public enum VkAttachmentLoadOp { }
+    public enum VkAttachmentStoreOp { }
+    public enum VkSubpassDescriptionFlags { }
+    public enum VkPipelineBindPoint { }
+    public enum VkFormat { }
 
     //public struct HndCommandPool { }
     //public struct HndRenderPass { }

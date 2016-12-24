@@ -43,6 +43,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="VkAccessFlags.cs" />
+    <Compile Include="VkAttachmentDescription.cs" />
+    <Compile Include="VkAttachmentDescriptionFlags.cs" />
+    <Compile Include="VkAttachmentLoadOp.cs" />
+    <Compile Include="VkAttachmentReference.cs" />
+    <Compile Include="VkAttachmentStoreOp.cs" />
     <Compile Include="VkBuffer.cs" />
     <Compile Include="VkBufferMemoryBarrier.cs" />
     <Compile Include="VkDependencyFlags.cs" />
@@ -71,6 +76,7 @@
     <Compile Include="VkFence.cs" />
     <Compile Include="VkFenceCreateFlags.cs" />
     <Compile Include="VkFenceCreateInfo.cs" />
+    <Compile Include="VkFormat.cs" />
     <Compile Include="VkFramebuffer.cs" />
     <Compile Include="VkImage.cs" />
     <Compile Include="VkImageAspectFlags.cs" />
@@ -78,6 +84,7 @@
     <Compile Include="VkImageMemoryBarrier.cs" />
     <Compile Include="VkImageSubresourceRange.cs" />
     <Compile Include="VkMemoryBarrier.cs" />
+    <Compile Include="VkPipelineBindPoint .cs" />
     <Compile Include="VkPipelineStageFlagBits.cs" />
     <Compile Include="VkPipelineStageFlags.cs" />
     <Compile Include="VkQueryControlFlags.cs" />
@@ -123,14 +130,20 @@
     <Compile Include="VkQueueFlags.cs" />
     <Compile Include="VkRect2D.cs" />
     <Compile Include="VkRenderPass.cs" />
+    <Compile Include="VkRenderPassCreateFlags.cs" />
+    <Compile Include="VkRenderPassCreateInfo.cs" />
     <Compile Include="VkResult.cs" />
     <Compile Include="VkResultExtensions.cs" />
+    <Compile Include="VkSampleCountFlagBits.cs" />
     <Compile Include="VkSampleCountFlags.cs" />
     <Compile Include="VkSemaphore.cs" />
     <Compile Include="VkSemaphoreCreateFlags.cs" />
     <Compile Include="VkSemaphoreCreateInfo.cs" />
     <Compile Include="VkStructureType.cs" />
     <Compile Include="VkSubmitInfo.cs" />
+    <Compile Include="VkSubpassDependency.cs" />
+    <Compile Include="VkSubpassDescription.cs" />
+    <Compile Include="VkSubpassDescriptionFlags.cs" />
     <Compile Include="VkSystemAllocationScope.cs" />
     <Compile Include="VkUintVector2.cs" />
     <Compile Include="VkUintVector3.cs" />

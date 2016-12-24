@@ -13,7 +13,6 @@ namespace VulkaNetGenerator.Reflection
         public Type ReturnGenType { get; }
         public string ReturnTypeStr { get; }
         public string WrapperName { get; }
-        public bool IsDispose { get; }
 
         public RawFunction(MethodInfo methodInfo)
         {
@@ -22,7 +21,6 @@ namespace VulkaNetGenerator.Reflection
             ReturnGenType = methodInfo.ReturnType;
             ReturnTypeStr = DeriveReturnTypeStr(ReturnGenType);
             WrapperName = GetAttrValue<MethodNameAttribute>(methodInfo.CustomAttributes.ToArray()) ?? Name;
-            IsDispose = HasAttribute<DisposeAttribute>(methodInfo.CustomAttributes.ToArray());
         }
 
         private static bool HasAttribute<T>(CustomAttributeData[] attributes) =>

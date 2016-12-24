@@ -5,7 +5,6 @@ namespace VulkaNetGenerator.GenStructs
 {
     public unsafe struct GenFence : IGenNonDispatchableHandledObject
     {
-        [Dispose]
         [MethodName("Dispose")]
         public void DestroyFence(
             [FromProperty("Device")] GenDevice device,

@@ -48,7 +48,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\AsTypeAttribute.cs" />
-    <Compile Include="Attributes\DisposeAttribute.cs" />
     <Compile Include="Attributes\ReturnCountAttribute.cs" />
     <Compile Include="Attributes\FromPropertyAttribute.cs" />
     <Compile Include="CodeWriter.cs" />

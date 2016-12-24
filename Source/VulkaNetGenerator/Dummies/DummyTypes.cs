@@ -44,6 +44,7 @@ namespace VulkaNetGenerator.Dummies
     public enum VkCommandBufferResetFlags { }
     public enum VkCommandPoolResetFlags { }
     public enum VkSemaphoreCreateFlags { }
+    public enum VkEventCreateFlags { }
 
     //public struct HndCommandPool { }
     //public struct HndRenderPass { }

@@ -45,6 +45,7 @@ namespace VulkaNet
         VkResult ResetFences(IReadOnlyList<IVkFence> fences);
         VkResult WaitForFences(IReadOnlyList<IVkFence> fences, bool waitAll, ulong timeout);
         VkObjectResult<IVkSemaphore> CreateSemaphore(IVkSemaphoreCreateInfo createInfo, IVkAllocationCallbacks allocator);
+        VkObjectResult<IVkEvent> CreateEvent(IVkEventCreateInfo createInfo, IVkAllocationCallbacks allocator);
     }
 
     public unsafe class VkDevice : IVkDevice
@@ -157,6 +158,12 @@ namespace VulkaNet
                 VkSemaphore.HandleType semaphore,
                 VkAllocationCallbacks.Raw* pAllocator);
 
+            public DestroyEventDelegate DestroyEvent { get; }
+            public delegate void DestroyEventDelegate(
+                HandleType device,
+                VkEvent.HandleType eventObj,
+                VkAllocationCallbacks.Raw* pAllocator);
+
             public DestroyDeviceDelegate DestroyDevice { get; }
             public delegate void DestroyDeviceDelegate(
                 HandleType device,
@@ -207,6 +214,13 @@ namespace VulkaNet
                 VkAllocationCallbacks.Raw* pAllocator,
                 VkSemaphore.HandleType* pSemaphore);
 
+            public CreateEventDelegate CreateEvent { get; }
+            public delegate VkResult CreateEventDelegate(
+                HandleType device,
+                VkEventCreateInfo.Raw* pCreateInfo,
+                VkAllocationCallbacks.Raw* pAllocator,
+                VkEvent.HandleType* pEvent);
+
             public DirectFunctions(IVkDevice device)
             {
                 this.device = device;
@@ -224,6 +238,7 @@ namespace VulkaNet
                 DestroyFence = GetDeviceDelegate<DestroyFenceDelegate>("vkDestroyFence");
                 GetFenceStatus = GetDeviceDelegate<GetFenceStatusDelegate>("vkGetFenceStatus");
                 DestroySemaphore = GetDeviceDelegate<DestroySemaphoreDelegate>("vkDestroySemaphore");
+                DestroyEvent = GetDeviceDelegate<DestroyEventDelegate>("vkDestroyEvent");
                 DestroyDevice = GetDeviceDelegate<DestroyDeviceDelegate>("vkDestroyDevice");
                 DeviceWaitIdle = GetDeviceDelegate<DeviceWaitIdleDelegate>("vkDeviceWaitIdle");
                 CreateCommandPool = GetDeviceDelegate<CreateCommandPoolDelegate>("vkCreateCommandPool");
@@ -232,6 +247,7 @@ namespace VulkaNet
                 ResetFences = GetDeviceDelegate<ResetFencesDelegate>("vkResetFences");
                 WaitForFences = GetDeviceDelegate<WaitForFencesDelegate>("vkWaitForFences");
                 CreateSemaphore = GetDeviceDelegate<CreateSemaphoreDelegate>("vkCreateSemaphore");
+                CreateEvent = GetDeviceDelegate<CreateEventDelegate>("vkCreateEvent");
             }
 
             public TDelegate GetDeviceDelegate<TDelegate>(string name)
@@ -379,6 +395,25 @@ namespace VulkaNet
                 var result = Direct.CreateSemaphore(_device, _pCreateInfo, _pAllocator, &_pSemaphore);
                 var instance = result == VkResult.Success ? new VkSemaphore(this, _pSemaphore, allocator) : null;
                 return new VkObjectResult<IVkSemaphore>(result, instance);
+            }
+        }
+
+        public VkObjectResult<IVkEvent> CreateEvent(IVkEventCreateInfo createInfo, IVkAllocationCallbacks allocator)
+        {
+            var unmanagedSize =
+                createInfo.SizeOfMarshalIndirect() +
+                allocator.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _device = Handle;
+                var _pCreateInfo = createInfo.MarshalIndirect(ref unmanaged);
+                var _pAllocator = allocator.MarshalIndirect(ref unmanaged);
+                VkEvent.HandleType _pEvent;
+                var result = Direct.CreateEvent(_device, _pCreateInfo, _pAllocator, &_pEvent);
+                var instance = result == VkResult.Success ? new VkEvent(this, _pEvent, allocator) : null;
+                return new VkObjectResult<IVkEvent>(result, instance);
             }
         }
 

@@ -67,6 +67,7 @@
     <Compile Include="GenStructs\GenDeviceCreateInfo.cs" />
     <Compile Include="GenStructs\GenDeviceQueueCreateInfo.cs" />
     <Compile Include="GenStructs\GenEvent.cs" />
+    <Compile Include="GenStructs\GenEventCreateInfo.cs" />
     <Compile Include="GenStructs\GenFence.cs" />
     <Compile Include="GenStructs\GenFenceCreateInfo.cs" />
     <Compile Include="GenStructs\GenFramebuffer.cs" />

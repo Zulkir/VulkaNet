@@ -42,6 +42,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="VkEvent.cs" />
+    <Compile Include="VkEventCreateFlags.cs" />
     <Compile Include="InternalHelpers\ValuePair.cs" />
     <Compile Include="InternalHelpers\VkBlob16.cs" />
     <Compile Include="InternalHelpers\VkBlob256.cs" />
@@ -61,6 +63,7 @@
     <Compile Include="VkCommandPoolCreateFlags.cs" />
     <Compile Include="VkCommandPoolCreateInfo.cs" />
     <Compile Include="VkCommandPoolResetFlags.cs" />
+    <Compile Include="VkEventCreateInfo.cs" />
     <Compile Include="VkFence.cs" />
     <Compile Include="VkFenceCreateFlags.cs" />
     <Compile Include="VkFenceCreateInfo.cs" />

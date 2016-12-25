@@ -34,6 +34,12 @@ namespace VulkaNetGenerator.Dummies
     public struct VkClearValue { }
     public struct VkExtent2D { }
     public struct VkSpecializationMapEntry { }
+    public struct VkVertexInputBindingDescription { }
+    public struct VkVertexInputAttributeDescription { }
+    public struct VkViewport { }
+    public struct VkStencilOpState { }
+    public struct VkColor4 { }
+    public struct VkPipelineColorBlendAttachmentState { }
     
     public enum VkResult { }
     public enum VkStructureType { }
@@ -71,6 +77,23 @@ namespace VulkaNetGenerator.Dummies
     public enum VkPipelineCreateFlags { }
     public enum VkPipelineShaderStageCreateFlags { }
     public enum VkShaderStageFlagBits { }
+    public enum VkPipelineVertexInputStateCreateFlags { }
+    public enum VkPipelineInputAssemblyStateCreateFlags { }
+    public enum VkPrimitiveTopology { }
+    public enum VkPipelineTessellationStateCreateFlags { }
+    public enum VkPipelineViewportStateCreateFlags { }
+    public enum VkPipelineRasterizationStateCreateFlags { }
+    public enum VkPolygonMode { }
+    public enum VkCullModeFlagBits { }
+    public enum VkFrontFace { }
+    public enum VkPipelineMultisampleStateCreateFlags { }
+    public enum VkPipelineDepthStencilStateCreateFlags { }
+    public enum VkCompareOp { }
+    public enum VkStencilOp { }
+    public enum VkPipelineColorBlendStateCreateFlags { }
+    public enum VkLogicOp { }
+    public enum VkPipelineDynamicStateCreateFlags { }
+    public enum VkDynamicState { }
 
     //public struct HndCommandPool { }
     //public struct HndRenderPass { }

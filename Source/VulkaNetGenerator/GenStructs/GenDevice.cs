@@ -93,5 +93,14 @@ namespace VulkaNetGenerator.GenStructs
             GenAllocationCallbacks* pAllocator,
             [Return] GenPipeline* pPipelines)
             => default(VkResult);
+
+        public VkResult CreateGraphicsPipelines(
+            [FromProperty("this")] GenDevice device,
+            GenPipelineCache pipelineCache,
+            [CountFor("createInfos")] int createInfoCount,
+            [IsArray] GenGraphicsPipelineCreateInfo* pCreateInfos,
+            GenAllocationCallbacks* pAllocator,
+            [Return] GenPipeline* pPipelines)
+            => default(VkResult);
     }
 }

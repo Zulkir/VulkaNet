@@ -23,27 +23,27 @@ THE SOFTWARE.
 #endregion
 
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public struct VkRect2D
+    [StructLayout(LayoutKind.Sequential)]
+    public struct VkViewport
     {
-        public VkOffset2D Offset;
-        public VkExtent2D Extent;
-
-        public VkRect2D(VkOffset2D offset, VkExtent2D extent)
-        {
-            Offset = offset;
-            Extent = extent;
-        }
+        public float X;
+        public float Y;
+        public float Width;
+        public float Height;
+        public float MinDepth;
+        public float MaxDepth;
     }
 
-    public static unsafe class VkRect2DExtensions
+    public static unsafe class VkViewportExtensions
     {
-        public static int SizeOfMarshalDirect(this IReadOnlyList<VkRect2D> list) =>
-            list.SizeOfMarshalDirect(sizeof(VkRect2D), x => 0);
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkViewport> list) =>
+            list.SizeOfMarshalDirect(sizeof(VkViewport), x => 0);
 
-        public static VkRect2D* MarshalDirect(this IReadOnlyList<VkRect2D> list, ref byte* unmanaged) =>
-            (VkRect2D*)list.MarshalDirect(ref unmanaged, (elem, dst) => { *(VkRect2D*)dst = elem; }, sizeof(VkRect2D));
+        public static VkViewport* MarshalDirect(this IReadOnlyList<VkViewport> list, ref byte* unmanaged) =>
+            (VkViewport*)list.MarshalDirect(ref unmanaged, (elem, dst) => { *(VkViewport*)dst = elem; }, sizeof(VkViewport));
     }
 }

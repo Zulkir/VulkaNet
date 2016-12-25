@@ -22,28 +22,12 @@ THE SOFTWARE.
 */
 #endregion
 
-using System.Collections.Generic;
-
 namespace VulkaNet
 {
-    public struct VkRect2D
+    public enum VkPolygonMode
     {
-        public VkOffset2D Offset;
-        public VkExtent2D Extent;
-
-        public VkRect2D(VkOffset2D offset, VkExtent2D extent)
-        {
-            Offset = offset;
-            Extent = extent;
-        }
-    }
-
-    public static unsafe class VkRect2DExtensions
-    {
-        public static int SizeOfMarshalDirect(this IReadOnlyList<VkRect2D> list) =>
-            list.SizeOfMarshalDirect(sizeof(VkRect2D), x => 0);
-
-        public static VkRect2D* MarshalDirect(this IReadOnlyList<VkRect2D> list, ref byte* unmanaged) =>
-            (VkRect2D*)list.MarshalDirect(ref unmanaged, (elem, dst) => { *(VkRect2D*)dst = elem; }, sizeof(VkRect2D));
+        Fill = 0,
+        Line = 1,
+        Point = 2,
     }
 }

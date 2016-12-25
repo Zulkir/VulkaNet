@@ -76,6 +76,7 @@
     <Compile Include="GenStructs\GenFenceCreateInfo.cs" />
     <Compile Include="GenStructs\GenFramebuffer.cs" />
     <Compile Include="GenStructs\GenFramebufferCreateInfo.cs" />
+    <Compile Include="GenStructs\GenGraphicsPipelineCreateInfo.cs" />
     <Compile Include="GenStructs\GenImage.cs" />
     <Compile Include="GenStructs\GenImageMemoryBarrier.cs" />
     <Compile Include="GenStructs\GenImageView.cs" />
@@ -87,7 +88,16 @@
     <Compile Include="GenStructs\GenPhysicalDeviceSparseProperties.cs" />
     <Compile Include="GenStructs\GenPipeline.cs" />
     <Compile Include="GenStructs\GenPipelineCache.cs" />
+    <Compile Include="GenStructs\GenPipelineColorBlendStateCreateInfo.cs" />
+    <Compile Include="GenStructs\GenPipelineDepthStencilStateCreateInfo.cs" />
+    <Compile Include="GenStructs\GenPipelineDynamicStateCreateInfo.cs" />
+    <Compile Include="GenStructs\GenPipelineInputAssemblyStateCreateInfo.cs" />
+    <Compile Include="GenStructs\GenPipelineMultisampleStateCreateInfo.cs" />
+    <Compile Include="GenStructs\GenPipelineRasterizationStateCreateInfo.cs" />
     <Compile Include="GenStructs\GenPipelineShaderStageCreateInfo.cs" />
+    <Compile Include="GenStructs\GenPipelineTessellationStateCreateInfo.cs" />
+    <Compile Include="GenStructs\GenPipelineVertexInputStateCreateInfo.cs" />
+    <Compile Include="GenStructs\GenPipelineViewportStateCreateInfo.cs" />
     <Compile Include="GenStructs\GenQueue.cs" />
     <Compile Include="GenStructs\GenRenderPass.cs" />
     <Compile Include="GenStructs\GenRenderPassBeginInfo.cs" />

@@ -60,6 +60,16 @@ namespace VulkaNetGenerator
             generator.GenerateStruct<GenComputePipelineCreateInfo>(true, false);
             generator.GenerateStruct<GenPipelineShaderStageCreateInfo>(true, false);
             generator.GenerateStruct<GenSpecializationInfo>(true, false);
+            generator.GenerateStruct<GenGraphicsPipelineCreateInfo>(true, false);
+            generator.GenerateStruct<GenPipelineVertexInputStateCreateInfo>(true, false);
+            generator.GenerateStruct<GenPipelineInputAssemblyStateCreateInfo>(true, false);
+            generator.GenerateStruct<GenPipelineTessellationStateCreateInfo>(true, false);
+            generator.GenerateStruct<GenPipelineViewportStateCreateInfo>(true, false);
+            generator.GenerateStruct<GenPipelineRasterizationStateCreateInfo>(true, false);
+            generator.GenerateStruct<GenPipelineMultisampleStateCreateInfo>(true, false);
+            generator.GenerateStruct<GenPipelineDepthStencilStateCreateInfo>(true, false);
+            generator.GenerateStruct<GenPipelineColorBlendStateCreateInfo>(true, false);
+            generator.GenerateStruct<GenPipelineDynamicStateCreateInfo>(true, false);
 
             generator.GenerateClass<GenQueue>();
             generator.GenerateClass<GenCommandPool>();

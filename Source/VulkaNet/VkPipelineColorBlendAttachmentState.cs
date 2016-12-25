@@ -26,24 +26,24 @@ using System.Collections.Generic;
 
 namespace VulkaNet
 {
-    public struct VkRect2D
+    public struct VkPipelineColorBlendAttachmentState
     {
-        public VkOffset2D Offset;
-        public VkExtent2D Extent;
-
-        public VkRect2D(VkOffset2D offset, VkExtent2D extent)
-        {
-            Offset = offset;
-            Extent = extent;
-        }
+        public VkBool32 BlendEnable;
+        public VkBlendFactor SrcColorBlendFactor;
+        public VkBlendFactor DstColorBlendFactor;
+        public VkBlendOp ColorBlendOp;
+        public VkBlendFactor SrcAlphaBlendFactor;
+        public VkBlendFactor DstAlphaBlendFactor;
+        public VkBlendOp AlphaBlendOp;
+        public VkColorComponentFlagBits ColorWriteMask;
     }
 
-    public static unsafe class VkRect2DExtensions
+    public static unsafe class VkPipelineColorBlendAttachmentStateExtensions
     {
-        public static int SizeOfMarshalDirect(this IReadOnlyList<VkRect2D> list) =>
-            list.SizeOfMarshalDirect(sizeof(VkRect2D), x => 0);
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkPipelineColorBlendAttachmentState> list) =>
+            list.SizeOfMarshalDirect(sizeof(VkPipelineColorBlendAttachmentState), x => 0);
 
-        public static VkRect2D* MarshalDirect(this IReadOnlyList<VkRect2D> list, ref byte* unmanaged) =>
-            (VkRect2D*)list.MarshalDirect(ref unmanaged, (elem, dst) => { *(VkRect2D*)dst = elem; }, sizeof(VkRect2D));
+        public static VkPipelineColorBlendAttachmentState* MarshalDirect(this IReadOnlyList<VkPipelineColorBlendAttachmentState> list, ref byte* unmanaged) =>
+            (VkPipelineColorBlendAttachmentState*)list.MarshalDirect(ref unmanaged, (elem, dst) => { *(VkPipelineColorBlendAttachmentState*)dst = elem; }, sizeof(VkPipelineColorBlendAttachmentState));
     }
 }

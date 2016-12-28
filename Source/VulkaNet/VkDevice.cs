@@ -60,6 +60,7 @@ namespace VulkaNet
         VkObjectResult<IVkImage> CreateImage(IVkImageCreateInfo createInfo, IVkAllocationCallbacks allocator);
         VkObjectResult<IVkImageView> CreateImageView(IVkImageViewCreateInfo createInfo, IVkAllocationCallbacks allocator);
         VkObjectResult<IVkSampler> CreateSampler(IVkSamplerCreateInfo createInfo, IVkAllocationCallbacks allocator);
+        VkObjectResult<IVkDescriptorSetLayout> vkCreateDescriptorSetLayout(IVkDescriptorSetLayoutCreateInfo createInfo, IVkAllocationCallbacks allocator);
     }
 
     public unsafe class VkDevice : IVkDevice
@@ -392,6 +393,12 @@ namespace VulkaNet
                 VkSampler.HandleType sampler,
                 VkAllocationCallbacks.Raw* pAllocator);
 
+            public DestroyDescriptorSetLayoutDelegate DestroyDescriptorSetLayout { get; }
+            public delegate void DestroyDescriptorSetLayoutDelegate(
+                HandleType device,
+                VkDescriptorSetLayout.HandleType descriptorSetLayout,
+                VkAllocationCallbacks.Raw* pAllocator);
+
             public DestroyDeviceDelegate DestroyDevice { get; }
             public delegate void DestroyDeviceDelegate(
                 HandleType device,
@@ -549,6 +556,13 @@ namespace VulkaNet
                 VkAllocationCallbacks.Raw* pAllocator,
                 VkSampler.HandleType* pSampler);
 
+            public vkCreateDescriptorSetLayoutDelegate vkCreateDescriptorSetLayout { get; }
+            public delegate VkResult vkCreateDescriptorSetLayoutDelegate(
+                HandleType device,
+                VkDescriptorSetLayoutCreateInfo.Raw* pCreateInfo,
+                VkAllocationCallbacks.Raw* pAllocator,
+                VkDescriptorSetLayout.HandleType* pSetLayout);
+
             public DirectFunctions(IVkDevice device)
             {
                 this.device = device;
@@ -600,6 +614,7 @@ namespace VulkaNet
                 GetDeviceMemoryCommitment = GetDeviceDelegate<GetDeviceMemoryCommitmentDelegate>("vkGetDeviceMemoryCommitment");
                 DestroyBufferView = GetDeviceDelegate<DestroyBufferViewDelegate>("vkDestroyBufferView");
                 DestroySampler = GetDeviceDelegate<DestroySamplerDelegate>("vkDestroySampler");
+                DestroyDescriptorSetLayout = GetDeviceDelegate<DestroyDescriptorSetLayoutDelegate>("vkDestroyDescriptorSetLayout");
                 DestroyDevice = GetDeviceDelegate<DestroyDeviceDelegate>("vkDestroyDevice");
                 DeviceWaitIdle = GetDeviceDelegate<DeviceWaitIdleDelegate>("vkDeviceWaitIdle");
                 CreateCommandPool = GetDeviceDelegate<CreateCommandPoolDelegate>("vkCreateCommandPool");
@@ -623,6 +638,7 @@ namespace VulkaNet
                 CreateImage = GetDeviceDelegate<CreateImageDelegate>("vkCreateImage");
                 CreateImageView = GetDeviceDelegate<CreateImageViewDelegate>("vkCreateImageView");
                 CreateSampler = GetDeviceDelegate<CreateSamplerDelegate>("vkCreateSampler");
+                vkCreateDescriptorSetLayout = GetDeviceDelegate<vkCreateDescriptorSetLayoutDelegate>("vkvkCreateDescriptorSetLayout");
             }
 
             public TDelegate GetDeviceDelegate<TDelegate>(string name)
@@ -1051,6 +1067,25 @@ namespace VulkaNet
                 var result = Direct.CreateSampler(_device, _pCreateInfo, _pAllocator, &_pSampler);
                 var instance = result == VkResult.Success ? new VkSampler(this, _pSampler, allocator) : null;
                 return new VkObjectResult<IVkSampler>(result, instance);
+            }
+        }
+
+        public VkObjectResult<IVkDescriptorSetLayout> vkCreateDescriptorSetLayout(IVkDescriptorSetLayoutCreateInfo createInfo, IVkAllocationCallbacks allocator)
+        {
+            var unmanagedSize =
+                createInfo.SizeOfMarshalIndirect() +
+                allocator.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _device = Handle;
+                var _pCreateInfo = createInfo.MarshalIndirect(ref unmanaged);
+                var _pAllocator = allocator.MarshalIndirect(ref unmanaged);
+                VkDescriptorSetLayout.HandleType _pSetLayout;
+                var result = Direct.vkCreateDescriptorSetLayout(_device, _pCreateInfo, _pAllocator, &_pSetLayout);
+                var instance = result == VkResult.Success ? new VkDescriptorSetLayout(this, _pSetLayout, allocator) : null;
+                return new VkObjectResult<IVkDescriptorSetLayout>(result, instance);
             }
         }
 

@@ -71,6 +71,9 @@
     <Compile Include="GenStructs\GenCommandPool.cs" />
     <Compile Include="GenStructs\GenCommandPoolCreateInfo.cs" />
     <Compile Include="GenStructs\GenComputePipelineCreateInfo.cs" />
+    <Compile Include="GenStructs\GenDescriptorSetLayout.cs" />
+    <Compile Include="GenStructs\GenDescriptorSetLayoutBinding.cs" />
+    <Compile Include="GenStructs\GenDescriptorSetLayoutCreateInfo.cs" />
     <Compile Include="GenStructs\GenDevice.cs" />
     <Compile Include="GenStructs\GenDeviceCreateInfo.cs" />
     <Compile Include="GenStructs\GenDeviceMemory.cs" />

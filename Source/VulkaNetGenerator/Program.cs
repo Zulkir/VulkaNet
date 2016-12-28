@@ -79,6 +79,8 @@ namespace VulkaNetGenerator
             generator.GenerateStruct<GenImageCreateInfo>(true, false);
             generator.GenerateStruct<GenImageViewCreateInfo>(true, false);
             generator.GenerateStruct<GenSamplerCreateInfo>(true, false);
+            generator.GenerateStruct<GenDescriptorSetLayoutCreateInfo>(true, false);
+            generator.GenerateStruct<GenDescriptorSetLayoutBinding>(true, false);
 
             generator.GenerateClass<GenQueue>();
             generator.GenerateClass<GenCommandPool>();
@@ -98,6 +100,7 @@ namespace VulkaNetGenerator
             generator.GenerateClass<GenDeviceMemory>();
             generator.GenerateClass<GenBufferView>();
             generator.GenerateClass<GenSampler>();
+            generator.GenerateClass<GenDescriptorSetLayout>();
 
             generator.GenerateClass<GenDevice>();
         }

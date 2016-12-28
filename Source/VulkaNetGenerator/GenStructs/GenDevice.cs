@@ -163,5 +163,12 @@ namespace VulkaNetGenerator.GenStructs
             GenAllocationCallbacks* pAllocator,
             [Return] GenSampler* pSampler)
             => default(VkResult);
+
+        public VkResult vkCreateDescriptorSetLayout(
+            [FromProperty("this")] GenDevice device,
+            GenDescriptorSetLayoutCreateInfo* pCreateInfo,
+            GenAllocationCallbacks* pAllocator,
+            [Return] GenDescriptorSetLayout* pSetLayout)
+            => default(VkResult);
     }
 }

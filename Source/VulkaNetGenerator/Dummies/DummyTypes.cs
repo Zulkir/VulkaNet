@@ -119,6 +119,8 @@ namespace VulkaNetGenerator.Dummies
     public enum VkSamplerMipmapMode { }
     public enum VkSamplerAddressMode { }
     public enum VkBorderColor { }
+    public enum VkDescriptorSetLayoutCreateFlags { }
+    public enum VkDescriptorType { }
 
     //public struct HndCommandPool { }
     //public struct HndRenderPass { }

@@ -68,6 +68,8 @@
     <Compile Include="VkComputePipelineCreateInfo.cs" />
     <Compile Include="VkCullModeFlagBits.cs" />
     <Compile Include="VkDependencyFlags.cs" />
+    <Compile Include="VkDescriptorSetLayoutCreateFlags.cs" />
+    <Compile Include="VkDescriptorType.cs" />
     <Compile Include="VkDeviceMemory.cs" />
     <Compile Include="VkDynamicState.cs" />
     <Compile Include="VkEvent.cs" />
@@ -211,8 +213,10 @@
     <Compile Include="VkResultExtensions.cs" />
     <Compile Include="VkSampleCountFlagBits.cs" />
     <Compile Include="VkSampleCountFlags.cs" />
+    <Compile Include="VkSampler.cs" />
     <Compile Include="VkSamplerAddressMode.cs" />
     <Compile Include="VkSamplerCreateFlags.cs" />
+    <Compile Include="VkSamplerCreateInfo.cs" />
     <Compile Include="VkSamplerMipmapMode.cs" />
     <Compile Include="VkSemaphore.cs" />
     <Compile Include="VkSemaphoreCreateFlags.cs" />

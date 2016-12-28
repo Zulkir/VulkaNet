@@ -23,6 +23,8 @@ namespace VulkaNetGenerator.Reflection
             FromProperty = GetAttrValue<FromPropertyAttribute>(attributes);
             if (TypeStr.StartsWith("VkDevice.HandleType") && parameterInfo.Member.DeclaringType == typeof(GenDevice))
                 TypeStr = TypeStr.Substring("VkDevice.".Length);
+            if (parameterInfo.ParameterType.Name.StartsWith("Vk") && !IsArray)
+                ShouldMarshal = false;
         }
     }
 }

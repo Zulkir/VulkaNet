@@ -175,6 +175,7 @@ namespace VulkaNetGenerator
                                                field.IsCountFor != null ? $"s.{field.IsCountFor}?.Count ?? 0" :
                                                field.TypeStr == "VkBool32" ? $"new VkBool32(s.{prop?.Name})" :
                                                (prop?.NeedsCast ?? false) ? $"({field.TypeStr})s.{prop.Name}" :
+                                               field.IsUnmanagedPtr ? $"&s.{prop?.Name}" :
                                                $"s.{prop?.Name}";
                                     writer.WriteLine($"result.{field.Name} = {rval};");
                                 }
@@ -548,6 +549,7 @@ namespace VulkaNetGenerator
                                                rParam.IsCountFor != null ? $"{rParam.IsCountFor}?.Count ?? 0" :
                                                rParam.TypeStr == "VkBool32" ? $"new VkBool32({wParam?.Name})" :
                                                rParam.IsReturnSize ? $"({rParam.TypeStr.Substring(0, rParam.TypeStr.Length - 1)})0" :
+                                               rParam.IsUnmanagedPtr ? $"&{wParam?.Name}" :
                                                $"{wParam?.Name}";
                                     writer.WriteLine($"var _{rParam.Name} = {rval};");
                                 }

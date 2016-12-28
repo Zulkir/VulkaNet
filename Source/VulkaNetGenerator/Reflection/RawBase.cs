@@ -35,7 +35,7 @@ namespace VulkaNetGenerator.Reflection
         public string TypeStr { get; protected set; }
         public string Name { get; }
         public bool IgnoreInWrapper { get; protected set; }
-        public bool ShouldMarshal { get; }
+        public bool ShouldMarshal { get; protected set; }
         public bool IsUnmanagedPtr { get; }
         public string IsCountFor { get; }
         public string ExplicitWrapperType { get; }
@@ -135,7 +135,7 @@ namespace VulkaNetGenerator.Reflection
 
         private static bool DeriveSholdMarshal(Type genType, bool isPointer, bool isArray) =>
             //(genType.Name.StartsWith("Gen") || isArray) && (isPointer || DeriveIsStructRaw(genType));
-            (isPointer || DeriveIsStructRaw(genType));
+            isPointer || DeriveIsStructRaw(genType);
 
         private static bool DeriveIsStructRaw(Type genType)
         {

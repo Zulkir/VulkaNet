@@ -22,28 +22,32 @@ THE SOFTWARE.
 */
 #endregion
 
+using System;
 using System.Collections.Generic;
 
 namespace VulkaNet
 {
-    public interface IVkPipelineLayout : IVkNonDispatchableHandledObject, IVkDeviceChild
+    public interface IVkPipelineLayout : IVkNonDispatchableHandledObject, IVkDeviceChild, IDisposable
     {
         VkPipelineLayout.HandleType Handle { get; }
+        IVkAllocationCallbacks Allocator { get; }
     }
 
     public unsafe class VkPipelineLayout : IVkPipelineLayout
     {
         public IVkDevice Device { get; }
         public HandleType Handle { get; }
+        public IVkAllocationCallbacks Allocator { get; }
 
         private VkDevice.DirectFunctions Direct => Device.Direct;
 
         public ulong RawHandle => Handle.InternalHandle;
 
-        public VkPipelineLayout(IVkDevice device, HandleType handle)
+        public VkPipelineLayout(IVkDevice device, HandleType handle, IVkAllocationCallbacks allocator)
         {
             Device = device;
             Handle = handle;
+            Allocator = allocator;
         }
 
         public struct HandleType
@@ -53,6 +57,21 @@ namespace VulkaNet
             public override string ToString() => InternalHandle.ToString();
             public static int SizeInBytes { get; } = sizeof(ulong);
             public static HandleType Null => new HandleType(default(ulong));
+        }
+
+        public void Dispose()
+        {
+            var unmanagedSize =
+                Allocator.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _device = Device.Handle;
+                var _pipelineLayout = Handle;
+                var _pAllocator = Allocator.MarshalIndirect(ref unmanaged);
+                Direct.DestroyPipelineLayout(_device, _pipelineLayout, _pAllocator);
+            }
         }
 
     }

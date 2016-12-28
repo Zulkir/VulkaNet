@@ -68,7 +68,10 @@
     <Compile Include="VkComputePipelineCreateInfo.cs" />
     <Compile Include="VkCullModeFlagBits.cs" />
     <Compile Include="VkDependencyFlags.cs" />
+    <Compile Include="VkDescriptorSetLayout.cs" />
+    <Compile Include="VkDescriptorSetLayoutBinding.cs" />
     <Compile Include="VkDescriptorSetLayoutCreateFlags.cs" />
+    <Compile Include="VkDescriptorSetLayoutCreateInfo.cs" />
     <Compile Include="VkDescriptorType.cs" />
     <Compile Include="VkDeviceMemory.cs" />
     <Compile Include="VkDynamicState.cs" />
@@ -147,6 +150,7 @@
     <Compile Include="VkPipelineInputAssemblyStateCreateFlags.cs" />
     <Compile Include="VkPipelineInputAssemblyStateCreateInfo.cs" />
     <Compile Include="VkPipelineLayout.cs" />
+    <Compile Include="VkPipelineLayoutCreateFlags.cs" />
     <Compile Include="VkPipelineMultisampleStateCreateFlags.cs" />
     <Compile Include="VkPipelineMultisampleStateCreateInfo.cs" />
     <Compile Include="VkPipelineRasterizationStateCreateFlags.cs" />
@@ -163,6 +167,7 @@
     <Compile Include="VkPipelineViewportStateCreateInfo.cs" />
     <Compile Include="VkPolygonMode.cs" />
     <Compile Include="VkPrimitiveTopology.cs" />
+    <Compile Include="VkPushConstantRange.cs" />
     <Compile Include="VkQueryControlFlags.cs" />
     <Compile Include="VkQueryPipelineStatisticFlags.cs" />
     <Compile Include="VkQueue.cs" />

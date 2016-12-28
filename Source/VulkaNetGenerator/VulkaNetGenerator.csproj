@@ -106,6 +106,7 @@
     <Compile Include="GenStructs\GenPipelineDepthStencilStateCreateInfo.cs" />
     <Compile Include="GenStructs\GenPipelineDynamicStateCreateInfo.cs" />
     <Compile Include="GenStructs\GenPipelineInputAssemblyStateCreateInfo.cs" />
+    <Compile Include="GenStructs\GenPipelineLayoutCreateInfo.cs" />
     <Compile Include="GenStructs\GenPipelineMultisampleStateCreateInfo.cs" />
     <Compile Include="GenStructs\GenPipelineRasterizationStateCreateInfo.cs" />
     <Compile Include="GenStructs\GenPipelineShaderStageCreateInfo.cs" />

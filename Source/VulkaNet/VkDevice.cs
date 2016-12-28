@@ -60,7 +60,8 @@ namespace VulkaNet
         VkObjectResult<IVkImage> CreateImage(IVkImageCreateInfo createInfo, IVkAllocationCallbacks allocator);
         VkObjectResult<IVkImageView> CreateImageView(IVkImageViewCreateInfo createInfo, IVkAllocationCallbacks allocator);
         VkObjectResult<IVkSampler> CreateSampler(IVkSamplerCreateInfo createInfo, IVkAllocationCallbacks allocator);
-        VkObjectResult<IVkDescriptorSetLayout> vkCreateDescriptorSetLayout(IVkDescriptorSetLayoutCreateInfo createInfo, IVkAllocationCallbacks allocator);
+        VkObjectResult<IVkDescriptorSetLayout> CreateDescriptorSetLayout(IVkDescriptorSetLayoutCreateInfo createInfo, IVkAllocationCallbacks allocator);
+        VkObjectResult<IVkPipelineLayout> CreatePipelineLayout(IVkPipelineLayoutCreateInfo createInfo, IVkAllocationCallbacks allocator);
     }
 
     public unsafe class VkDevice : IVkDevice
@@ -335,6 +336,12 @@ namespace VulkaNet
                 VkPipeline.HandleType pipeline,
                 VkAllocationCallbacks.Raw* pAllocator);
 
+            public DestroyPipelineLayoutDelegate DestroyPipelineLayout { get; }
+            public delegate void DestroyPipelineLayoutDelegate(
+                HandleType device,
+                VkPipelineLayout.HandleType pipelineLayout,
+                VkAllocationCallbacks.Raw* pAllocator);
+
             public DestroyPipelineCacheDelegate DestroyPipelineCache { get; }
             public delegate void DestroyPipelineCacheDelegate(
                 HandleType device,
@@ -556,12 +563,19 @@ namespace VulkaNet
                 VkAllocationCallbacks.Raw* pAllocator,
                 VkSampler.HandleType* pSampler);
 
-            public vkCreateDescriptorSetLayoutDelegate vkCreateDescriptorSetLayout { get; }
-            public delegate VkResult vkCreateDescriptorSetLayoutDelegate(
+            public CreateDescriptorSetLayoutDelegate CreateDescriptorSetLayout { get; }
+            public delegate VkResult CreateDescriptorSetLayoutDelegate(
                 HandleType device,
                 VkDescriptorSetLayoutCreateInfo.Raw* pCreateInfo,
                 VkAllocationCallbacks.Raw* pAllocator,
                 VkDescriptorSetLayout.HandleType* pSetLayout);
+
+            public CreatePipelineLayoutDelegate CreatePipelineLayout { get; }
+            public delegate VkResult CreatePipelineLayoutDelegate(
+                HandleType device,
+                VkPipelineLayoutCreateInfo.Raw* pCreateInfo,
+                VkAllocationCallbacks.Raw* pAllocator,
+                VkPipelineLayout.HandleType* pPipelineLayout);
 
             public DirectFunctions(IVkDevice device)
             {
@@ -605,6 +619,7 @@ namespace VulkaNet
                 DestroyImageView = GetDeviceDelegate<DestroyImageViewDelegate>("vkDestroyImageView");
                 DestroyShaderModule = GetDeviceDelegate<DestroyShaderModuleDelegate>("vkDestroyShaderModule");
                 DestroyPipeline = GetDeviceDelegate<DestroyPipelineDelegate>("vkDestroyPipeline");
+                DestroyPipelineLayout = GetDeviceDelegate<DestroyPipelineLayoutDelegate>("vkDestroyPipelineLayout");
                 DestroyPipelineCache = GetDeviceDelegate<DestroyPipelineCacheDelegate>("vkDestroyPipelineCache");
                 MergePipelineCaches = GetDeviceDelegate<MergePipelineCachesDelegate>("vkMergePipelineCaches");
                 GetPipelineCacheData = GetDeviceDelegate<GetPipelineCacheDataDelegate>("vkGetPipelineCacheData");
@@ -638,7 +653,8 @@ namespace VulkaNet
                 CreateImage = GetDeviceDelegate<CreateImageDelegate>("vkCreateImage");
                 CreateImageView = GetDeviceDelegate<CreateImageViewDelegate>("vkCreateImageView");
                 CreateSampler = GetDeviceDelegate<CreateSamplerDelegate>("vkCreateSampler");
-                vkCreateDescriptorSetLayout = GetDeviceDelegate<vkCreateDescriptorSetLayoutDelegate>("vkvkCreateDescriptorSetLayout");
+                CreateDescriptorSetLayout = GetDeviceDelegate<CreateDescriptorSetLayoutDelegate>("vkCreateDescriptorSetLayout");
+                CreatePipelineLayout = GetDeviceDelegate<CreatePipelineLayoutDelegate>("vkCreatePipelineLayout");
             }
 
             public TDelegate GetDeviceDelegate<TDelegate>(string name)
@@ -1070,7 +1086,7 @@ namespace VulkaNet
             }
         }
 
-        public VkObjectResult<IVkDescriptorSetLayout> vkCreateDescriptorSetLayout(IVkDescriptorSetLayoutCreateInfo createInfo, IVkAllocationCallbacks allocator)
+        public VkObjectResult<IVkDescriptorSetLayout> CreateDescriptorSetLayout(IVkDescriptorSetLayoutCreateInfo createInfo, IVkAllocationCallbacks allocator)
         {
             var unmanagedSize =
                 createInfo.SizeOfMarshalIndirect() +
@@ -1083,9 +1099,28 @@ namespace VulkaNet
                 var _pCreateInfo = createInfo.MarshalIndirect(ref unmanaged);
                 var _pAllocator = allocator.MarshalIndirect(ref unmanaged);
                 VkDescriptorSetLayout.HandleType _pSetLayout;
-                var result = Direct.vkCreateDescriptorSetLayout(_device, _pCreateInfo, _pAllocator, &_pSetLayout);
+                var result = Direct.CreateDescriptorSetLayout(_device, _pCreateInfo, _pAllocator, &_pSetLayout);
                 var instance = result == VkResult.Success ? new VkDescriptorSetLayout(this, _pSetLayout, allocator) : null;
                 return new VkObjectResult<IVkDescriptorSetLayout>(result, instance);
+            }
+        }
+
+        public VkObjectResult<IVkPipelineLayout> CreatePipelineLayout(IVkPipelineLayoutCreateInfo createInfo, IVkAllocationCallbacks allocator)
+        {
+            var unmanagedSize =
+                createInfo.SizeOfMarshalIndirect() +
+                allocator.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _device = Handle;
+                var _pCreateInfo = createInfo.MarshalIndirect(ref unmanaged);
+                var _pAllocator = allocator.MarshalIndirect(ref unmanaged);
+                VkPipelineLayout.HandleType _pPipelineLayout;
+                var result = Direct.CreatePipelineLayout(_device, _pCreateInfo, _pAllocator, &_pPipelineLayout);
+                var instance = result == VkResult.Success ? new VkPipelineLayout(this, _pPipelineLayout, allocator) : null;
+                return new VkObjectResult<IVkPipelineLayout>(result, instance);
             }
         }
 

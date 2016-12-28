@@ -32,6 +32,8 @@ namespace VulkaNet
         VkImage.HandleType Handle { get; }
         IVkAllocationCallbacks Allocator { get; }
         VkSubresourceLayout GetImageSubresourceLayout(VkImageSubresource subresource);
+        VkMemoryRequirements GetMemoryRequirements();
+        VkResult BindMemory(IVkDeviceMemory memory, ulong memoryOffset);
     }
 
     public unsafe class VkImage : IVkImage
@@ -83,6 +85,24 @@ namespace VulkaNet
             VkSubresourceLayout _pLayout;
             Direct.GetImageSubresourceLayout(_device, _image, _pSubresource, &_pLayout);
             return _pLayout;
+        }
+
+        public VkMemoryRequirements GetMemoryRequirements()
+        {
+            var _device = Device.Handle;
+            var _image = Handle;
+            VkMemoryRequirements _pMemoryRequirements;
+            Direct.GetImageMemoryRequirements(_device, _image, &_pMemoryRequirements);
+            return _pMemoryRequirements;
+        }
+
+        public VkResult BindMemory(IVkDeviceMemory memory, ulong memoryOffset)
+        {
+            var _device = Device.Handle;
+            var _image = Handle;
+            var _memory = memory?.Handle ?? VkDeviceMemory.HandleType.Null;
+            var _memoryOffset = memoryOffset;
+            return Direct.BindImageMemory(_device, _image, _memory, _memoryOffset);
         }
 
     }

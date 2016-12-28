@@ -18,5 +18,20 @@ namespace VulkaNetGenerator.GenStructs
             VkImageSubresource* pSubresource,
             [Return] VkSubresourceLayout* pLayout)
         { }
+
+        [MethodName("GetMemoryRequirements")]
+        public void GetImageMemoryRequirements(
+            [FromProperty("Device")] GenDevice device,
+            [FromProperty("this")] GenImage image,
+            [Return] VkMemoryRequirements* pMemoryRequirements)
+        { }
+
+        [MethodName("BindMemory")]
+        public VkResult BindImageMemory(
+            [FromProperty("Device")] GenDevice device,
+            [FromProperty("this")] GenImage image,
+            GenDeviceMemory memory,
+            ulong memoryOffset)
+            => default(VkResult);
     }
 }

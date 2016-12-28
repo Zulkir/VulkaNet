@@ -46,6 +46,7 @@ namespace VulkaNetGenerator.Dummies
     public struct VkImageSubresource { }
     public struct VkSubresourceLayout { }
     public struct VkComponentMapping { }
+    public struct VkMemoryRequirements { }
     
     public enum VkResult { }
     public enum VkStructureType { }

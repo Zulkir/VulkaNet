@@ -113,6 +113,7 @@
     <Compile Include="VkImageUsageFlags.cs" />
     <Compile Include="VkImageView.cs" />
     <Compile Include="VkImageViewCreateFlags.cs" />
+    <Compile Include="VkImageViewCreateInfo.cs" />
     <Compile Include="VkImageViewType.cs" />
     <Compile Include="VkLogicOp.cs" />
     <Compile Include="VkMappedMemoryRange.cs" />
@@ -122,6 +123,7 @@
     <Compile Include="VkMemoryHeapFlags.cs" />
     <Compile Include="VkMemoryMapFlags.cs" />
     <Compile Include="VkMemoryPropertyFlags.cs" />
+    <Compile Include="VkMemoryRequirements.cs" />
     <Compile Include="VkMemoryType.cs" />
     <Compile Include="VkPhysicalDeviceMemoryProperties.cs" />
     <Compile Include="VkPipeline.cs" />

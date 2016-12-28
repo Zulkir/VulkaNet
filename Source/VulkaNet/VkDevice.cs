@@ -258,6 +258,19 @@ namespace VulkaNet
                 VkBuffer.HandleType buffer,
                 VkAllocationCallbacks.Raw* pAllocator);
 
+            public GetBufferMemoryRequirementsDelegate GetBufferMemoryRequirements { get; }
+            public delegate void GetBufferMemoryRequirementsDelegate(
+                HandleType device,
+                VkBuffer.HandleType buffer,
+                VkMemoryRequirements* pMemoryRequirements);
+
+            public BindBufferMemoryDelegate BindBufferMemory { get; }
+            public delegate VkResult BindBufferMemoryDelegate(
+                HandleType device,
+                VkBuffer.HandleType buffer,
+                VkDeviceMemory.HandleType memory,
+                ulong memoryOffset);
+
             public DestroyImageDelegate DestroyImage { get; }
             public delegate void DestroyImageDelegate(
                 HandleType device,
@@ -270,6 +283,19 @@ namespace VulkaNet
                 VkImage.HandleType image,
                 VkImageSubresource* pSubresource,
                 VkSubresourceLayout* pLayout);
+
+            public GetImageMemoryRequirementsDelegate GetImageMemoryRequirements { get; }
+            public delegate void GetImageMemoryRequirementsDelegate(
+                HandleType device,
+                VkImage.HandleType image,
+                VkMemoryRequirements* pMemoryRequirements);
+
+            public BindImageMemoryDelegate BindImageMemory { get; }
+            public delegate VkResult BindImageMemoryDelegate(
+                HandleType device,
+                VkImage.HandleType image,
+                VkDeviceMemory.HandleType memory,
+                ulong memoryOffset);
 
             public DestroyRenderPassDelegate DestroyRenderPass { get; }
             public delegate void DestroyRenderPassDelegate(
@@ -539,8 +565,12 @@ namespace VulkaNet
                 SetEvent = GetDeviceDelegate<SetEventDelegate>("vkSetEvent");
                 ResetEvent = GetDeviceDelegate<ResetEventDelegate>("vkResetEvent");
                 DestroyBuffer = GetDeviceDelegate<DestroyBufferDelegate>("vkDestroyBuffer");
+                GetBufferMemoryRequirements = GetDeviceDelegate<GetBufferMemoryRequirementsDelegate>("vkGetBufferMemoryRequirements");
+                BindBufferMemory = GetDeviceDelegate<BindBufferMemoryDelegate>("vkBindBufferMemory");
                 DestroyImage = GetDeviceDelegate<DestroyImageDelegate>("vkDestroyImage");
                 GetImageSubresourceLayout = GetDeviceDelegate<GetImageSubresourceLayoutDelegate>("vkGetImageSubresourceLayout");
+                GetImageMemoryRequirements = GetDeviceDelegate<GetImageMemoryRequirementsDelegate>("vkGetImageMemoryRequirements");
+                BindImageMemory = GetDeviceDelegate<BindImageMemoryDelegate>("vkBindImageMemory");
                 DestroyRenderPass = GetDeviceDelegate<DestroyRenderPassDelegate>("vkDestroyRenderPass");
                 GetRenderAreaGranularity = GetDeviceDelegate<GetRenderAreaGranularityDelegate>("vkGetRenderAreaGranularity");
                 DestroyFramebuffer = GetDeviceDelegate<DestroyFramebufferDelegate>("vkDestroyFramebuffer");

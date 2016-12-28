@@ -31,6 +31,8 @@ namespace VulkaNet
     {
         VkBuffer.HandleType Handle { get; }
         IVkAllocationCallbacks Allocator { get; }
+        VkMemoryRequirements GetMemoryRequirements();
+        VkResult BindMemory(IVkDeviceMemory memory, ulong memoryOffset);
     }
 
     public unsafe class VkBuffer : IVkBuffer
@@ -72,6 +74,24 @@ namespace VulkaNet
                 var _pAllocator = Allocator.MarshalIndirect(ref unmanaged);
                 Direct.DestroyBuffer(_device, _buffer, _pAllocator);
             }
+        }
+
+        public VkMemoryRequirements GetMemoryRequirements()
+        {
+            var _device = Device.Handle;
+            var _buffer = Handle;
+            VkMemoryRequirements _pMemoryRequirements;
+            Direct.GetBufferMemoryRequirements(_device, _buffer, &_pMemoryRequirements);
+            return _pMemoryRequirements;
+        }
+
+        public VkResult BindMemory(IVkDeviceMemory memory, ulong memoryOffset)
+        {
+            var _device = Device.Handle;
+            var _buffer = Handle;
+            var _memory = memory?.Handle ?? VkDeviceMemory.HandleType.Null;
+            var _memoryOffset = memoryOffset;
+            return Direct.BindBufferMemory(_device, _buffer, _memory, _memoryOffset);
         }
 
     }

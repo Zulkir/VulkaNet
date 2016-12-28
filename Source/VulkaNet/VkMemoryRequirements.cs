@@ -27,12 +27,10 @@ using System.Runtime.InteropServices;
 namespace VulkaNet
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct VkImageSubresourceRange
+    public struct VkMemoryRequirements
     {
-        public VkImageAspectFlags AspectMask;
-        public int BaseMipLevel;
-        public int LevelCount;
-        public int BaseArrayLayer;
-        public int LayerCount;
+        public ulong Size;
+        public ulong Alignment;
+        public int MemoryTypeBits;
     }
 }

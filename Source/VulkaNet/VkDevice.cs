@@ -59,6 +59,7 @@ namespace VulkaNet
         VkObjectResult<IVkBufferView> CreateBufferView(IVkBufferViewCreateInfo createInfo, IVkAllocationCallbacks allocator);
         VkObjectResult<IVkImage> CreateImage(IVkImageCreateInfo createInfo, IVkAllocationCallbacks allocator);
         VkObjectResult<IVkImageView> CreateImageView(IVkImageViewCreateInfo createInfo, IVkAllocationCallbacks allocator);
+        VkObjectResult<IVkSampler> CreateSampler(IVkSamplerCreateInfo createInfo, IVkAllocationCallbacks allocator);
     }
 
     public unsafe class VkDevice : IVkDevice
@@ -385,6 +386,12 @@ namespace VulkaNet
                 VkBufferView.HandleType bufferView,
                 VkAllocationCallbacks.Raw* pAllocator);
 
+            public DestroySamplerDelegate DestroySampler { get; }
+            public delegate void DestroySamplerDelegate(
+                HandleType device,
+                VkSampler.HandleType sampler,
+                VkAllocationCallbacks.Raw* pAllocator);
+
             public DestroyDeviceDelegate DestroyDevice { get; }
             public delegate void DestroyDeviceDelegate(
                 HandleType device,
@@ -535,6 +542,13 @@ namespace VulkaNet
                 VkAllocationCallbacks.Raw* pAllocator,
                 VkImageView.HandleType* pView);
 
+            public CreateSamplerDelegate CreateSampler { get; }
+            public delegate VkResult CreateSamplerDelegate(
+                HandleType device,
+                VkSamplerCreateInfo.Raw* pCreateInfo,
+                VkAllocationCallbacks.Raw* pAllocator,
+                VkSampler.HandleType* pSampler);
+
             public DirectFunctions(IVkDevice device)
             {
                 this.device = device;
@@ -585,6 +599,7 @@ namespace VulkaNet
                 UnmapMemory = GetDeviceDelegate<UnmapMemoryDelegate>("vkUnmapMemory");
                 GetDeviceMemoryCommitment = GetDeviceDelegate<GetDeviceMemoryCommitmentDelegate>("vkGetDeviceMemoryCommitment");
                 DestroyBufferView = GetDeviceDelegate<DestroyBufferViewDelegate>("vkDestroyBufferView");
+                DestroySampler = GetDeviceDelegate<DestroySamplerDelegate>("vkDestroySampler");
                 DestroyDevice = GetDeviceDelegate<DestroyDeviceDelegate>("vkDestroyDevice");
                 DeviceWaitIdle = GetDeviceDelegate<DeviceWaitIdleDelegate>("vkDeviceWaitIdle");
                 CreateCommandPool = GetDeviceDelegate<CreateCommandPoolDelegate>("vkCreateCommandPool");
@@ -607,6 +622,7 @@ namespace VulkaNet
                 CreateBufferView = GetDeviceDelegate<CreateBufferViewDelegate>("vkCreateBufferView");
                 CreateImage = GetDeviceDelegate<CreateImageDelegate>("vkCreateImage");
                 CreateImageView = GetDeviceDelegate<CreateImageViewDelegate>("vkCreateImageView");
+                CreateSampler = GetDeviceDelegate<CreateSamplerDelegate>("vkCreateSampler");
             }
 
             public TDelegate GetDeviceDelegate<TDelegate>(string name)
@@ -1016,6 +1032,25 @@ namespace VulkaNet
                 var result = Direct.CreateImageView(_device, _pCreateInfo, _pAllocator, &_pView);
                 var instance = result == VkResult.Success ? new VkImageView(this, _pView, allocator) : null;
                 return new VkObjectResult<IVkImageView>(result, instance);
+            }
+        }
+
+        public VkObjectResult<IVkSampler> CreateSampler(IVkSamplerCreateInfo createInfo, IVkAllocationCallbacks allocator)
+        {
+            var unmanagedSize =
+                createInfo.SizeOfMarshalIndirect() +
+                allocator.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _device = Handle;
+                var _pCreateInfo = createInfo.MarshalIndirect(ref unmanaged);
+                var _pAllocator = allocator.MarshalIndirect(ref unmanaged);
+                VkSampler.HandleType _pSampler;
+                var result = Direct.CreateSampler(_device, _pCreateInfo, _pAllocator, &_pSampler);
+                var instance = result == VkResult.Success ? new VkSampler(this, _pSampler, allocator) : null;
+                return new VkObjectResult<IVkSampler>(result, instance);
             }
         }
 

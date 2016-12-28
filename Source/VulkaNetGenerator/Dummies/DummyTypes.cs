@@ -114,6 +114,11 @@ namespace VulkaNetGenerator.Dummies
     public enum VkImageViewCreateFlags { }
     public enum VkImageViewType { }
     public enum VkComponentSwizzle { }
+    public enum VkSamplerCreateFlags { }
+    public enum VkFilter { }
+    public enum VkSamplerMipmapMode { }
+    public enum VkSamplerAddressMode { }
+    public enum VkBorderColor { }
 
     //public struct HndCommandPool { }
     //public struct HndRenderPass { }

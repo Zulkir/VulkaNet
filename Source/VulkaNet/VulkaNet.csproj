@@ -50,6 +50,7 @@
     <Compile Include="VkAttachmentStoreOp.cs" />
     <Compile Include="VkBlendFactor.cs" />
     <Compile Include="VkBlendOp.cs" />
+    <Compile Include="VkBorderColor.cs" />
     <Compile Include="VkBuffer.cs" />
     <Compile Include="VkBufferCreateFlags.cs" />
     <Compile Include="VkBufferCreateInfo.cs" />
@@ -94,6 +95,7 @@
     <Compile Include="VkFence.cs" />
     <Compile Include="VkFenceCreateFlags.cs" />
     <Compile Include="VkFenceCreateInfo.cs" />
+    <Compile Include="VkFilter.cs" />
     <Compile Include="VkFormat.cs" />
     <Compile Include="VkFramebuffer.cs" />
     <Compile Include="VkFramebufferCreateFlags.cs" />
@@ -209,6 +211,9 @@
     <Compile Include="VkResultExtensions.cs" />
     <Compile Include="VkSampleCountFlagBits.cs" />
     <Compile Include="VkSampleCountFlags.cs" />
+    <Compile Include="VkSamplerAddressMode.cs" />
+    <Compile Include="VkSamplerCreateFlags.cs" />
+    <Compile Include="VkSamplerMipmapMode.cs" />
     <Compile Include="VkSemaphore.cs" />
     <Compile Include="VkSemaphoreCreateFlags.cs" />
     <Compile Include="VkSemaphoreCreateInfo.cs" />

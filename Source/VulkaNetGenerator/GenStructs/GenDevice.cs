@@ -156,5 +156,12 @@ namespace VulkaNetGenerator.GenStructs
             GenAllocationCallbacks* pAllocator,
             [Return] GenImageView* pView)
             => default(VkResult);
+
+        public VkResult CreateSampler(
+            [FromProperty("this")] GenDevice device,
+            GenSamplerCreateInfo* pCreateInfo,
+            GenAllocationCallbacks* pAllocator,
+            [Return] GenSampler* pSampler)
+            => default(VkResult);
     }
 }

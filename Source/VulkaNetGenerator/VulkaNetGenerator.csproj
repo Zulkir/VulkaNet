@@ -62,6 +62,8 @@
     <Compile Include="GenStructs\GenBuffer.cs" />
     <Compile Include="GenStructs\GenBufferCreateInfo.cs" />
     <Compile Include="GenStructs\GenBufferMemoryBarrier.cs" />
+    <Compile Include="GenStructs\GenBufferView.cs" />
+    <Compile Include="GenStructs\GenBufferViewCreateInfo.cs" />
     <Compile Include="GenStructs\GenCommandBuffer.cs" />
     <Compile Include="GenStructs\GenCommandBufferAllocateInfo.cs" />
     <Compile Include="GenStructs\GenCommandBufferBeginInfo.cs" />

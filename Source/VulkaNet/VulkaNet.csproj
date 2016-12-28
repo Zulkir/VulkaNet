@@ -55,6 +55,9 @@
     <Compile Include="VkBufferCreateInfo.cs" />
     <Compile Include="VkBufferMemoryBarrier.cs" />
     <Compile Include="VkBufferUsageFlags.cs" />
+    <Compile Include="VkBufferView.cs" />
+    <Compile Include="VkBufferViewCreateFlags.cs" />
+    <Compile Include="VkBufferViewCreateInfo.cs" />
     <Compile Include="VkClearValue.cs" />
     <Compile Include="VkColor4.cs" />
     <Compile Include="VkColorComponentFlagBits.cs" />

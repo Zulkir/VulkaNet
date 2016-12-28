@@ -101,6 +101,7 @@ namespace VulkaNetGenerator.Dummies
     public enum VkBufferCreateFlags { }
     public enum VkBufferUsageFlags { }
     public enum VkSharingMode { }
+    public enum VkBufferViewCreateFlags { }
 
     //public struct HndCommandPool { }
     //public struct HndRenderPass { }

@@ -75,6 +75,7 @@ namespace VulkaNetGenerator
             generator.GenerateStruct<GenMemoryAllocateInfo>(true, false);
             generator.GenerateStruct<GenMappedMemoryRange>(true, false);
             generator.GenerateStruct<GenBufferCreateInfo>(true, false);
+            generator.GenerateStruct<GenBufferViewCreateInfo>(true, false);
 
             generator.GenerateClass<GenQueue>();
             generator.GenerateClass<GenCommandPool>();
@@ -92,6 +93,7 @@ namespace VulkaNetGenerator
             generator.GenerateClass<GenPipelineLayout>();
             generator.GenerateClass<GenPipelineCache>();
             generator.GenerateClass<GenDeviceMemory>();
+            generator.GenerateClass<GenBufferView>();
 
             generator.GenerateClass<GenDevice>();
         }

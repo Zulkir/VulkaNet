@@ -27,8 +27,9 @@ using System;
 namespace VulkaNet
 {
     [Flags]
-    public enum VkDescriptorSetLayoutCreateFlags
+    public enum VkDescriptorPoolCreateFlags
     {
-        None = 0
+        None = 0,
+        FreeDescriptorSet = 0x00000001
     }
 }

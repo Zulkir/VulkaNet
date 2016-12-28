@@ -68,6 +68,13 @@
     <Compile Include="VkComputePipelineCreateInfo.cs" />
     <Compile Include="VkCullModeFlagBits.cs" />
     <Compile Include="VkDependencyFlags.cs" />
+    <Compile Include="VkDescriptorPool.cs" />
+    <Compile Include="VkDescriptorPoolCreateFlags.cs" />
+    <Compile Include="VkDescriptorPoolCreateInfo.cs" />
+    <Compile Include="VkDescriptorPoolResetFlags.cs" />
+    <Compile Include="VkDescriptorPoolSize.cs" />
+    <Compile Include="VkDescriptorSet.cs" />
+    <Compile Include="VkDescriptorSetAllocateInfo.cs" />
     <Compile Include="VkDescriptorSetLayout.cs" />
     <Compile Include="VkDescriptorSetLayoutBinding.cs" />
     <Compile Include="VkDescriptorSetLayoutCreateFlags.cs" />
@@ -151,6 +158,7 @@
     <Compile Include="VkPipelineInputAssemblyStateCreateInfo.cs" />
     <Compile Include="VkPipelineLayout.cs" />
     <Compile Include="VkPipelineLayoutCreateFlags.cs" />
+    <Compile Include="VkPipelineLayoutCreateInfo.cs" />
     <Compile Include="VkPipelineMultisampleStateCreateFlags.cs" />
     <Compile Include="VkPipelineMultisampleStateCreateInfo.cs" />
     <Compile Include="VkPipelineRasterizationStateCreateFlags.cs" />

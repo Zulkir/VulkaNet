@@ -5,6 +5,7 @@ namespace VulkaNetGenerator.GenStructs
 {
     public unsafe struct GenDescriptorSetLayoutBinding
     {
+        // todo: fill automatically
         public int binding;
         public VkDescriptorType descriptorType;
         public int descriptorCount;

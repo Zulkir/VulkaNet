@@ -22,13 +22,24 @@ THE SOFTWARE.
 */
 #endregion
 
-using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    [Flags]
-    public enum VkDescriptorSetLayoutCreateFlags
+    [StructLayout(LayoutKind.Sequential)]
+    public struct VkDescriptorPoolSize
     {
-        None = 0
+        public VkDescriptorType Type;
+        public int DescriptorCount;
+    }
+
+    public static unsafe class VkDescriptorPoolSizeExtensions
+    {
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkDescriptorPoolSize> list) =>
+            list.SizeOfMarshalDirect(sizeof(VkDescriptorPoolSize), x => 0);
+
+        public static VkDescriptorPoolSize* MarshalDirect(this IReadOnlyList<VkDescriptorPoolSize> list, ref byte* unmanaged) =>
+            (VkDescriptorPoolSize*)list.MarshalDirect(ref unmanaged, (elem, dst) => { *(VkDescriptorPoolSize*)dst = elem; }, sizeof(VkDescriptorPoolSize));
     }
 }

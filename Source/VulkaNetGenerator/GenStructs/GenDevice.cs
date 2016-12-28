@@ -177,5 +177,27 @@ namespace VulkaNetGenerator.GenStructs
             GenAllocationCallbacks* pAllocator,
             [Return] GenPipelineLayout* pPipelineLayout)
             => default(VkResult);
+
+        public VkResult CreateDescriptorPool(
+            [FromProperty("this")] GenDevice device,
+            GenDescriptorPoolCreateInfo* pCreateInfo,
+            GenAllocationCallbacks* pAllocator,
+            [Return] GenDescriptorPool* pDescriptorPool)
+            => default(VkResult);
+
+        // todo: to GenDescriptorPool
+        public VkResult AllocateDescriptorSets(
+            [FromProperty("this")] GenDevice device,
+            GenDescriptorSetAllocateInfo* pAllocateInfo,
+            [Return, ReturnCount("allocateInfo.SetLayouts.Count"), IsArray] GenDescriptorSet* pDescriptorSets)
+            => default(VkResult);
+
+        // todo: to GenDescriptorPool
+        public VkResult FreeDescriptorSets(
+            [FromProperty("this")] GenDevice device,
+            GenDescriptorPool descriptorPool,
+            [CountFor("descriptorSets")] int descriptorSetCount,
+            [IsArray] GenDescriptorSet* pDescriptorSets)
+            => default(VkResult);
     }
 }

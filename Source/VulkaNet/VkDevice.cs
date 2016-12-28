@@ -62,6 +62,9 @@ namespace VulkaNet
         VkObjectResult<IVkSampler> CreateSampler(IVkSamplerCreateInfo createInfo, IVkAllocationCallbacks allocator);
         VkObjectResult<IVkDescriptorSetLayout> CreateDescriptorSetLayout(IVkDescriptorSetLayoutCreateInfo createInfo, IVkAllocationCallbacks allocator);
         VkObjectResult<IVkPipelineLayout> CreatePipelineLayout(IVkPipelineLayoutCreateInfo createInfo, IVkAllocationCallbacks allocator);
+        VkObjectResult<IVkDescriptorPool> CreateDescriptorPool(IVkDescriptorPoolCreateInfo createInfo, IVkAllocationCallbacks allocator);
+        VkObjectResult<IReadOnlyList<IVkDescriptorSet>> AllocateDescriptorSets(IVkDescriptorSetAllocateInfo allocateInfo);
+        VkResult FreeDescriptorSets(IVkDescriptorPool descriptorPool, IReadOnlyList<IVkDescriptorSet> descriptorSets);
     }
 
     public unsafe class VkDevice : IVkDevice
@@ -406,6 +409,18 @@ namespace VulkaNet
                 VkDescriptorSetLayout.HandleType descriptorSetLayout,
                 VkAllocationCallbacks.Raw* pAllocator);
 
+            public DestroyDescriptorPoolDelegate DestroyDescriptorPool { get; }
+            public delegate void DestroyDescriptorPoolDelegate(
+                HandleType device,
+                VkDescriptorPool.HandleType descriptorPool,
+                VkAllocationCallbacks.Raw* pAllocator);
+
+            public ResetDescriptorPoolDelegate ResetDescriptorPool { get; }
+            public delegate VkResult ResetDescriptorPoolDelegate(
+                HandleType device,
+                VkDescriptorPool.HandleType descriptorPool,
+                VkDescriptorPoolResetFlags flags);
+
             public DestroyDeviceDelegate DestroyDevice { get; }
             public delegate void DestroyDeviceDelegate(
                 HandleType device,
@@ -577,6 +592,26 @@ namespace VulkaNet
                 VkAllocationCallbacks.Raw* pAllocator,
                 VkPipelineLayout.HandleType* pPipelineLayout);
 
+            public CreateDescriptorPoolDelegate CreateDescriptorPool { get; }
+            public delegate VkResult CreateDescriptorPoolDelegate(
+                HandleType device,
+                VkDescriptorPoolCreateInfo.Raw* pCreateInfo,
+                VkAllocationCallbacks.Raw* pAllocator,
+                VkDescriptorPool.HandleType* pDescriptorPool);
+
+            public AllocateDescriptorSetsDelegate AllocateDescriptorSets { get; }
+            public delegate VkResult AllocateDescriptorSetsDelegate(
+                HandleType device,
+                VkDescriptorSetAllocateInfo.Raw* pAllocateInfo,
+                VkDescriptorSet.HandleType* pDescriptorSets);
+
+            public FreeDescriptorSetsDelegate FreeDescriptorSets { get; }
+            public delegate VkResult FreeDescriptorSetsDelegate(
+                HandleType device,
+                VkDescriptorPool.HandleType descriptorPool,
+                int descriptorSetCount,
+                VkDescriptorSet.HandleType* pDescriptorSets);
+
             public DirectFunctions(IVkDevice device)
             {
                 this.device = device;
@@ -630,6 +665,8 @@ namespace VulkaNet
                 DestroyBufferView = GetDeviceDelegate<DestroyBufferViewDelegate>("vkDestroyBufferView");
                 DestroySampler = GetDeviceDelegate<DestroySamplerDelegate>("vkDestroySampler");
                 DestroyDescriptorSetLayout = GetDeviceDelegate<DestroyDescriptorSetLayoutDelegate>("vkDestroyDescriptorSetLayout");
+                DestroyDescriptorPool = GetDeviceDelegate<DestroyDescriptorPoolDelegate>("vkDestroyDescriptorPool");
+                ResetDescriptorPool = GetDeviceDelegate<ResetDescriptorPoolDelegate>("vkResetDescriptorPool");
                 DestroyDevice = GetDeviceDelegate<DestroyDeviceDelegate>("vkDestroyDevice");
                 DeviceWaitIdle = GetDeviceDelegate<DeviceWaitIdleDelegate>("vkDeviceWaitIdle");
                 CreateCommandPool = GetDeviceDelegate<CreateCommandPoolDelegate>("vkCreateCommandPool");
@@ -655,6 +692,9 @@ namespace VulkaNet
                 CreateSampler = GetDeviceDelegate<CreateSamplerDelegate>("vkCreateSampler");
                 CreateDescriptorSetLayout = GetDeviceDelegate<CreateDescriptorSetLayoutDelegate>("vkCreateDescriptorSetLayout");
                 CreatePipelineLayout = GetDeviceDelegate<CreatePipelineLayoutDelegate>("vkCreatePipelineLayout");
+                CreateDescriptorPool = GetDeviceDelegate<CreateDescriptorPoolDelegate>("vkCreateDescriptorPool");
+                AllocateDescriptorSets = GetDeviceDelegate<AllocateDescriptorSetsDelegate>("vkAllocateDescriptorSets");
+                FreeDescriptorSets = GetDeviceDelegate<FreeDescriptorSetsDelegate>("vkFreeDescriptorSets");
             }
 
             public TDelegate GetDeviceDelegate<TDelegate>(string name)
@@ -1121,6 +1161,61 @@ namespace VulkaNet
                 var result = Direct.CreatePipelineLayout(_device, _pCreateInfo, _pAllocator, &_pPipelineLayout);
                 var instance = result == VkResult.Success ? new VkPipelineLayout(this, _pPipelineLayout, allocator) : null;
                 return new VkObjectResult<IVkPipelineLayout>(result, instance);
+            }
+        }
+
+        public VkObjectResult<IVkDescriptorPool> CreateDescriptorPool(IVkDescriptorPoolCreateInfo createInfo, IVkAllocationCallbacks allocator)
+        {
+            var unmanagedSize =
+                createInfo.SizeOfMarshalIndirect() +
+                allocator.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _device = Handle;
+                var _pCreateInfo = createInfo.MarshalIndirect(ref unmanaged);
+                var _pAllocator = allocator.MarshalIndirect(ref unmanaged);
+                VkDescriptorPool.HandleType _pDescriptorPool;
+                var result = Direct.CreateDescriptorPool(_device, _pCreateInfo, _pAllocator, &_pDescriptorPool);
+                var instance = result == VkResult.Success ? new VkDescriptorPool(this, _pDescriptorPool, allocator) : null;
+                return new VkObjectResult<IVkDescriptorPool>(result, instance);
+            }
+        }
+
+        public VkObjectResult<IReadOnlyList<IVkDescriptorSet>> AllocateDescriptorSets(IVkDescriptorSetAllocateInfo allocateInfo)
+        {
+            var unmanagedSize =
+                allocateInfo.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _device = Handle;
+                var _pAllocateInfo = allocateInfo.MarshalIndirect(ref unmanaged);
+                var handleArray = new VkDescriptorSet.HandleType[allocateInfo.SetLayouts.Count];
+                fixed (VkDescriptorSet.HandleType* _pDescriptorSets = handleArray)
+                {
+                    var result = Direct.AllocateDescriptorSets(_device, _pAllocateInfo, _pDescriptorSets);
+                    var instance = result == VkResult.Success ? Enumerable.Range(0, handleArray.Length).Select(i => (IVkDescriptorSet)new VkDescriptorSet(this, handleArray[i])).ToArray() : null;
+                    return new VkObjectResult<IReadOnlyList<IVkDescriptorSet>>(result, instance);
+                }
+            }
+        }
+
+        public VkResult FreeDescriptorSets(IVkDescriptorPool descriptorPool, IReadOnlyList<IVkDescriptorSet> descriptorSets)
+        {
+            var unmanagedSize =
+                descriptorSets.SizeOfMarshalDirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _device = Handle;
+                var _descriptorPool = descriptorPool?.Handle ?? VkDescriptorPool.HandleType.Null;
+                var _descriptorSetCount = descriptorSets?.Count ?? 0;
+                var _pDescriptorSets = descriptorSets.MarshalDirect(ref unmanaged);
+                return Direct.FreeDescriptorSets(_device, _descriptorPool, _descriptorSetCount, _pDescriptorSets);
             }
         }
 

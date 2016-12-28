@@ -48,6 +48,7 @@ namespace VulkaNetGenerator.Dummies
     public struct VkComponentMapping { }
     public struct VkMemoryRequirements { }
     public struct VkPushConstantRange { }
+    public struct VkDescriptorPoolSize { }
     
     public enum VkResult { }
     public enum VkStructureType { }
@@ -123,6 +124,8 @@ namespace VulkaNetGenerator.Dummies
     public enum VkDescriptorSetLayoutCreateFlags { }
     public enum VkDescriptorType { }
     public enum VkPipelineLayoutCreateFlags { }
+    public enum VkDescriptorPoolCreateFlags { }
+    public enum VkDescriptorPoolResetFlags { }
 
     //public struct HndCommandPool { }
     //public struct HndRenderPass { }

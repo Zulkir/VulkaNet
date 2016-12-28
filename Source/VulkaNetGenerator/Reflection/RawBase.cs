@@ -58,7 +58,7 @@ namespace VulkaNetGenerator.Reflection
             IsUnmanagedPtr = genType.IsPointer;
             ShouldMarshal = IsUnmanagedPtr || DeriveIsStructRaw(genType);
             IsCountFor = GetAttrValue<CountForAttribute>(attributes);
-            IgnoreInWrapper = Name == "sType" || IsCountFor != null;
+            IgnoreInWrapper = Name == "sType" || IsCountFor != null || HasAttribute<ReturnSizeAttribute>(attributes);
             ExplicitWrapperType = DeriveExplicitWrapperType(genType, attributes);
             IsArray = DeriveIsArray(attributes);
         }
@@ -85,6 +85,7 @@ namespace VulkaNetGenerator.Reflection
                 case "StrByte**": return "byte**";
 
                 case "Sizet": return "IntPtr";
+                case "Sizet*": return "IntPtr*";
 
                 case "Void*": return "void*";
                 case "Byte": return "byte";

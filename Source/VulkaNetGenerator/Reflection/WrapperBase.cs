@@ -4,7 +4,7 @@
         where TRaw : RawBase
     {
         public TRaw Raw { get; }
-        public string TypeStr { get; }
+        public string TypeStr { get; protected set; }
         public string Name { get; protected set; }
         public bool MarshalledAsUnmanaged { get; }
         public bool NeedsCast { get; }

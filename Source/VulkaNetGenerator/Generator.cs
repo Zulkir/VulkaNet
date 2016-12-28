@@ -283,7 +283,7 @@ namespace VulkaNetGenerator
                 WriteLicense(writer);
                 writer.WriteLine();
                 
-                if (isDispatchable || isDisposable)
+                if (isDispatchable || isDisposable || wrapperMethods.Any(x => x.ReturnTypeStr == "VkObjectResult<byte[]>"))
                     writer.WriteLine("using System;");
                 if (isDevice)
                     writer.WriteLine("using System.Collections.Concurrent;");
@@ -340,7 +340,6 @@ namespace VulkaNetGenerator
                     writer.WriteLine($"public unsafe class Vk{name} : IVk{name}");
                     using (writer.Curly())
                     {
-                        
                         var rawHandleTypeStr = isDispatchable ? "IntPtr" : "ulong";
 
                         if (isDevice)
@@ -548,6 +547,7 @@ namespace VulkaNetGenerator
                                                rParam.IsHandle ? $"{wParam?.Name}?.Handle ?? {rParam.TypeStr}.Null" :
                                                rParam.IsCountFor != null ? $"{rParam.IsCountFor}?.Count ?? 0" :
                                                rParam.TypeStr == "VkBool32" ? $"new VkBool32({wParam?.Name})" :
+                                               rParam.IsReturnSize ? $"({rParam.TypeStr.Substring(0, rParam.TypeStr.Length - 1)})0" :
                                                $"{wParam?.Name}";
                                     writer.WriteLine($"var _{rParam.Name} = {rval};");
                                 }
@@ -562,11 +562,11 @@ namespace VulkaNetGenerator
                                         writer.WriteLine("{");
                                         writer.Tab();
                                     }
-                                    else
+                                    else if (wrapper.ReturnTypeStr != "VkObjectResult<byte[]>")
                                         writer.WriteLine($"{rawReturnParam.TypeStr.Substring(0, rawReturnParam.TypeStr.Length - 1)} _{rawReturnParam.Name};");
                                 }
 
-                                var rawParamsStr = string.Join(", ", raw.Parameters.Select(x => (x.IsReturnParam && !x.IsArray ? "&_" : "_") + x.Name));
+                                var rawParamsStr = string.Join(", ", raw.Parameters.Select(x => ((x.IsReturnParam && !x.IsArray) || x.IsReturnSize ? "&_" : "_") + x.Name));
 
                                 if (wrapper.ReturnTypeStr == "void" && raw.ReturnTypeStr == "void")
                                 {
@@ -575,6 +575,28 @@ namespace VulkaNetGenerator
                                 else if (wrapper.ReturnTypeStr == "VkResult" && raw.ReturnTypeStr == "VkResult")
                                 {
                                     writer.WriteLine($"return Direct.{raw.Name}({rawParamsStr});");
+                                }
+                                else if (wrapper.ReturnTypeStr == "VkObjectResult<byte[]>" && raw.ReturnTypeStr == "VkResult")
+                                {
+                                    var returnSizeParam = raw.Parameters.Single(x => x.IsReturnSize);
+                                    var firstParamStr = string.Join(", ", raw.Parameters
+                                        .Select(x => 
+                                            x.IsReturnSize ? $"&_{x.Name}" : 
+                                            x.IsReturnParam ? $"({x.TypeStr})0" :
+                                            $"_{x.Name}"));
+                                    writer.WriteLine($"Direct.{raw.Name}({firstParamStr});");
+                                    writer.WriteLine($"var resultArray = new byte[(int)_{returnSizeParam.Name}];");
+                                    writer.WriteLine("fixed (byte* pResultArray = resultArray)");
+                                    using (writer.Curly())
+                                    {
+                                        var secondParamStr = string.Join(", ", raw.Parameters
+                                            .Select(x =>
+                                                x.IsReturnSize ? $"&_{x.Name}" :
+                                                x.IsReturnParam ? $"({x.TypeStr})pResultArray" :
+                                                $"_{x.Name}"));
+                                        writer.WriteLine($"var result = Direct.{raw.Name}({secondParamStr});");
+                                        writer.WriteLine("return new VkObjectResult<byte[]>(result, resultArray);");
+                                    }
                                 }
                                 else if (rawReturnParam != null && raw.ReturnTypeStr == "VkResult")
                                 {

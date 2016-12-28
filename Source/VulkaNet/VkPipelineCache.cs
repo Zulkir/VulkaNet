@@ -22,28 +22,34 @@ THE SOFTWARE.
 */
 #endregion
 
+using System;
 using System.Collections.Generic;
 
 namespace VulkaNet
 {
-    public interface IVkPipelineCache : IVkNonDispatchableHandledObject, IVkDeviceChild
+    public interface IVkPipelineCache : IVkNonDispatchableHandledObject, IVkDeviceChild, IDisposable
     {
         VkPipelineCache.HandleType Handle { get; }
+        IVkAllocationCallbacks Allocator { get; }
+        VkResult Merge(IReadOnlyList<IVkPipelineCache> srcCaches);
+        VkObjectResult<byte[]> GetData();
     }
 
     public unsafe class VkPipelineCache : IVkPipelineCache
     {
         public IVkDevice Device { get; }
         public HandleType Handle { get; }
+        public IVkAllocationCallbacks Allocator { get; }
 
         private VkDevice.DirectFunctions Direct => Device.Direct;
 
         public ulong RawHandle => Handle.InternalHandle;
 
-        public VkPipelineCache(IVkDevice device, HandleType handle)
+        public VkPipelineCache(IVkDevice device, HandleType handle, IVkAllocationCallbacks allocator)
         {
             Device = device;
             Handle = handle;
+            Allocator = allocator;
         }
 
         public struct HandleType
@@ -53,6 +59,51 @@ namespace VulkaNet
             public override string ToString() => InternalHandle.ToString();
             public static int SizeInBytes { get; } = sizeof(ulong);
             public static HandleType Null => new HandleType(default(ulong));
+        }
+
+        public void Dispose()
+        {
+            var unmanagedSize =
+                Allocator.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _device = Device.Handle;
+                var _pipelineCache = Handle;
+                var _pAllocator = Allocator.MarshalIndirect(ref unmanaged);
+                Direct.DestroyPipelineCache(_device, _pipelineCache, _pAllocator);
+            }
+        }
+
+        public VkResult Merge(IReadOnlyList<IVkPipelineCache> srcCaches)
+        {
+            var unmanagedSize =
+                srcCaches.SizeOfMarshalDirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _device = Device.Handle;
+                var _dstCache = Handle;
+                var _srcCacheCount = srcCaches?.Count ?? 0;
+                var _pSrcCaches = srcCaches.MarshalDirect(ref unmanaged);
+                return Direct.MergePipelineCaches(_device, _dstCache, _srcCacheCount, _pSrcCaches);
+            }
+        }
+
+        public VkObjectResult<byte[]> GetData()
+        {
+            var _device = Device.Handle;
+            var _pipelineCache = Handle;
+            var _pDataSize = (IntPtr)0;
+            Direct.GetPipelineCacheData(_device, _pipelineCache, &_pDataSize, (void*)0);
+            var resultArray = new byte[(int)_pDataSize];
+            fixed (byte* pResultArray = resultArray)
+            {
+                var result = Direct.GetPipelineCacheData(_device, _pipelineCache, &_pDataSize, (void*)pResultArray);
+                return new VkObjectResult<byte[]>(result, resultArray);
+            }
         }
 
     }

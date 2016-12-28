@@ -102,6 +102,9 @@
     <Compile Include="VkPipeline.cs" />
     <Compile Include="VkPipelineBindPoint .cs" />
     <Compile Include="VkPipelineCache.cs" />
+    <Compile Include="VkPipelineCacheCreateFlags.cs" />
+    <Compile Include="VkPipelineCacheCreateInfo.cs" />
+    <Compile Include="VkPipelineCacheHeaderVersion.cs" />
     <Compile Include="VkPipelineColorBlendAttachmentState.cs" />
     <Compile Include="VkPipelineColorBlendStateCreateFlags.cs" />
     <Compile Include="VkPipelineColorBlendStateCreateInfo.cs" />

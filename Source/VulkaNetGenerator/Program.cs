@@ -70,6 +70,7 @@ namespace VulkaNetGenerator
             generator.GenerateStruct<GenPipelineDepthStencilStateCreateInfo>(true, false);
             generator.GenerateStruct<GenPipelineColorBlendStateCreateInfo>(true, false);
             generator.GenerateStruct<GenPipelineDynamicStateCreateInfo>(true, false);
+            generator.GenerateStruct<GenPipelineCacheCreateInfo>(true, false);
 
             generator.GenerateClass<GenQueue>();
             generator.GenerateClass<GenCommandPool>();

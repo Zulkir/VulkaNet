@@ -15,6 +15,11 @@
             {
                 Name = char.ToLower(Name[0]) + Name.Substring(1);
             }
+
+            if (raw.IsReturnParam && raw.TypeStr == "void*")
+            {
+                TypeStr = "byte[]";
+            }
         }
     }
 }

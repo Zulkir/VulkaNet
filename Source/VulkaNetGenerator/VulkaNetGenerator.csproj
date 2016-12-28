@@ -50,6 +50,7 @@
     <Compile Include="Attributes\AsTypeAttribute.cs" />
     <Compile Include="Attributes\ReturnCountAttribute.cs" />
     <Compile Include="Attributes\FromPropertyAttribute.cs" />
+    <Compile Include="Attributes\ReturnSizeAttribute.cs" />
     <Compile Include="CodeWriter.cs" />
     <Compile Include="Attributes\CountForAttribute.cs" />
     <Compile Include="Dummies\DummyTypes.cs" />
@@ -88,6 +89,7 @@
     <Compile Include="GenStructs\GenPhysicalDeviceSparseProperties.cs" />
     <Compile Include="GenStructs\GenPipeline.cs" />
     <Compile Include="GenStructs\GenPipelineCache.cs" />
+    <Compile Include="GenStructs\GenPipelineCacheCreateInfo.cs" />
     <Compile Include="GenStructs\GenPipelineColorBlendStateCreateInfo.cs" />
     <Compile Include="GenStructs\GenPipelineDepthStencilStateCreateInfo.cs" />
     <Compile Include="GenStructs\GenPipelineDynamicStateCreateInfo.cs" />

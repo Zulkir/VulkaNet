@@ -62,6 +62,8 @@
     <Compile Include="VkColor4.cs" />
     <Compile Include="VkColorComponentFlagBits.cs" />
     <Compile Include="VkCompareOp.cs" />
+    <Compile Include="VkComponentMapping.cs" />
+    <Compile Include="VkComponentSwizzle.cs" />
     <Compile Include="VkComputePipelineCreateInfo.cs" />
     <Compile Include="VkCullModeFlagBits.cs" />
     <Compile Include="VkDependencyFlags.cs" />
@@ -110,6 +112,8 @@
     <Compile Include="VkImageType.cs" />
     <Compile Include="VkImageUsageFlags.cs" />
     <Compile Include="VkImageView.cs" />
+    <Compile Include="VkImageViewCreateFlags.cs" />
+    <Compile Include="VkImageViewType.cs" />
     <Compile Include="VkLogicOp.cs" />
     <Compile Include="VkMappedMemoryRange.cs" />
     <Compile Include="VkMemoryAllocateInfo.cs" />

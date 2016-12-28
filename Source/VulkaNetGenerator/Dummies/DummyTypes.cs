@@ -45,6 +45,7 @@ namespace VulkaNetGenerator.Dummies
     public struct VkExtent3D { }
     public struct VkImageSubresource { }
     public struct VkSubresourceLayout { }
+    public struct VkComponentMapping { }
     
     public enum VkResult { }
     public enum VkStructureType { }
@@ -109,6 +110,9 @@ namespace VulkaNetGenerator.Dummies
     public enum VkImageType { }
     public enum VkImageTiling { }
     public enum VkImageUsageFlags { }
+    public enum VkImageViewCreateFlags { }
+    public enum VkImageViewType { }
+    public enum VkComponentSwizzle { }
 
     //public struct HndCommandPool { }
     //public struct HndRenderPass { }

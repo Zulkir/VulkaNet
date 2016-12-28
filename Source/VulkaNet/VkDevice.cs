@@ -58,6 +58,7 @@ namespace VulkaNet
         VkObjectResult<IVkBuffer> CreateBuffer(IVkBufferCreateInfo createInfo, IVkAllocationCallbacks allocator);
         VkObjectResult<IVkBufferView> CreateBufferView(IVkBufferViewCreateInfo createInfo, IVkAllocationCallbacks allocator);
         VkObjectResult<IVkImage> CreateImage(IVkImageCreateInfo createInfo, IVkAllocationCallbacks allocator);
+        VkObjectResult<IVkImageView> CreateImageView(IVkImageViewCreateInfo createInfo, IVkAllocationCallbacks allocator);
     }
 
     public unsafe class VkDevice : IVkDevice
@@ -288,6 +289,12 @@ namespace VulkaNet
                 VkFramebuffer.HandleType framebuffer,
                 VkAllocationCallbacks.Raw* pAllocator);
 
+            public DestroyImageViewDelegate DestroyImageView { get; }
+            public delegate void DestroyImageViewDelegate(
+                HandleType device,
+                VkImageView.HandleType imageView,
+                VkAllocationCallbacks.Raw* pAllocator);
+
             public DestroyShaderModuleDelegate DestroyShaderModule { get; }
             public delegate void DestroyShaderModuleDelegate(
                 HandleType device,
@@ -495,6 +502,13 @@ namespace VulkaNet
                 VkAllocationCallbacks.Raw* pAllocator,
                 VkImage.HandleType* pImage);
 
+            public CreateImageViewDelegate CreateImageView { get; }
+            public delegate VkResult CreateImageViewDelegate(
+                HandleType device,
+                VkImageViewCreateInfo.Raw* pCreateInfo,
+                VkAllocationCallbacks.Raw* pAllocator,
+                VkImageView.HandleType* pView);
+
             public DirectFunctions(IVkDevice device)
             {
                 this.device = device;
@@ -530,6 +544,7 @@ namespace VulkaNet
                 DestroyRenderPass = GetDeviceDelegate<DestroyRenderPassDelegate>("vkDestroyRenderPass");
                 GetRenderAreaGranularity = GetDeviceDelegate<GetRenderAreaGranularityDelegate>("vkGetRenderAreaGranularity");
                 DestroyFramebuffer = GetDeviceDelegate<DestroyFramebufferDelegate>("vkDestroyFramebuffer");
+                DestroyImageView = GetDeviceDelegate<DestroyImageViewDelegate>("vkDestroyImageView");
                 DestroyShaderModule = GetDeviceDelegate<DestroyShaderModuleDelegate>("vkDestroyShaderModule");
                 DestroyPipeline = GetDeviceDelegate<DestroyPipelineDelegate>("vkDestroyPipeline");
                 DestroyPipelineCache = GetDeviceDelegate<DestroyPipelineCacheDelegate>("vkDestroyPipelineCache");
@@ -561,6 +576,7 @@ namespace VulkaNet
                 CreateBuffer = GetDeviceDelegate<CreateBufferDelegate>("vkCreateBuffer");
                 CreateBufferView = GetDeviceDelegate<CreateBufferViewDelegate>("vkCreateBufferView");
                 CreateImage = GetDeviceDelegate<CreateImageDelegate>("vkCreateImage");
+                CreateImageView = GetDeviceDelegate<CreateImageViewDelegate>("vkCreateImageView");
             }
 
             public TDelegate GetDeviceDelegate<TDelegate>(string name)
@@ -951,6 +967,25 @@ namespace VulkaNet
                 var result = Direct.CreateImage(_device, _pCreateInfo, _pAllocator, &_pImage);
                 var instance = result == VkResult.Success ? new VkImage(this, _pImage, allocator) : null;
                 return new VkObjectResult<IVkImage>(result, instance);
+            }
+        }
+
+        public VkObjectResult<IVkImageView> CreateImageView(IVkImageViewCreateInfo createInfo, IVkAllocationCallbacks allocator)
+        {
+            var unmanagedSize =
+                createInfo.SizeOfMarshalIndirect() +
+                allocator.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _device = Handle;
+                var _pCreateInfo = createInfo.MarshalIndirect(ref unmanaged);
+                var _pAllocator = allocator.MarshalIndirect(ref unmanaged);
+                VkImageView.HandleType _pView;
+                var result = Direct.CreateImageView(_device, _pCreateInfo, _pAllocator, &_pView);
+                var instance = result == VkResult.Success ? new VkImageView(this, _pView, allocator) : null;
+                return new VkObjectResult<IVkImageView>(result, instance);
             }
         }
 

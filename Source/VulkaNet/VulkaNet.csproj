@@ -51,7 +51,10 @@
     <Compile Include="VkBlendFactor.cs" />
     <Compile Include="VkBlendOp.cs" />
     <Compile Include="VkBuffer.cs" />
+    <Compile Include="VkBufferCreateFlags.cs" />
+    <Compile Include="VkBufferCreateInfo.cs" />
     <Compile Include="VkBufferMemoryBarrier.cs" />
+    <Compile Include="VkBufferUsageFlags.cs" />
     <Compile Include="VkClearValue.cs" />
     <Compile Include="VkColor4.cs" />
     <Compile Include="VkColorComponentFlagBits.cs" />
@@ -198,6 +201,7 @@
     <Compile Include="VkShaderModuleCreateFlags.cs" />
     <Compile Include="VkShaderModuleCreateInfo.cs" />
     <Compile Include="VkShaderStageFlagBits.cs" />
+    <Compile Include="VkSharingMode.cs" />
     <Compile Include="VkSpecializationInfo.cs" />
     <Compile Include="VkSpecializationMapEntry.cs" />
     <Compile Include="VkStencilOp.cs" />

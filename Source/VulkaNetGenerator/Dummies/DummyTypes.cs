@@ -98,6 +98,9 @@ namespace VulkaNetGenerator.Dummies
     public enum VkDynamicState { }
     public enum VkPipelineCacheCreateFlags { }
     public enum VkMemoryMapFlags { }
+    public enum VkBufferCreateFlags { }
+    public enum VkBufferUsageFlags { }
+    public enum VkSharingMode { }
 
     //public struct HndCommandPool { }
     //public struct HndRenderPass { }

@@ -55,6 +55,7 @@ namespace VulkaNet
         VkObjectResult<IVkDeviceMemory> AllocateMemory(IVkMemoryAllocateInfo allocateInfo, IVkAllocationCallbacks allocator);
         VkResult FlushMappedMemoryRanges(IReadOnlyList<IVkMappedMemoryRange> memoryRanges);
         VkResult InvalidateMappedMemoryRanges(IReadOnlyList<IVkMappedMemoryRange> memoryRanges);
+        VkObjectResult<IVkBuffer> CreateBuffer(IVkBufferCreateInfo createInfo, IVkAllocationCallbacks allocator);
     }
 
     public unsafe class VkDevice : IVkDevice
@@ -247,6 +248,12 @@ namespace VulkaNet
             public delegate VkResult ResetEventDelegate(
                 HandleType device,
                 VkEvent.HandleType eventObj);
+
+            public DestroyBufferDelegate DestroyBuffer { get; }
+            public delegate void DestroyBufferDelegate(
+                HandleType device,
+                VkBuffer.HandleType buffer,
+                VkAllocationCallbacks.Raw* pAllocator);
 
             public DestroyRenderPassDelegate DestroyRenderPass { get; }
             public delegate void DestroyRenderPassDelegate(
@@ -446,6 +453,13 @@ namespace VulkaNet
                 int memoryRangeCount,
                 VkMappedMemoryRange.Raw* pMemoryRanges);
 
+            public CreateBufferDelegate CreateBuffer { get; }
+            public delegate VkResult CreateBufferDelegate(
+                HandleType device,
+                VkBufferCreateInfo.Raw* pCreateInfo,
+                VkAllocationCallbacks.Raw* pAllocator,
+                VkBuffer.HandleType* pBuffer);
+
             public DirectFunctions(IVkDevice device)
             {
                 this.device = device;
@@ -475,6 +489,7 @@ namespace VulkaNet
                 GetEventStatus = GetDeviceDelegate<GetEventStatusDelegate>("vkGetEventStatus");
                 SetEvent = GetDeviceDelegate<SetEventDelegate>("vkSetEvent");
                 ResetEvent = GetDeviceDelegate<ResetEventDelegate>("vkResetEvent");
+                DestroyBuffer = GetDeviceDelegate<DestroyBufferDelegate>("vkDestroyBuffer");
                 DestroyRenderPass = GetDeviceDelegate<DestroyRenderPassDelegate>("vkDestroyRenderPass");
                 GetRenderAreaGranularity = GetDeviceDelegate<GetRenderAreaGranularityDelegate>("vkGetRenderAreaGranularity");
                 DestroyFramebuffer = GetDeviceDelegate<DestroyFramebufferDelegate>("vkDestroyFramebuffer");
@@ -505,6 +520,7 @@ namespace VulkaNet
                 AllocateMemory = GetDeviceDelegate<AllocateMemoryDelegate>("vkAllocateMemory");
                 FlushMappedMemoryRanges = GetDeviceDelegate<FlushMappedMemoryRangesDelegate>("vkFlushMappedMemoryRanges");
                 InvalidateMappedMemoryRanges = GetDeviceDelegate<InvalidateMappedMemoryRangesDelegate>("vkInvalidateMappedMemoryRanges");
+                CreateBuffer = GetDeviceDelegate<CreateBufferDelegate>("vkCreateBuffer");
             }
 
             public TDelegate GetDeviceDelegate<TDelegate>(string name)
@@ -838,6 +854,25 @@ namespace VulkaNet
                 var _memoryRangeCount = memoryRanges?.Count ?? 0;
                 var _pMemoryRanges = memoryRanges.MarshalDirect(ref unmanaged);
                 return Direct.InvalidateMappedMemoryRanges(_device, _memoryRangeCount, _pMemoryRanges);
+            }
+        }
+
+        public VkObjectResult<IVkBuffer> CreateBuffer(IVkBufferCreateInfo createInfo, IVkAllocationCallbacks allocator)
+        {
+            var unmanagedSize =
+                createInfo.SizeOfMarshalIndirect() +
+                allocator.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _device = Handle;
+                var _pCreateInfo = createInfo.MarshalIndirect(ref unmanaged);
+                var _pAllocator = allocator.MarshalIndirect(ref unmanaged);
+                VkBuffer.HandleType _pBuffer;
+                var result = Direct.CreateBuffer(_device, _pCreateInfo, _pAllocator, &_pBuffer);
+                var instance = result == VkResult.Success ? new VkBuffer(this, _pBuffer, allocator) : null;
+                return new VkObjectResult<IVkBuffer>(result, instance);
             }
         }
 

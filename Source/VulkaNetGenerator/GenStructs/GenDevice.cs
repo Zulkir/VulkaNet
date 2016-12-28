@@ -116,5 +116,17 @@ namespace VulkaNetGenerator.GenStructs
             GenAllocationCallbacks* pAllocator,
             [Return] GenDeviceMemory* pMemory)
             => default (VkResult);
+
+        public VkResult FlushMappedMemoryRanges(
+            [FromProperty("this")] GenDevice device,
+            [CountFor("memoryRanges")] int memoryRangeCount,
+            [IsArray] GenMappedMemoryRange* pMemoryRanges)
+            => default(VkResult);
+
+        public VkResult InvalidateMappedMemoryRanges(
+            [FromProperty("this")] GenDevice device,
+            [CountFor("memoryRanges")] int memoryRangeCount,
+            [IsArray] GenMappedMemoryRange* pMemoryRanges)
+            => default(VkResult);
     }
 }

@@ -99,10 +99,12 @@
     <Compile Include="VkImageSubresourceRange.cs" />
     <Compile Include="VkImageView.cs" />
     <Compile Include="VkLogicOp.cs" />
+    <Compile Include="VkMappedMemoryRange.cs" />
     <Compile Include="VkMemoryAllocateInfo.cs" />
     <Compile Include="VkMemoryBarrier.cs" />
     <Compile Include="VkMemoryHeap.cs" />
     <Compile Include="VkMemoryHeapFlags.cs" />
+    <Compile Include="VkMemoryMapFlags.cs" />
     <Compile Include="VkMemoryPropertyFlags.cs" />
     <Compile Include="VkMemoryType.cs" />
     <Compile Include="VkPhysicalDeviceMemoryProperties.cs" />

@@ -53,6 +53,8 @@ namespace VulkaNet
         VkObjectResult<IVkPipeline> CreateGraphicsPipelines(IVkPipelineCache pipelineCache, IReadOnlyList<IVkGraphicsPipelineCreateInfo> createInfos, IVkAllocationCallbacks allocator);
         VkObjectResult<IVkPipelineCache> CreatePipelineCache(IVkPipelineCacheCreateInfo createInfo, IVkAllocationCallbacks allocator);
         VkObjectResult<IVkDeviceMemory> AllocateMemory(IVkMemoryAllocateInfo allocateInfo, IVkAllocationCallbacks allocator);
+        VkResult FlushMappedMemoryRanges(IReadOnlyList<IVkMappedMemoryRange> memoryRanges);
+        VkResult InvalidateMappedMemoryRanges(IReadOnlyList<IVkMappedMemoryRange> memoryRanges);
     }
 
     public unsafe class VkDevice : IVkDevice
@@ -302,6 +304,26 @@ namespace VulkaNet
                 VkDeviceMemory.HandleType memory,
                 VkAllocationCallbacks.Raw* pAllocator);
 
+            public MapMemoryDelegate MapMemory { get; }
+            public delegate VkResult MapMemoryDelegate(
+                HandleType device,
+                VkDeviceMemory.HandleType memory,
+                ulong offset,
+                ulong size,
+                VkMemoryMapFlags flags,
+                IntPtr* ppData);
+
+            public UnmapMemoryDelegate UnmapMemory { get; }
+            public delegate void UnmapMemoryDelegate(
+                HandleType device,
+                VkDeviceMemory.HandleType memory);
+
+            public GetDeviceMemoryCommitmentDelegate GetDeviceMemoryCommitment { get; }
+            public delegate void GetDeviceMemoryCommitmentDelegate(
+                HandleType device,
+                VkDeviceMemory.HandleType memory,
+                ulong* pCommittedMemoryInBytes);
+
             public DestroyDeviceDelegate DestroyDevice { get; }
             public delegate void DestroyDeviceDelegate(
                 HandleType device,
@@ -412,6 +434,18 @@ namespace VulkaNet
                 VkAllocationCallbacks.Raw* pAllocator,
                 VkDeviceMemory.HandleType* pMemory);
 
+            public FlushMappedMemoryRangesDelegate FlushMappedMemoryRanges { get; }
+            public delegate VkResult FlushMappedMemoryRangesDelegate(
+                HandleType device,
+                int memoryRangeCount,
+                VkMappedMemoryRange.Raw* pMemoryRanges);
+
+            public InvalidateMappedMemoryRangesDelegate InvalidateMappedMemoryRanges { get; }
+            public delegate VkResult InvalidateMappedMemoryRangesDelegate(
+                HandleType device,
+                int memoryRangeCount,
+                VkMappedMemoryRange.Raw* pMemoryRanges);
+
             public DirectFunctions(IVkDevice device)
             {
                 this.device = device;
@@ -450,6 +484,9 @@ namespace VulkaNet
                 MergePipelineCaches = GetDeviceDelegate<MergePipelineCachesDelegate>("vkMergePipelineCaches");
                 GetPipelineCacheData = GetDeviceDelegate<GetPipelineCacheDataDelegate>("vkGetPipelineCacheData");
                 FreeMemory = GetDeviceDelegate<FreeMemoryDelegate>("vkFreeMemory");
+                MapMemory = GetDeviceDelegate<MapMemoryDelegate>("vkMapMemory");
+                UnmapMemory = GetDeviceDelegate<UnmapMemoryDelegate>("vkUnmapMemory");
+                GetDeviceMemoryCommitment = GetDeviceDelegate<GetDeviceMemoryCommitmentDelegate>("vkGetDeviceMemoryCommitment");
                 DestroyDevice = GetDeviceDelegate<DestroyDeviceDelegate>("vkDestroyDevice");
                 DeviceWaitIdle = GetDeviceDelegate<DeviceWaitIdleDelegate>("vkDeviceWaitIdle");
                 CreateCommandPool = GetDeviceDelegate<CreateCommandPoolDelegate>("vkCreateCommandPool");
@@ -466,6 +503,8 @@ namespace VulkaNet
                 CreateGraphicsPipelines = GetDeviceDelegate<CreateGraphicsPipelinesDelegate>("vkCreateGraphicsPipelines");
                 CreatePipelineCache = GetDeviceDelegate<CreatePipelineCacheDelegate>("vkCreatePipelineCache");
                 AllocateMemory = GetDeviceDelegate<AllocateMemoryDelegate>("vkAllocateMemory");
+                FlushMappedMemoryRanges = GetDeviceDelegate<FlushMappedMemoryRangesDelegate>("vkFlushMappedMemoryRanges");
+                InvalidateMappedMemoryRanges = GetDeviceDelegate<InvalidateMappedMemoryRangesDelegate>("vkInvalidateMappedMemoryRanges");
             }
 
             public TDelegate GetDeviceDelegate<TDelegate>(string name)
@@ -769,6 +808,36 @@ namespace VulkaNet
                 var result = Direct.AllocateMemory(_device, _pAllocateInfo, _pAllocator, &_pMemory);
                 var instance = result == VkResult.Success ? new VkDeviceMemory(this, _pMemory, allocator) : null;
                 return new VkObjectResult<IVkDeviceMemory>(result, instance);
+            }
+        }
+
+        public VkResult FlushMappedMemoryRanges(IReadOnlyList<IVkMappedMemoryRange> memoryRanges)
+        {
+            var unmanagedSize =
+                memoryRanges.SizeOfMarshalDirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _device = Handle;
+                var _memoryRangeCount = memoryRanges?.Count ?? 0;
+                var _pMemoryRanges = memoryRanges.MarshalDirect(ref unmanaged);
+                return Direct.FlushMappedMemoryRanges(_device, _memoryRangeCount, _pMemoryRanges);
+            }
+        }
+
+        public VkResult InvalidateMappedMemoryRanges(IReadOnlyList<IVkMappedMemoryRange> memoryRanges)
+        {
+            var unmanagedSize =
+                memoryRanges.SizeOfMarshalDirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _device = Handle;
+                var _memoryRangeCount = memoryRanges?.Count ?? 0;
+                var _pMemoryRanges = memoryRanges.MarshalDirect(ref unmanaged);
+                return Direct.InvalidateMappedMemoryRanges(_device, _memoryRangeCount, _pMemoryRanges);
             }
         }
 

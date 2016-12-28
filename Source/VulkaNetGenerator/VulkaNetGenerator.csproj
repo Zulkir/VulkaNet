@@ -83,6 +83,7 @@
     <Compile Include="GenStructs\GenImageMemoryBarrier.cs" />
     <Compile Include="GenStructs\GenImageView.cs" />
     <Compile Include="GenStructs\GenInstanceCreateInfo.cs" />
+    <Compile Include="GenStructs\GenMappedMemoryRange.cs" />
     <Compile Include="GenStructs\GenMemoryAllocateInfo.cs" />
     <Compile Include="GenStructs\GenMemoryBarrier.cs" />
     <Compile Include="GenStructs\GenPhysicalDeviceFeatures.cs" />

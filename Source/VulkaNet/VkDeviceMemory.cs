@@ -31,6 +31,9 @@ namespace VulkaNet
     {
         VkDeviceMemory.HandleType Handle { get; }
         IVkAllocationCallbacks Allocator { get; }
+        VkObjectResult<IntPtr> Map(ulong offset, ulong size, VkMemoryMapFlags flags);
+        void Unmap();
+        ulong GetCommitment();
     }
 
     public unsafe class VkDeviceMemory : IVkDeviceMemory
@@ -72,6 +75,34 @@ namespace VulkaNet
                 var _pAllocator = Allocator.MarshalIndirect(ref unmanaged);
                 Direct.FreeMemory(_device, _memory, _pAllocator);
             }
+        }
+
+        public VkObjectResult<IntPtr> Map(ulong offset, ulong size, VkMemoryMapFlags flags)
+        {
+            var _device = Device.Handle;
+            var _memory = Handle;
+            var _offset = offset;
+            var _size = size;
+            var _flags = flags;
+            IntPtr _ppData;
+            var result = Direct.MapMemory(_device, _memory, _offset, _size, _flags, &_ppData);
+            return new VkObjectResult<IntPtr>(result, _ppData);
+        }
+
+        public void Unmap()
+        {
+            var _device = Device.Handle;
+            var _memory = Handle;
+            Direct.UnmapMemory(_device, _memory);
+        }
+
+        public ulong GetCommitment()
+        {
+            var _device = Device.Handle;
+            var _memory = Handle;
+            ulong _pCommittedMemoryInBytes;
+            Direct.GetDeviceMemoryCommitment(_device, _memory, &_pCommittedMemoryInBytes);
+            return _pCommittedMemoryInBytes;
         }
 
     }

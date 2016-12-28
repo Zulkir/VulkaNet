@@ -598,6 +598,11 @@ namespace VulkaNetGenerator
                                         writer.WriteLine("return new VkObjectResult<byte[]>(result, resultArray);");
                                     }
                                 }
+                                else if (wrapper.ReturnTypeStr == "VkObjectResult<IntPtr>" && raw.ReturnTypeStr == "VkResult")
+                                {
+                                    writer.WriteLine($"var result = Direct.{raw.Name}({rawParamsStr});");
+                                    writer.WriteLine($"return new VkObjectResult<IntPtr>(result, _{rawReturnParam.Name});");
+                                }
                                 else if (rawReturnParam != null && raw.ReturnTypeStr == "VkResult")
                                 {
                                     var objTypeStr = Regex.Match(wrapper.ReturnTypeStr, @"^VkObjectResult<(.+)>$").Groups[1].Value;

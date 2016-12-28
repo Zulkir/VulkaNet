@@ -73,6 +73,7 @@ namespace VulkaNetGenerator
             generator.GenerateStruct<GenPipelineCacheCreateInfo>(true, false);
             //generator.GenerateStruct<GenPhysicalDeviceMemoryProperties>(false, true);
             generator.GenerateStruct<GenMemoryAllocateInfo>(true, false);
+            generator.GenerateStruct<GenMappedMemoryRange>(true, false);
 
             generator.GenerateClass<GenQueue>();
             generator.GenerateClass<GenCommandPool>();

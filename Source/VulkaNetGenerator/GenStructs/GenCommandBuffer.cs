@@ -77,5 +77,11 @@ namespace VulkaNetGenerator.GenStructs
             [FromProperty("this")] GenCommandBuffer commandBuffer,
             VkSubpassContents contents)
         { }
+
+        public void CmdBindPipeline(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            VkPipelineBindPoint pipelineBindPoint,
+            GenPipeline pipeline)
+        { }
     }
 }

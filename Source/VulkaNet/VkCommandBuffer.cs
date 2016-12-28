@@ -40,6 +40,7 @@ namespace VulkaNet
         void CmdPipelineBarrier(VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags, IReadOnlyList<IVkMemoryBarrier> memoryBarriers, IReadOnlyList<IVkBufferMemoryBarrier> bufferMemoryBarriers, IReadOnlyList<IVkImageMemoryBarrier> imageMemoryBarriers);
         void CmdBeginRenderPass(IVkRenderPassBeginInfo renderPassBegin, VkSubpassContents contents);
         void CmdNextSubpass(VkSubpassContents contents);
+        void CmdBindPipeline(VkPipelineBindPoint pipelineBindPoint, IVkPipeline pipeline);
     }
 
     public unsafe class VkCommandBuffer : IVkCommandBuffer
@@ -194,6 +195,14 @@ namespace VulkaNet
             var _commandBuffer = Handle;
             var _contents = contents;
             Direct.CmdNextSubpass(_commandBuffer, _contents);
+        }
+
+        public void CmdBindPipeline(VkPipelineBindPoint pipelineBindPoint, IVkPipeline pipeline)
+        {
+            var _commandBuffer = Handle;
+            var _pipelineBindPoint = pipelineBindPoint;
+            var _pipeline = pipeline?.Handle ?? VkPipeline.HandleType.Null;
+            Direct.CmdBindPipeline(_commandBuffer, _pipelineBindPoint, _pipeline);
         }
 
     }

@@ -201,6 +201,12 @@ namespace VulkaNet
                 VkCommandBuffer.HandleType commandBuffer,
                 VkSubpassContents contents);
 
+            public CmdBindPipelineDelegate CmdBindPipeline { get; }
+            public delegate void CmdBindPipelineDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                VkPipelineBindPoint pipelineBindPoint,
+                VkPipeline.HandleType pipeline);
+
             public DestroyFenceDelegate DestroyFence { get; }
             public delegate void DestroyFenceDelegate(
                 HandleType device,
@@ -413,6 +419,7 @@ namespace VulkaNet
                 CmdPipelineBarrier = GetDeviceDelegate<CmdPipelineBarrierDelegate>("vkCmdPipelineBarrier");
                 CmdBeginRenderPass = GetDeviceDelegate<CmdBeginRenderPassDelegate>("vkCmdBeginRenderPass");
                 CmdNextSubpass = GetDeviceDelegate<CmdNextSubpassDelegate>("vkCmdNextSubpass");
+                CmdBindPipeline = GetDeviceDelegate<CmdBindPipelineDelegate>("vkCmdBindPipeline");
                 DestroyFence = GetDeviceDelegate<DestroyFenceDelegate>("vkDestroyFence");
                 GetFenceStatus = GetDeviceDelegate<GetFenceStatusDelegate>("vkGetFenceStatus");
                 DestroySemaphore = GetDeviceDelegate<DestroySemaphoreDelegate>("vkDestroySemaphore");

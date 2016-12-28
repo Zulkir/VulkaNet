@@ -56,13 +56,13 @@ namespace VulkaNetGenerator.Reflection
             FixedArraySize = GetAttrValue<FixedArrayAttribute>(attributes);
             TypeStr = DeriveTypeStr(genType, FixedArraySize, IsHandle);
             IsUnmanagedPtr = genType.IsPointer;
-            ShouldMarshal = IsUnmanagedPtr || DeriveIsStructRaw(genType);
             IsCountFor = GetAttrValue<CountForAttribute>(attributes);
             IgnoreInWrapper = Name == "sType" || IsCountFor != null || HasAttribute<ReturnSizeAttribute>(attributes);
             ExplicitWrapperType = DeriveExplicitWrapperType(genType, attributes);
             IsArray = DeriveIsArray(attributes);
+            ShouldMarshal = DeriveSholdMarshal(genType, IsUnmanagedPtr, IsArray);
         }
-        
+
         private static string DeriveTypeStr(Type type, string fixedBufferSize, bool isHandle)
         {
             if (fixedBufferSize != null)
@@ -132,6 +132,10 @@ namespace VulkaNetGenerator.Reflection
                 typeof(IGenHandledObject).IsAssignableFrom(internalType) ||
                 typeof(IGenNonDispatchableHandledObject).IsAssignableFrom(internalType);
         }
+
+        private static bool DeriveSholdMarshal(Type genType, bool isPointer, bool isArray) =>
+            //(genType.Name.StartsWith("Gen") || isArray) && (isPointer || DeriveIsStructRaw(genType));
+            (isPointer || DeriveIsStructRaw(genType));
 
         private static bool DeriveIsStructRaw(Type genType)
         {

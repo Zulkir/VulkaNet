@@ -100,9 +100,15 @@
     <Compile Include="VkGraphicsPipelineCreateInfo.cs" />
     <Compile Include="VkImage.cs" />
     <Compile Include="VkImageAspectFlags.cs" />
+    <Compile Include="VkImageCreateFlags.cs" />
+    <Compile Include="VkImageCreateInfo.cs" />
     <Compile Include="VkImageLayout.cs" />
     <Compile Include="VkImageMemoryBarrier.cs" />
+    <Compile Include="VkImageSubresource.cs" />
     <Compile Include="VkImageSubresourceRange.cs" />
+    <Compile Include="VkImageTiling.cs" />
+    <Compile Include="VkImageType.cs" />
+    <Compile Include="VkImageUsageFlags.cs" />
     <Compile Include="VkImageView.cs" />
     <Compile Include="VkLogicOp.cs" />
     <Compile Include="VkMappedMemoryRange.cs" />
@@ -215,6 +221,7 @@
     <Compile Include="VkSubpassDependency.cs" />
     <Compile Include="VkSubpassDescription.cs" />
     <Compile Include="VkSubpassDescriptionFlags.cs" />
+    <Compile Include="VkSubresourceLayout.cs" />
     <Compile Include="VkSystemAllocationScope.cs" />
     <Compile Include="VkUintVector2.cs" />
     <Compile Include="VkUintVector3.cs" />

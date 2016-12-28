@@ -83,6 +83,7 @@
     <Compile Include="GenStructs\GenFramebufferCreateInfo.cs" />
     <Compile Include="GenStructs\GenGraphicsPipelineCreateInfo.cs" />
     <Compile Include="GenStructs\GenImage.cs" />
+    <Compile Include="GenStructs\GenImageCreateInfo.cs" />
     <Compile Include="GenStructs\GenImageMemoryBarrier.cs" />
     <Compile Include="GenStructs\GenImageView.cs" />
     <Compile Include="GenStructs\GenInstanceCreateInfo.cs" />

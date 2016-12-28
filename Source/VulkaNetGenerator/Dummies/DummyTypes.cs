@@ -42,6 +42,9 @@ namespace VulkaNetGenerator.Dummies
     public struct VkPipelineColorBlendAttachmentState { }
     public struct VkMemoryType { }
     public struct VkMemoryHeap { }
+    public struct VkExtent3D { }
+    public struct VkImageSubresource { }
+    public struct VkSubresourceLayout { }
     
     public enum VkResult { }
     public enum VkStructureType { }
@@ -102,6 +105,10 @@ namespace VulkaNetGenerator.Dummies
     public enum VkBufferUsageFlags { }
     public enum VkSharingMode { }
     public enum VkBufferViewCreateFlags { }
+    public enum VkImageCreateFlags { }
+    public enum VkImageType { }
+    public enum VkImageTiling { }
+    public enum VkImageUsageFlags { }
 
     //public struct HndCommandPool { }
     //public struct HndRenderPass { }

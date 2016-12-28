@@ -22,28 +22,33 @@ THE SOFTWARE.
 */
 #endregion
 
+using System;
 using System.Collections.Generic;
 
 namespace VulkaNet
 {
-    public interface IVkImage : IVkNonDispatchableHandledObject, IVkDeviceChild
+    public interface IVkImage : IVkNonDispatchableHandledObject, IVkDeviceChild, IDisposable
     {
         VkImage.HandleType Handle { get; }
+        IVkAllocationCallbacks Allocator { get; }
+        VkSubresourceLayout GetImageSubresourceLayout(VkImageSubresource subresource);
     }
 
     public unsafe class VkImage : IVkImage
     {
         public IVkDevice Device { get; }
         public HandleType Handle { get; }
+        public IVkAllocationCallbacks Allocator { get; }
 
         private VkDevice.DirectFunctions Direct => Device.Direct;
 
         public ulong RawHandle => Handle.InternalHandle;
 
-        public VkImage(IVkDevice device, HandleType handle)
+        public VkImage(IVkDevice device, HandleType handle, IVkAllocationCallbacks allocator)
         {
             Device = device;
             Handle = handle;
+            Allocator = allocator;
         }
 
         public struct HandleType
@@ -53,6 +58,31 @@ namespace VulkaNet
             public override string ToString() => InternalHandle.ToString();
             public static int SizeInBytes { get; } = sizeof(ulong);
             public static HandleType Null => new HandleType(default(ulong));
+        }
+
+        public void Dispose()
+        {
+            var unmanagedSize =
+                Allocator.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _device = Device.Handle;
+                var _image = Handle;
+                var _pAllocator = Allocator.MarshalIndirect(ref unmanaged);
+                Direct.DestroyImage(_device, _image, _pAllocator);
+            }
+        }
+
+        public VkSubresourceLayout GetImageSubresourceLayout(VkImageSubresource subresource)
+        {
+            var _device = Device.Handle;
+            var _image = Handle;
+            var _pSubresource = &subresource;
+            VkSubresourceLayout _pLayout;
+            Direct.GetImageSubresourceLayout(_device, _image, _pSubresource, &_pLayout);
+            return _pLayout;
         }
 
     }

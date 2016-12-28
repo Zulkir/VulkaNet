@@ -57,6 +57,7 @@ namespace VulkaNet
         VkResult InvalidateMappedMemoryRanges(IReadOnlyList<IVkMappedMemoryRange> memoryRanges);
         VkObjectResult<IVkBuffer> CreateBuffer(IVkBufferCreateInfo createInfo, IVkAllocationCallbacks allocator);
         VkObjectResult<IVkBufferView> CreateBufferView(IVkBufferViewCreateInfo createInfo, IVkAllocationCallbacks allocator);
+        VkObjectResult<IVkImage> CreateImage(IVkImageCreateInfo createInfo, IVkAllocationCallbacks allocator);
     }
 
     public unsafe class VkDevice : IVkDevice
@@ -255,6 +256,19 @@ namespace VulkaNet
                 HandleType device,
                 VkBuffer.HandleType buffer,
                 VkAllocationCallbacks.Raw* pAllocator);
+
+            public DestroyImageDelegate DestroyImage { get; }
+            public delegate void DestroyImageDelegate(
+                HandleType device,
+                VkImage.HandleType image,
+                VkAllocationCallbacks.Raw* pAllocator);
+
+            public GetImageSubresourceLayoutDelegate GetImageSubresourceLayout { get; }
+            public delegate void GetImageSubresourceLayoutDelegate(
+                HandleType device,
+                VkImage.HandleType image,
+                VkImageSubresource* pSubresource,
+                VkSubresourceLayout* pLayout);
 
             public DestroyRenderPassDelegate DestroyRenderPass { get; }
             public delegate void DestroyRenderPassDelegate(
@@ -474,6 +488,13 @@ namespace VulkaNet
                 VkAllocationCallbacks.Raw* pAllocator,
                 VkBufferView.HandleType* pView);
 
+            public CreateImageDelegate CreateImage { get; }
+            public delegate VkResult CreateImageDelegate(
+                HandleType device,
+                VkImageCreateInfo.Raw* pCreateInfo,
+                VkAllocationCallbacks.Raw* pAllocator,
+                VkImage.HandleType* pImage);
+
             public DirectFunctions(IVkDevice device)
             {
                 this.device = device;
@@ -504,6 +525,8 @@ namespace VulkaNet
                 SetEvent = GetDeviceDelegate<SetEventDelegate>("vkSetEvent");
                 ResetEvent = GetDeviceDelegate<ResetEventDelegate>("vkResetEvent");
                 DestroyBuffer = GetDeviceDelegate<DestroyBufferDelegate>("vkDestroyBuffer");
+                DestroyImage = GetDeviceDelegate<DestroyImageDelegate>("vkDestroyImage");
+                GetImageSubresourceLayout = GetDeviceDelegate<GetImageSubresourceLayoutDelegate>("vkGetImageSubresourceLayout");
                 DestroyRenderPass = GetDeviceDelegate<DestroyRenderPassDelegate>("vkDestroyRenderPass");
                 GetRenderAreaGranularity = GetDeviceDelegate<GetRenderAreaGranularityDelegate>("vkGetRenderAreaGranularity");
                 DestroyFramebuffer = GetDeviceDelegate<DestroyFramebufferDelegate>("vkDestroyFramebuffer");
@@ -537,6 +560,7 @@ namespace VulkaNet
                 InvalidateMappedMemoryRanges = GetDeviceDelegate<InvalidateMappedMemoryRangesDelegate>("vkInvalidateMappedMemoryRanges");
                 CreateBuffer = GetDeviceDelegate<CreateBufferDelegate>("vkCreateBuffer");
                 CreateBufferView = GetDeviceDelegate<CreateBufferViewDelegate>("vkCreateBufferView");
+                CreateImage = GetDeviceDelegate<CreateImageDelegate>("vkCreateImage");
             }
 
             public TDelegate GetDeviceDelegate<TDelegate>(string name)
@@ -908,6 +932,25 @@ namespace VulkaNet
                 var result = Direct.CreateBufferView(_device, _pCreateInfo, _pAllocator, &_pView);
                 var instance = result == VkResult.Success ? new VkBufferView(this, _pView, allocator) : null;
                 return new VkObjectResult<IVkBufferView>(result, instance);
+            }
+        }
+
+        public VkObjectResult<IVkImage> CreateImage(IVkImageCreateInfo createInfo, IVkAllocationCallbacks allocator)
+        {
+            var unmanagedSize =
+                createInfo.SizeOfMarshalIndirect() +
+                allocator.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _device = Handle;
+                var _pCreateInfo = createInfo.MarshalIndirect(ref unmanaged);
+                var _pAllocator = allocator.MarshalIndirect(ref unmanaged);
+                VkImage.HandleType _pImage;
+                var result = Direct.CreateImage(_device, _pCreateInfo, _pAllocator, &_pImage);
+                var instance = result == VkResult.Success ? new VkImage(this, _pImage, allocator) : null;
+                return new VkObjectResult<IVkImage>(result, instance);
             }
         }
 

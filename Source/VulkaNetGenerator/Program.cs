@@ -71,6 +71,8 @@ namespace VulkaNetGenerator
             generator.GenerateStruct<GenPipelineColorBlendStateCreateInfo>(true, false);
             generator.GenerateStruct<GenPipelineDynamicStateCreateInfo>(true, false);
             generator.GenerateStruct<GenPipelineCacheCreateInfo>(true, false);
+            //generator.GenerateStruct<GenPhysicalDeviceMemoryProperties>(false, true);
+            generator.GenerateStruct<GenMemoryAllocateInfo>(true, false);
 
             generator.GenerateClass<GenQueue>();
             generator.GenerateClass<GenCommandPool>();
@@ -87,6 +89,7 @@ namespace VulkaNetGenerator
             generator.GenerateClass<GenPipeline>();
             generator.GenerateClass<GenPipelineLayout>();
             generator.GenerateClass<GenPipelineCache>();
+            generator.GenerateClass<GenDeviceMemory>();
 
             generator.GenerateClass<GenDevice>();
         }

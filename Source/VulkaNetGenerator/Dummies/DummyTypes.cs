@@ -40,6 +40,8 @@ namespace VulkaNetGenerator.Dummies
     public struct VkStencilOpState { }
     public struct VkColor4 { }
     public struct VkPipelineColorBlendAttachmentState { }
+    public struct VkMemoryType { }
+    public struct VkMemoryHeap { }
     
     public enum VkResult { }
     public enum VkStructureType { }

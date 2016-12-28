@@ -70,6 +70,7 @@
     <Compile Include="GenStructs\GenComputePipelineCreateInfo.cs" />
     <Compile Include="GenStructs\GenDevice.cs" />
     <Compile Include="GenStructs\GenDeviceCreateInfo.cs" />
+    <Compile Include="GenStructs\GenDeviceMemory.cs" />
     <Compile Include="GenStructs\GenDeviceQueueCreateInfo.cs" />
     <Compile Include="GenStructs\GenEvent.cs" />
     <Compile Include="GenStructs\GenEventCreateInfo.cs" />
@@ -82,9 +83,11 @@
     <Compile Include="GenStructs\GenImageMemoryBarrier.cs" />
     <Compile Include="GenStructs\GenImageView.cs" />
     <Compile Include="GenStructs\GenInstanceCreateInfo.cs" />
+    <Compile Include="GenStructs\GenMemoryAllocateInfo.cs" />
     <Compile Include="GenStructs\GenMemoryBarrier.cs" />
     <Compile Include="GenStructs\GenPhysicalDeviceFeatures.cs" />
     <Compile Include="GenStructs\GenPhysicalDeviceLimits.cs" />
+    <Compile Include="GenStructs\GenPhysicalDeviceMemoryProperties.cs" />
     <Compile Include="GenStructs\GenPhysicalDeviceProperties.cs" />
     <Compile Include="GenStructs\GenPhysicalDeviceSparseProperties.cs" />
     <Compile Include="GenStructs\GenPipeline.cs" />

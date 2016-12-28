@@ -59,6 +59,7 @@
     <Compile Include="VkComputePipelineCreateInfo.cs" />
     <Compile Include="VkCullModeFlagBits.cs" />
     <Compile Include="VkDependencyFlags.cs" />
+    <Compile Include="VkDeviceMemory.cs" />
     <Compile Include="VkDynamicState.cs" />
     <Compile Include="VkEvent.cs" />
     <Compile Include="VkEventCreateFlags.cs" />
@@ -98,7 +99,13 @@
     <Compile Include="VkImageSubresourceRange.cs" />
     <Compile Include="VkImageView.cs" />
     <Compile Include="VkLogicOp.cs" />
+    <Compile Include="VkMemoryAllocateInfo.cs" />
     <Compile Include="VkMemoryBarrier.cs" />
+    <Compile Include="VkMemoryHeap.cs" />
+    <Compile Include="VkMemoryHeapFlags.cs" />
+    <Compile Include="VkMemoryPropertyFlags.cs" />
+    <Compile Include="VkMemoryType.cs" />
+    <Compile Include="VkPhysicalDeviceMemoryProperties.cs" />
     <Compile Include="VkPipeline.cs" />
     <Compile Include="VkPipelineBindPoint .cs" />
     <Compile Include="VkPipelineCache.cs" />

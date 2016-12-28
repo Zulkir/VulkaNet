@@ -33,6 +33,7 @@ namespace VulkaNet
         IVkPhysicalDeviceProperties Properties { get; }
         IReadOnlyList<IVkQueueFamilyProperties> QueueFamilyProperties { get; }
         IVkPhysicalDeviceFeatures Features { get; }
+        IVkPhysicalDeviceMemoryProperties MemoryProperties { get; }
         VkObjectResult<IVkDevice> CreateDevice(IVkDeviceCreateInfo createInfo, IVkAllocationCallbacks allocator);
     }
 
@@ -44,6 +45,7 @@ namespace VulkaNet
         public IVkPhysicalDeviceProperties Properties { get; }
         public IReadOnlyList<IVkQueueFamilyProperties> QueueFamilyProperties { get; }
         public IVkPhysicalDeviceFeatures Features { get; }
+        public IVkPhysicalDeviceMemoryProperties MemoryProperties { get; }
 
         public VkPhysicalDevice(IVkInstance instance, IntPtr handle)
         {
@@ -53,6 +55,7 @@ namespace VulkaNet
             Properties = GetPhysicalDeviceProperties();
             QueueFamilyProperties = GetPhysicalDeviceQueueFamilyProperties();
             Features = GetPhysicalDeviceFeatures();
+            MemoryProperties = GetPhysicalDeviceMemoryProperties();
         }
 
         public class DirectFunctions
@@ -80,6 +83,11 @@ namespace VulkaNet
                 IntPtr physicalDevice,
                 VkPhysicalDeviceFeatures.Raw* pFeatures);
 
+            public GetPhysicalDeviceMemoryPropertiesDelegate GetPhysicalDeviceMemoryProperties { get; }
+            public delegate void GetPhysicalDeviceMemoryPropertiesDelegate(
+                IntPtr physicalDevice,
+                VkPhysicalDeviceMemoryProperties.Raw* pMemoryProperties);
+
             public DirectFunctions(IVkInstance instance)
             {
                 GetPhysicalDeviceProperties =
@@ -90,6 +98,8 @@ namespace VulkaNet
                     VkHelpers.GetInstanceDelegate<CreateDeviceDelegate>(instance, "vkCreateDevice");
                 GetPhysicalDeviceFeatures =
                     VkHelpers.GetInstanceDelegate<GetPhysicalDeviceFeaturesDelegate>(instance, "vkGetPhysicalDeviceFeatures");
+                GetPhysicalDeviceMemoryProperties =
+                    VkHelpers.GetInstanceDelegate<GetPhysicalDeviceMemoryPropertiesDelegate>(instance, "vkGetPhysicalDeviceMemoryProperties");
             }
         }
 
@@ -136,6 +146,13 @@ namespace VulkaNet
             VkPhysicalDeviceFeatures.Raw raw;
             Direct.GetPhysicalDeviceFeatures(Handle, &raw);
             return new VkPhysicalDeviceFeatures(&raw);
+        }
+
+        private IVkPhysicalDeviceMemoryProperties GetPhysicalDeviceMemoryProperties()
+        {
+            VkPhysicalDeviceMemoryProperties.Raw raw;
+            Direct.GetPhysicalDeviceMemoryProperties(Handle, &raw);
+            return new VkPhysicalDeviceMemoryProperties(&raw);
         }
     }
 }

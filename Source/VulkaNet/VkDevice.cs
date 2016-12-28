@@ -52,6 +52,7 @@ namespace VulkaNet
         VkObjectResult<IVkPipeline> CreateComputePipelines(IVkPipelineCache pipelineCache, IReadOnlyList<IVkComputePipelineCreateInfo> createInfos, IVkAllocationCallbacks allocator);
         VkObjectResult<IVkPipeline> CreateGraphicsPipelines(IVkPipelineCache pipelineCache, IReadOnlyList<IVkGraphicsPipelineCreateInfo> createInfos, IVkAllocationCallbacks allocator);
         VkObjectResult<IVkPipelineCache> CreatePipelineCache(IVkPipelineCacheCreateInfo createInfo, IVkAllocationCallbacks allocator);
+        VkObjectResult<IVkDeviceMemory> AllocateMemory(IVkMemoryAllocateInfo allocateInfo, IVkAllocationCallbacks allocator);
     }
 
     public unsafe class VkDevice : IVkDevice
@@ -295,6 +296,12 @@ namespace VulkaNet
                 IntPtr* pDataSize,
                 void* pData);
 
+            public FreeMemoryDelegate FreeMemory { get; }
+            public delegate void FreeMemoryDelegate(
+                HandleType device,
+                VkDeviceMemory.HandleType memory,
+                VkAllocationCallbacks.Raw* pAllocator);
+
             public DestroyDeviceDelegate DestroyDevice { get; }
             public delegate void DestroyDeviceDelegate(
                 HandleType device,
@@ -398,6 +405,13 @@ namespace VulkaNet
                 VkAllocationCallbacks.Raw* pAllocator,
                 VkPipelineCache.HandleType* pPipelineCache);
 
+            public AllocateMemoryDelegate AllocateMemory { get; }
+            public delegate VkResult AllocateMemoryDelegate(
+                HandleType device,
+                VkMemoryAllocateInfo.Raw* pAllocateInfo,
+                VkAllocationCallbacks.Raw* pAllocator,
+                VkDeviceMemory.HandleType* pMemory);
+
             public DirectFunctions(IVkDevice device)
             {
                 this.device = device;
@@ -435,6 +449,7 @@ namespace VulkaNet
                 DestroyPipelineCache = GetDeviceDelegate<DestroyPipelineCacheDelegate>("vkDestroyPipelineCache");
                 MergePipelineCaches = GetDeviceDelegate<MergePipelineCachesDelegate>("vkMergePipelineCaches");
                 GetPipelineCacheData = GetDeviceDelegate<GetPipelineCacheDataDelegate>("vkGetPipelineCacheData");
+                FreeMemory = GetDeviceDelegate<FreeMemoryDelegate>("vkFreeMemory");
                 DestroyDevice = GetDeviceDelegate<DestroyDeviceDelegate>("vkDestroyDevice");
                 DeviceWaitIdle = GetDeviceDelegate<DeviceWaitIdleDelegate>("vkDeviceWaitIdle");
                 CreateCommandPool = GetDeviceDelegate<CreateCommandPoolDelegate>("vkCreateCommandPool");
@@ -450,6 +465,7 @@ namespace VulkaNet
                 CreateComputePipelines = GetDeviceDelegate<CreateComputePipelinesDelegate>("vkCreateComputePipelines");
                 CreateGraphicsPipelines = GetDeviceDelegate<CreateGraphicsPipelinesDelegate>("vkCreateGraphicsPipelines");
                 CreatePipelineCache = GetDeviceDelegate<CreatePipelineCacheDelegate>("vkCreatePipelineCache");
+                AllocateMemory = GetDeviceDelegate<AllocateMemoryDelegate>("vkAllocateMemory");
             }
 
             public TDelegate GetDeviceDelegate<TDelegate>(string name)
@@ -734,6 +750,25 @@ namespace VulkaNet
                 var result = Direct.CreatePipelineCache(_device, _pCreateInfo, _pAllocator, &_pPipelineCache);
                 var instance = result == VkResult.Success ? new VkPipelineCache(this, _pPipelineCache, allocator) : null;
                 return new VkObjectResult<IVkPipelineCache>(result, instance);
+            }
+        }
+
+        public VkObjectResult<IVkDeviceMemory> AllocateMemory(IVkMemoryAllocateInfo allocateInfo, IVkAllocationCallbacks allocator)
+        {
+            var unmanagedSize =
+                allocateInfo.SizeOfMarshalIndirect() +
+                allocator.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _device = Handle;
+                var _pAllocateInfo = allocateInfo.MarshalIndirect(ref unmanaged);
+                var _pAllocator = allocator.MarshalIndirect(ref unmanaged);
+                VkDeviceMemory.HandleType _pMemory;
+                var result = Direct.AllocateMemory(_device, _pAllocateInfo, _pAllocator, &_pMemory);
+                var instance = result == VkResult.Success ? new VkDeviceMemory(this, _pMemory, allocator) : null;
+                return new VkObjectResult<IVkDeviceMemory>(result, instance);
             }
         }
 

@@ -221,6 +221,26 @@ namespace VulkaNet
                 VkPipelineBindPoint pipelineBindPoint,
                 VkPipeline.HandleType pipeline);
 
+            public CmdBindDescriptorSetsDelegate CmdBindDescriptorSets { get; }
+            public delegate void CmdBindDescriptorSetsDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                VkPipelineBindPoint pipelineBindPoint,
+                VkPipelineLayout.HandleType layout,
+                int firstSet,
+                int descriptorSetCount,
+                VkDescriptorSet.HandleType* pDescriptorSets,
+                int dynamicOffsetCount,
+                int* pDynamicOffsets);
+
+            public CmdPushConstantsDelegate CmdPushConstants { get; }
+            public delegate void CmdPushConstantsDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                VkPipelineLayout.HandleType layout,
+                VkShaderStageFlagBits stageFlags,
+                int offset,
+                int size,
+                IntPtr pValues);
+
             public DestroyFenceDelegate DestroyFence { get; }
             public delegate void DestroyFenceDelegate(
                 HandleType device,
@@ -643,6 +663,8 @@ namespace VulkaNet
                 CmdBeginRenderPass = GetDeviceDelegate<CmdBeginRenderPassDelegate>("vkCmdBeginRenderPass");
                 CmdNextSubpass = GetDeviceDelegate<CmdNextSubpassDelegate>("vkCmdNextSubpass");
                 CmdBindPipeline = GetDeviceDelegate<CmdBindPipelineDelegate>("vkCmdBindPipeline");
+                CmdBindDescriptorSets = GetDeviceDelegate<CmdBindDescriptorSetsDelegate>("vkCmdBindDescriptorSets");
+                CmdPushConstants = GetDeviceDelegate<CmdPushConstantsDelegate>("vkCmdPushConstants");
                 DestroyFence = GetDeviceDelegate<DestroyFenceDelegate>("vkDestroyFence");
                 GetFenceStatus = GetDeviceDelegate<GetFenceStatusDelegate>("vkGetFenceStatus");
                 DestroySemaphore = GetDeviceDelegate<DestroySemaphoreDelegate>("vkDestroySemaphore");

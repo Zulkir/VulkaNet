@@ -41,6 +41,8 @@ namespace VulkaNet
         void CmdBeginRenderPass(IVkRenderPassBeginInfo renderPassBegin, VkSubpassContents contents);
         void CmdNextSubpass(VkSubpassContents contents);
         void CmdBindPipeline(VkPipelineBindPoint pipelineBindPoint, IVkPipeline pipeline);
+        void CmdBindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, IVkPipelineLayout layout, int firstSet, IReadOnlyList<IVkDescriptorSet> descriptorSets, IReadOnlyList<int> dynamicOffsets);
+        void CmdPushConstants(IVkPipelineLayout layout, VkShaderStageFlagBits stageFlags, int offset, int size, IntPtr values);
     }
 
     public unsafe class VkCommandBuffer : IVkCommandBuffer
@@ -203,6 +205,38 @@ namespace VulkaNet
             var _pipelineBindPoint = pipelineBindPoint;
             var _pipeline = pipeline?.Handle ?? VkPipeline.HandleType.Null;
             Direct.CmdBindPipeline(_commandBuffer, _pipelineBindPoint, _pipeline);
+        }
+
+        public void CmdBindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, IVkPipelineLayout layout, int firstSet, IReadOnlyList<IVkDescriptorSet> descriptorSets, IReadOnlyList<int> dynamicOffsets)
+        {
+            var unmanagedSize =
+                descriptorSets.SizeOfMarshalDirect() +
+                dynamicOffsets.SizeOfMarshalDirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _commandBuffer = Handle;
+                var _pipelineBindPoint = pipelineBindPoint;
+                var _layout = layout?.Handle ?? VkPipelineLayout.HandleType.Null;
+                var _firstSet = firstSet;
+                var _descriptorSetCount = descriptorSets?.Count ?? 0;
+                var _pDescriptorSets = descriptorSets.MarshalDirect(ref unmanaged);
+                var _dynamicOffsetCount = dynamicOffsets?.Count ?? 0;
+                var _pDynamicOffsets = dynamicOffsets.MarshalDirect(ref unmanaged);
+                Direct.CmdBindDescriptorSets(_commandBuffer, _pipelineBindPoint, _layout, _firstSet, _descriptorSetCount, _pDescriptorSets, _dynamicOffsetCount, _pDynamicOffsets);
+            }
+        }
+
+        public void CmdPushConstants(IVkPipelineLayout layout, VkShaderStageFlagBits stageFlags, int offset, int size, IntPtr values)
+        {
+            var _commandBuffer = Handle;
+            var _layout = layout?.Handle ?? VkPipelineLayout.HandleType.Null;
+            var _stageFlags = stageFlags;
+            var _offset = offset;
+            var _size = size;
+            var _pValues = values;
+            Direct.CmdPushConstants(_commandBuffer, _layout, _stageFlags, _offset, _size, _pValues);
         }
 
     }

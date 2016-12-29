@@ -66,8 +66,11 @@
     <Compile Include="VkComponentMapping.cs" />
     <Compile Include="VkComponentSwizzle.cs" />
     <Compile Include="VkComputePipelineCreateInfo.cs" />
+    <Compile Include="VkCopyDescriptorSet.cs" />
     <Compile Include="VkCullModeFlagBits.cs" />
     <Compile Include="VkDependencyFlags.cs" />
+    <Compile Include="VkDescriptorBufferInfo.cs" />
+    <Compile Include="VkDescriptorImageInfo.cs" />
     <Compile Include="VkDescriptorPool.cs" />
     <Compile Include="VkDescriptorPoolCreateFlags.cs" />
     <Compile Include="VkDescriptorPoolCreateInfo.cs" />
@@ -259,6 +262,7 @@
     <Compile Include="VkVertexInputBindingDescription.cs" />
     <Compile Include="VkVertexInputRate.cs" />
     <Compile Include="VkViewport.cs" />
+    <Compile Include="VkWriteDescriptorSet.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Todo.txt" />

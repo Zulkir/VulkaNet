@@ -1,4 +1,5 @@
-﻿using VulkaNetGenerator.Attributes;
+﻿using System;
+using VulkaNetGenerator.Attributes;
 using VulkaNetGenerator.Dummies;
 
 namespace VulkaNetGenerator.GenStructs
@@ -82,6 +83,26 @@ namespace VulkaNetGenerator.GenStructs
             [FromProperty("this")] GenCommandBuffer commandBuffer,
             VkPipelineBindPoint pipelineBindPoint,
             GenPipeline pipeline)
+        { }
+
+        public void CmdBindDescriptorSets(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            VkPipelineBindPoint pipelineBindPoint,
+            GenPipelineLayout layout,
+            int firstSet,
+            [CountFor("descriptorSets")] int descriptorSetCount,
+            [IsArray] GenDescriptorSet* pDescriptorSets,
+            [CountFor("dynamicOffsets")] int dynamicOffsetCount,
+            [IsArray] int* pDynamicOffsets)
+        { }
+
+        public void CmdPushConstants(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            GenPipelineLayout layout,
+            VkShaderStageFlagBits stageFlags,
+            int offset,
+            int size,
+            IntPtr pValues)
         { }
     }
 }

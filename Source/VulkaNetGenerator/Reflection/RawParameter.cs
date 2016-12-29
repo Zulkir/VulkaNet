@@ -10,7 +10,6 @@ namespace VulkaNetGenerator.Reflection
         public bool IsReturnParam { get; }
         public string ReturnCount { get; }
         public bool IsReturnSize { get; }
-        public string FromProperty { get; }
 
         public RawParameter(ParameterInfo parameterInfo)
             : base(parameterInfo.ParameterType, parameterInfo.Name, parameterInfo.CustomAttributes.ToArray())
@@ -20,7 +19,6 @@ namespace VulkaNetGenerator.Reflection
             IsReturnSize = HasAttribute<ReturnSizeAttribute>(attributes);
             if (IsReturnParam)
                 IgnoreInWrapper = true;
-            FromProperty = GetAttrValue<FromPropertyAttribute>(attributes);
             if (TypeStr.StartsWith("VkDevice.HandleType") && parameterInfo.Member.DeclaringType == typeof(GenDevice))
                 TypeStr = TypeStr.Substring("VkDevice.".Length);
             if (parameterInfo.ParameterType.Name.StartsWith("Vk") && !IsArray)

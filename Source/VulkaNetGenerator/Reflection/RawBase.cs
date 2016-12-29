@@ -42,6 +42,7 @@ namespace VulkaNetGenerator.Reflection
         public string FixedArraySize { get; }
         public bool IsArray { get; }
         public bool IsHandle { get; }
+        public string FromProperty { get; }
 
         protected readonly Type genType;
         protected readonly CustomAttributeData[] attributes;
@@ -61,6 +62,7 @@ namespace VulkaNetGenerator.Reflection
             ExplicitWrapperType = DeriveExplicitWrapperType(genType, attributes);
             IsArray = DeriveIsArray(attributes);
             ShouldMarshal = DeriveSholdMarshal(genType, IsUnmanagedPtr, IsArray);
+            FromProperty = GetAttrValue<FromPropertyAttribute>(attributes);
         }
 
         private static string DeriveTypeStr(Type type, string fixedBufferSize, bool isHandle)

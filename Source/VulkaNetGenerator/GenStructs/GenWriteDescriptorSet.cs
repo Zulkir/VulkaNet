@@ -10,6 +10,7 @@ namespace VulkaNetGenerator.GenStructs
         public GenDescriptorSet dstSet;
         public int dstBinding;
         public int dstArrayElement;
+        // todo: make work
         [FromProperty("ImageInfo?.Count ?? BufferInfo?.Count ?? TexelBufferView?.Count ?? 0")]
         public int descriptorCount;
         public VkDescriptorType descriptorType;

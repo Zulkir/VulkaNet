@@ -71,6 +71,9 @@
     <Compile Include="GenStructs\GenCommandPool.cs" />
     <Compile Include="GenStructs\GenCommandPoolCreateInfo.cs" />
     <Compile Include="GenStructs\GenComputePipelineCreateInfo.cs" />
+    <Compile Include="GenStructs\GenCopyDescriptorSet.cs" />
+    <Compile Include="GenStructs\GenDescriptorBufferInfo.cs" />
+    <Compile Include="GenStructs\GenDescriptorImageInfo.cs" />
     <Compile Include="GenStructs\GenDescriptorPool.cs" />
     <Compile Include="GenStructs\GenDescriptorPoolCreateInfo.cs" />
     <Compile Include="GenStructs\GenDescriptorSet.cs" />
@@ -136,6 +139,7 @@
     <Compile Include="GenStructs\GenSubpassDescription.cs" />
     <Compile Include="GenStructs\GenShaderModule.cs" />
     <Compile Include="GenStructs\GenPipelineLayout.cs" />
+    <Compile Include="GenStructs\GenWriteDescriptorSet.cs" />
     <Compile Include="Reflection\RawField.cs" />
     <Compile Include="Reflection\RawFunction.cs" />
     <Compile Include="Reflection\RawParameter.cs" />

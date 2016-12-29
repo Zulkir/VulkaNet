@@ -84,6 +84,10 @@ namespace VulkaNetGenerator
             generator.GenerateStruct<GenPipelineLayoutCreateInfo>(true, false);
             generator.GenerateStruct<GenDescriptorPoolCreateInfo>(true, false);
             generator.GenerateStruct<GenDescriptorSetAllocateInfo>(true, false);
+            generator.GenerateStruct<GenWriteDescriptorSet>(true, false);
+            generator.GenerateStruct<GenDescriptorImageInfo>(true, false);
+            generator.GenerateStruct<GenDescriptorBufferInfo>(true, false);
+            generator.GenerateStruct<GenCopyDescriptorSet>(true, false);
 
             generator.GenerateClass<GenQueue>();
             generator.GenerateClass<GenCommandPool>();

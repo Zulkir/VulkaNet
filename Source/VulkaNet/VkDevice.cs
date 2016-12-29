@@ -65,6 +65,7 @@ namespace VulkaNet
         VkObjectResult<IVkDescriptorPool> CreateDescriptorPool(IVkDescriptorPoolCreateInfo createInfo, IVkAllocationCallbacks allocator);
         VkObjectResult<IReadOnlyList<IVkDescriptorSet>> AllocateDescriptorSets(IVkDescriptorSetAllocateInfo allocateInfo);
         VkResult FreeDescriptorSets(IVkDescriptorPool descriptorPool, IReadOnlyList<IVkDescriptorSet> descriptorSets);
+        void UpdateDescriptorSets(IReadOnlyList<IVkWriteDescriptorSet> descriptorWrites, IReadOnlyList<IVkCopyDescriptorSet> descriptorCopies);
     }
 
     public unsafe class VkDevice : IVkDevice
@@ -612,6 +613,14 @@ namespace VulkaNet
                 int descriptorSetCount,
                 VkDescriptorSet.HandleType* pDescriptorSets);
 
+            public UpdateDescriptorSetsDelegate UpdateDescriptorSets { get; }
+            public delegate void UpdateDescriptorSetsDelegate(
+                HandleType device,
+                int descriptorWriteCount,
+                VkWriteDescriptorSet.Raw* pDescriptorWrites,
+                int descriptorCopyCount,
+                VkCopyDescriptorSet.Raw* pDescriptorCopies);
+
             public DirectFunctions(IVkDevice device)
             {
                 this.device = device;
@@ -695,6 +704,7 @@ namespace VulkaNet
                 CreateDescriptorPool = GetDeviceDelegate<CreateDescriptorPoolDelegate>("vkCreateDescriptorPool");
                 AllocateDescriptorSets = GetDeviceDelegate<AllocateDescriptorSetsDelegate>("vkAllocateDescriptorSets");
                 FreeDescriptorSets = GetDeviceDelegate<FreeDescriptorSetsDelegate>("vkFreeDescriptorSets");
+                UpdateDescriptorSets = GetDeviceDelegate<UpdateDescriptorSetsDelegate>("vkUpdateDescriptorSets");
             }
 
             public TDelegate GetDeviceDelegate<TDelegate>(string name)
@@ -1216,6 +1226,24 @@ namespace VulkaNet
                 var _descriptorSetCount = descriptorSets?.Count ?? 0;
                 var _pDescriptorSets = descriptorSets.MarshalDirect(ref unmanaged);
                 return Direct.FreeDescriptorSets(_device, _descriptorPool, _descriptorSetCount, _pDescriptorSets);
+            }
+        }
+
+        public void UpdateDescriptorSets(IReadOnlyList<IVkWriteDescriptorSet> descriptorWrites, IReadOnlyList<IVkCopyDescriptorSet> descriptorCopies)
+        {
+            var unmanagedSize =
+                descriptorWrites.SizeOfMarshalDirect() +
+                descriptorCopies.SizeOfMarshalDirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _device = Handle;
+                var _descriptorWriteCount = descriptorWrites?.Count ?? 0;
+                var _pDescriptorWrites = descriptorWrites.MarshalDirect(ref unmanaged);
+                var _descriptorCopyCount = descriptorCopies?.Count ?? 0;
+                var _pDescriptorCopies = descriptorCopies.MarshalDirect(ref unmanaged);
+                Direct.UpdateDescriptorSets(_device, _descriptorWriteCount, _pDescriptorWrites, _descriptorCopyCount, _pDescriptorCopies);
             }
         }
 

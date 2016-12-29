@@ -199,5 +199,13 @@ namespace VulkaNetGenerator.GenStructs
             [CountFor("descriptorSets")] int descriptorSetCount,
             [IsArray] GenDescriptorSet* pDescriptorSets)
             => default(VkResult);
+
+        public void UpdateDescriptorSets(
+            [FromProperty("this")] GenDevice device,
+            [CountFor("descriptorWrites")] int descriptorWriteCount,
+            [IsArray] GenWriteDescriptorSet* pDescriptorWrites,
+            [CountFor("descriptorCopies")] int descriptorCopyCount,
+            [IsArray] GenCopyDescriptorSet* pDescriptorCopies)
+            { }
     }
 }

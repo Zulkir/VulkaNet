@@ -126,6 +126,8 @@ namespace VulkaNetGenerator.Dummies
     public enum VkPipelineLayoutCreateFlags { }
     public enum VkDescriptorPoolCreateFlags { }
     public enum VkDescriptorPoolResetFlags { }
+    public enum VkQueryPoolCreateFlags { }
+    public enum VkQueryType { }
 
     //public struct HndCommandPool { }
     //public struct HndRenderPass { }

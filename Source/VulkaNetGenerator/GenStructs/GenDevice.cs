@@ -207,5 +207,12 @@ namespace VulkaNetGenerator.GenStructs
             [CountFor("descriptorCopies")] int descriptorCopyCount,
             [IsArray] GenCopyDescriptorSet* pDescriptorCopies)
             { }
+
+        public VkResult CreateQueryPool(
+            [FromProperty("this")] GenDevice device,
+            GenQueryPoolCreateInfo* pCreateInfo,
+            GenAllocationCallbacks* pAllocator,
+            [Return] GenQueryPool* pQueryPool)
+            => default(VkResult);
     }
 }

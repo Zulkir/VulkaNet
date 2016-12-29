@@ -88,6 +88,7 @@ namespace VulkaNetGenerator
             generator.GenerateStruct<GenDescriptorImageInfo>(true, false);
             generator.GenerateStruct<GenDescriptorBufferInfo>(true, false);
             generator.GenerateStruct<GenCopyDescriptorSet>(true, false);
+            generator.GenerateStruct<GenQueryPoolCreateInfo>(true, false);
 
             generator.GenerateClass<GenQueue>();
             generator.GenerateClass<GenCommandPool>();
@@ -110,6 +111,7 @@ namespace VulkaNetGenerator
             generator.GenerateClass<GenDescriptorSetLayout>();
             generator.GenerateClass<GenDescriptorPool>();
             generator.GenerateClass<GenDescriptorSet>();
+            generator.GenerateClass<GenQueryPool>();
 
             generator.GenerateClass<GenDevice>();
         }

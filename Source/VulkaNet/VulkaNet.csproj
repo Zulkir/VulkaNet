@@ -181,6 +181,8 @@
     <Compile Include="VkPushConstantRange.cs" />
     <Compile Include="VkQueryControlFlags.cs" />
     <Compile Include="VkQueryPipelineStatisticFlags.cs" />
+    <Compile Include="VkQueryPoolCreateFlags.cs" />
+    <Compile Include="VkQueryType.cs" />
     <Compile Include="VkQueue.cs" />
     <Compile Include="ReadOnlyListExtensions.cs" />
     <Compile Include="VkBool32.cs" />

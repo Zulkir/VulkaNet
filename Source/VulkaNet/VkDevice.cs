@@ -66,6 +66,7 @@ namespace VulkaNet
         VkObjectResult<IReadOnlyList<IVkDescriptorSet>> AllocateDescriptorSets(IVkDescriptorSetAllocateInfo allocateInfo);
         VkResult FreeDescriptorSets(IVkDescriptorPool descriptorPool, IReadOnlyList<IVkDescriptorSet> descriptorSets);
         void UpdateDescriptorSets(IReadOnlyList<IVkWriteDescriptorSet> descriptorWrites, IReadOnlyList<IVkCopyDescriptorSet> descriptorCopies);
+        VkObjectResult<IVkQueryPool> CreateQueryPool(IVkQueryPoolCreateInfo createInfo, IVkAllocationCallbacks allocator);
     }
 
     public unsafe class VkDevice : IVkDevice
@@ -442,6 +443,12 @@ namespace VulkaNet
                 VkDescriptorPool.HandleType descriptorPool,
                 VkDescriptorPoolResetFlags flags);
 
+            public DestroyQueryPoolDelegate DestroyQueryPool { get; }
+            public delegate void DestroyQueryPoolDelegate(
+                HandleType device,
+                VkQueryPool.HandleType queryPool,
+                VkAllocationCallbacks.Raw* pAllocator);
+
             public DestroyDeviceDelegate DestroyDevice { get; }
             public delegate void DestroyDeviceDelegate(
                 HandleType device,
@@ -641,6 +648,13 @@ namespace VulkaNet
                 int descriptorCopyCount,
                 VkCopyDescriptorSet.Raw* pDescriptorCopies);
 
+            public CreateQueryPoolDelegate CreateQueryPool { get; }
+            public delegate VkResult CreateQueryPoolDelegate(
+                HandleType device,
+                VkQueryPoolCreateInfo.Raw* pCreateInfo,
+                VkAllocationCallbacks.Raw* pAllocator,
+                VkQueryPool.HandleType* pQueryPool);
+
             public DirectFunctions(IVkDevice device)
             {
                 this.device = device;
@@ -698,6 +712,7 @@ namespace VulkaNet
                 DestroyDescriptorSetLayout = GetDeviceDelegate<DestroyDescriptorSetLayoutDelegate>("vkDestroyDescriptorSetLayout");
                 DestroyDescriptorPool = GetDeviceDelegate<DestroyDescriptorPoolDelegate>("vkDestroyDescriptorPool");
                 ResetDescriptorPool = GetDeviceDelegate<ResetDescriptorPoolDelegate>("vkResetDescriptorPool");
+                DestroyQueryPool = GetDeviceDelegate<DestroyQueryPoolDelegate>("vkDestroyQueryPool");
                 DestroyDevice = GetDeviceDelegate<DestroyDeviceDelegate>("vkDestroyDevice");
                 DeviceWaitIdle = GetDeviceDelegate<DeviceWaitIdleDelegate>("vkDeviceWaitIdle");
                 CreateCommandPool = GetDeviceDelegate<CreateCommandPoolDelegate>("vkCreateCommandPool");
@@ -727,6 +742,7 @@ namespace VulkaNet
                 AllocateDescriptorSets = GetDeviceDelegate<AllocateDescriptorSetsDelegate>("vkAllocateDescriptorSets");
                 FreeDescriptorSets = GetDeviceDelegate<FreeDescriptorSetsDelegate>("vkFreeDescriptorSets");
                 UpdateDescriptorSets = GetDeviceDelegate<UpdateDescriptorSetsDelegate>("vkUpdateDescriptorSets");
+                CreateQueryPool = GetDeviceDelegate<CreateQueryPoolDelegate>("vkCreateQueryPool");
             }
 
             public TDelegate GetDeviceDelegate<TDelegate>(string name)
@@ -1266,6 +1282,25 @@ namespace VulkaNet
                 var _descriptorCopyCount = descriptorCopies?.Count ?? 0;
                 var _pDescriptorCopies = descriptorCopies.MarshalDirect(ref unmanaged);
                 Direct.UpdateDescriptorSets(_device, _descriptorWriteCount, _pDescriptorWrites, _descriptorCopyCount, _pDescriptorCopies);
+            }
+        }
+
+        public VkObjectResult<IVkQueryPool> CreateQueryPool(IVkQueryPoolCreateInfo createInfo, IVkAllocationCallbacks allocator)
+        {
+            var unmanagedSize =
+                createInfo.SizeOfMarshalIndirect() +
+                allocator.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _device = Handle;
+                var _pCreateInfo = createInfo.MarshalIndirect(ref unmanaged);
+                var _pAllocator = allocator.MarshalIndirect(ref unmanaged);
+                VkQueryPool.HandleType _pQueryPool;
+                var result = Direct.CreateQueryPool(_device, _pCreateInfo, _pAllocator, &_pQueryPool);
+                var instance = result == VkResult.Success ? new VkQueryPool(this, _pQueryPool, allocator) : null;
+                return new VkObjectResult<IVkQueryPool>(result, instance);
             }
         }
 

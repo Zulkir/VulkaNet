@@ -120,6 +120,8 @@
     <Compile Include="GenStructs\GenPipelineTessellationStateCreateInfo.cs" />
     <Compile Include="GenStructs\GenPipelineVertexInputStateCreateInfo.cs" />
     <Compile Include="GenStructs\GenPipelineViewportStateCreateInfo.cs" />
+    <Compile Include="GenStructs\GenQueryPool.cs" />
+    <Compile Include="GenStructs\GenQueryPoolCreateInfo.cs" />
     <Compile Include="GenStructs\GenQueue.cs" />
     <Compile Include="GenStructs\GenRenderPass.cs" />
     <Compile Include="GenStructs\GenRenderPassBeginInfo.cs" />

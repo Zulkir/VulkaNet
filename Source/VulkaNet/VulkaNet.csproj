@@ -184,6 +184,7 @@
     <Compile Include="VkQueryPool.cs" />
     <Compile Include="VkQueryPoolCreateFlags.cs" />
     <Compile Include="VkQueryPoolCreateInfo.cs" />
+    <Compile Include="VkQueryResultFlags.cs" />
     <Compile Include="VkQueryType.cs" />
     <Compile Include="VkQueue.cs" />
     <Compile Include="ReadOnlyListExtensions.cs" />

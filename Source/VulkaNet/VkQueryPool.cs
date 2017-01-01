@@ -31,6 +31,7 @@ namespace VulkaNet
     {
         VkQueryPool.HandleType Handle { get; }
         IVkAllocationCallbacks Allocator { get; }
+        VkResult GetResults(int firstQuery, int queryCount, IntPtr dataSize, IntPtr data, ulong stride, VkQueryResultFlags flags);
     }
 
     public unsafe class VkQueryPool : IVkQueryPool
@@ -72,6 +73,19 @@ namespace VulkaNet
                 var _pAllocator = Allocator.MarshalIndirect(ref unmanaged);
                 Direct.DestroyQueryPool(_device, _queryPool, _pAllocator);
             }
+        }
+
+        public VkResult GetResults(int firstQuery, int queryCount, IntPtr dataSize, IntPtr data, ulong stride, VkQueryResultFlags flags)
+        {
+            var _device = Device.Handle;
+            var _queryPool = Handle;
+            var _firstQuery = firstQuery;
+            var _queryCount = queryCount;
+            var _dataSize = dataSize;
+            var _pData = data;
+            var _stride = stride;
+            var _flags = flags;
+            return Direct.GetQueryPoolResults(_device, _queryPool, _firstQuery, _queryCount, _dataSize, _pData, _stride, _flags);
         }
 
     }

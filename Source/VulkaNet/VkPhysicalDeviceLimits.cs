@@ -95,7 +95,7 @@ namespace VulkaNet
         VkUintVector2 MaxViewportDimensions { get; }
         VkVector2 ViewportBoundsRange { get; }
         uint ViewportSubPixelBits { get; }
-        int MinMemoryMapAlignment { get; }
+        IntPtr MinMemoryMapAlignment { get; }
         ulong MinTexelBufferOffsetAlignment { get; }
         ulong MinUniformBufferOffsetAlignment { get; }
         ulong MinStorageBufferOffsetAlignment { get; }
@@ -205,7 +205,7 @@ namespace VulkaNet
         public VkUintVector2 MaxViewportDimensions { get; set; }
         public VkVector2 ViewportBoundsRange { get; set; }
         public uint ViewportSubPixelBits { get; set; }
-        public int MinMemoryMapAlignment { get; set; }
+        public IntPtr MinMemoryMapAlignment { get; set; }
         public ulong MinTexelBufferOffsetAlignment { get; set; }
         public ulong MinUniformBufferOffsetAlignment { get; set; }
         public ulong MinStorageBufferOffsetAlignment { get; set; }
@@ -429,7 +429,7 @@ namespace VulkaNet
             MaxViewportDimensions = new VkUintVector2(raw->maxViewportDimensions);
             ViewportBoundsRange = new VkVector2(raw->viewportBoundsRange);
             ViewportSubPixelBits = raw->viewportSubPixelBits;
-            MinMemoryMapAlignment = (int)raw->minMemoryMapAlignment;
+            MinMemoryMapAlignment = raw->minMemoryMapAlignment;
             MinTexelBufferOffsetAlignment = raw->minTexelBufferOffsetAlignment;
             MinUniformBufferOffsetAlignment = raw->minUniformBufferOffsetAlignment;
             MinStorageBufferOffsetAlignment = raw->minStorageBufferOffsetAlignment;

@@ -32,14 +32,14 @@ namespace VulkaNet
     public interface IVkSpecializationInfo
     {
         IReadOnlyList<VkSpecializationMapEntry> MapEntries { get; }
-        int DataSize { get; }
+        IntPtr DataSize { get; }
         IntPtr Data { get; }
     }
 
     public unsafe class VkSpecializationInfo : IVkSpecializationInfo
     {
         public IReadOnlyList<VkSpecializationMapEntry> MapEntries { get; set; }
-        public int DataSize { get; set; }
+        public IntPtr DataSize { get; set; }
         public IntPtr Data { get; set; }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -75,7 +75,7 @@ namespace VulkaNet
             VkSpecializationInfo.Raw result;
             result.mapEntryCount = s.MapEntries?.Count ?? 0;
             result.pMapEntries = pMapEntries;
-            result.dataSize = (IntPtr)s.DataSize;
+            result.dataSize = s.DataSize;
             result.pData = s.Data;
             return result;
         }

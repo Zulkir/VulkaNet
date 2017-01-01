@@ -118,7 +118,7 @@ namespace VulkaNetGenerator.Reflection
             {
                 case "StrByte*": return "string";
                 case "StrByte**": return "IReadOnlyList<string>";
-                case "Sizet": return "int";
+                case "Sizet": return "IntPtr";
             }
             return null;
         }

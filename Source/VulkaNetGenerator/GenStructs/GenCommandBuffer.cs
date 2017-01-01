@@ -104,5 +104,43 @@ namespace VulkaNetGenerator.GenStructs
             int size,
             IntPtr pValues)
         { }
+
+        public void CmdResetQueryPool(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            GenQueryPool queryPool,
+            int firstQuery,
+            int queryCount)
+        { }
+
+        public void CmdBeginQuery(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            GenQueryPool queryPool,
+            int query,
+            VkQueryControlFlags flags)
+        { }
+
+        public void CmdEndQuery(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            GenQueryPool queryPool,
+            int query)
+        { }
+
+        public void CmdCopyQueryPoolResults(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            GenQueryPool queryPool,
+            int firstQuery,
+            int queryCount,
+            GenBuffer dstBuffer,
+            ulong dstOffset,
+            ulong stride,
+            VkQueryResultFlags flags)
+        { }
+
+        public void CmdWriteTimestamp(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            VkPipelineStageFlags pipelineStage,
+            GenQueryPool queryPool,
+            int query)
+        { }
     }
 }

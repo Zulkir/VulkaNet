@@ -242,6 +242,44 @@ namespace VulkaNet
                 int size,
                 IntPtr pValues);
 
+            public CmdResetQueryPoolDelegate CmdResetQueryPool { get; }
+            public delegate void CmdResetQueryPoolDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                VkQueryPool.HandleType queryPool,
+                int firstQuery,
+                int queryCount);
+
+            public CmdBeginQueryDelegate CmdBeginQuery { get; }
+            public delegate void CmdBeginQueryDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                VkQueryPool.HandleType queryPool,
+                int query,
+                VkQueryControlFlags flags);
+
+            public CmdEndQueryDelegate CmdEndQuery { get; }
+            public delegate void CmdEndQueryDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                VkQueryPool.HandleType queryPool,
+                int query);
+
+            public CmdCopyQueryPoolResultsDelegate CmdCopyQueryPoolResults { get; }
+            public delegate void CmdCopyQueryPoolResultsDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                VkQueryPool.HandleType queryPool,
+                int firstQuery,
+                int queryCount,
+                VkBuffer.HandleType dstBuffer,
+                ulong dstOffset,
+                ulong stride,
+                VkQueryResultFlags flags);
+
+            public CmdWriteTimestampDelegate CmdWriteTimestamp { get; }
+            public delegate void CmdWriteTimestampDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                VkPipelineStageFlags pipelineStage,
+                VkQueryPool.HandleType queryPool,
+                int query);
+
             public DestroyFenceDelegate DestroyFence { get; }
             public delegate void DestroyFenceDelegate(
                 HandleType device,
@@ -448,6 +486,17 @@ namespace VulkaNet
                 HandleType device,
                 VkQueryPool.HandleType queryPool,
                 VkAllocationCallbacks.Raw* pAllocator);
+
+            public GetQueryPoolResultsDelegate GetQueryPoolResults { get; }
+            public delegate VkResult GetQueryPoolResultsDelegate(
+                HandleType device,
+                VkQueryPool.HandleType queryPool,
+                int firstQuery,
+                int queryCount,
+                IntPtr dataSize,
+                IntPtr pData,
+                ulong stride,
+                VkQueryResultFlags flags);
 
             public DestroyDeviceDelegate DestroyDevice { get; }
             public delegate void DestroyDeviceDelegate(
@@ -679,6 +728,11 @@ namespace VulkaNet
                 CmdBindPipeline = GetDeviceDelegate<CmdBindPipelineDelegate>("vkCmdBindPipeline");
                 CmdBindDescriptorSets = GetDeviceDelegate<CmdBindDescriptorSetsDelegate>("vkCmdBindDescriptorSets");
                 CmdPushConstants = GetDeviceDelegate<CmdPushConstantsDelegate>("vkCmdPushConstants");
+                CmdResetQueryPool = GetDeviceDelegate<CmdResetQueryPoolDelegate>("vkCmdResetQueryPool");
+                CmdBeginQuery = GetDeviceDelegate<CmdBeginQueryDelegate>("vkCmdBeginQuery");
+                CmdEndQuery = GetDeviceDelegate<CmdEndQueryDelegate>("vkCmdEndQuery");
+                CmdCopyQueryPoolResults = GetDeviceDelegate<CmdCopyQueryPoolResultsDelegate>("vkCmdCopyQueryPoolResults");
+                CmdWriteTimestamp = GetDeviceDelegate<CmdWriteTimestampDelegate>("vkCmdWriteTimestamp");
                 DestroyFence = GetDeviceDelegate<DestroyFenceDelegate>("vkDestroyFence");
                 GetFenceStatus = GetDeviceDelegate<GetFenceStatusDelegate>("vkGetFenceStatus");
                 DestroySemaphore = GetDeviceDelegate<DestroySemaphoreDelegate>("vkDestroySemaphore");
@@ -713,6 +767,7 @@ namespace VulkaNet
                 DestroyDescriptorPool = GetDeviceDelegate<DestroyDescriptorPoolDelegate>("vkDestroyDescriptorPool");
                 ResetDescriptorPool = GetDeviceDelegate<ResetDescriptorPoolDelegate>("vkResetDescriptorPool");
                 DestroyQueryPool = GetDeviceDelegate<DestroyQueryPoolDelegate>("vkDestroyQueryPool");
+                GetQueryPoolResults = GetDeviceDelegate<GetQueryPoolResultsDelegate>("vkGetQueryPoolResults");
                 DestroyDevice = GetDeviceDelegate<DestroyDeviceDelegate>("vkDestroyDevice");
                 DeviceWaitIdle = GetDeviceDelegate<DeviceWaitIdleDelegate>("vkDeviceWaitIdle");
                 CreateCommandPool = GetDeviceDelegate<CreateCommandPoolDelegate>("vkCreateCommandPool");

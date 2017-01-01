@@ -33,7 +33,7 @@ namespace VulkaNet
     {
         IVkStructWrapper Next { get; }
         VkShaderModuleCreateFlags Flags { get; }
-        int CodeSize { get; }
+        IntPtr CodeSize { get; }
         IntPtr Code { get; }
     }
 
@@ -41,7 +41,7 @@ namespace VulkaNet
     {
         public IVkStructWrapper Next { get; set; }
         public VkShaderModuleCreateFlags Flags { get; set; }
-        public int CodeSize { get; set; }
+        public IntPtr CodeSize { get; set; }
         public IntPtr Code { get; set; }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -79,7 +79,7 @@ namespace VulkaNet
             result.sType = VkStructureType.ShaderModuleCreateInfo;
             result.pNext = pNext;
             result.flags = s.Flags;
-            result.codeSize = (IntPtr)s.CodeSize;
+            result.codeSize = s.CodeSize;
             result.pCode = s.Code;
             return result;
         }

@@ -33,7 +33,7 @@ namespace VulkaNet
     {
         IVkStructWrapper Next { get; }
         VkPipelineCacheCreateFlags Flags { get; }
-        int InitialDataSize { get; }
+        IntPtr InitialDataSize { get; }
         IntPtr InitialData { get; }
     }
 
@@ -41,7 +41,7 @@ namespace VulkaNet
     {
         public IVkStructWrapper Next { get; set; }
         public VkPipelineCacheCreateFlags Flags { get; set; }
-        public int InitialDataSize { get; set; }
+        public IntPtr InitialDataSize { get; set; }
         public IntPtr InitialData { get; set; }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -79,7 +79,7 @@ namespace VulkaNet
             result.sType = VkStructureType.PipelineCacheCreateInfo;
             result.pNext = pNext;
             result.flags = s.Flags;
-            result.initialDataSize = (IntPtr)s.InitialDataSize;
+            result.initialDataSize = s.InitialDataSize;
             result.pInitialData = s.InitialData;
             return result;
         }

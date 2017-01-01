@@ -43,6 +43,11 @@ namespace VulkaNet
         void CmdBindPipeline(VkPipelineBindPoint pipelineBindPoint, IVkPipeline pipeline);
         void CmdBindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, IVkPipelineLayout layout, int firstSet, IReadOnlyList<IVkDescriptorSet> descriptorSets, IReadOnlyList<int> dynamicOffsets);
         void CmdPushConstants(IVkPipelineLayout layout, VkShaderStageFlagBits stageFlags, int offset, int size, IntPtr values);
+        void CmdResetQueryPool(IVkQueryPool queryPool, int firstQuery, int queryCount);
+        void CmdBeginQuery(IVkQueryPool queryPool, int query, VkQueryControlFlags flags);
+        void CmdEndQuery(IVkQueryPool queryPool, int query);
+        void CmdCopyQueryPoolResults(IVkQueryPool queryPool, int firstQuery, int queryCount, IVkBuffer dstBuffer, ulong dstOffset, ulong stride, VkQueryResultFlags flags);
+        void CmdWriteTimestamp(VkPipelineStageFlags pipelineStage, IVkQueryPool queryPool, int query);
     }
 
     public unsafe class VkCommandBuffer : IVkCommandBuffer
@@ -237,6 +242,54 @@ namespace VulkaNet
             var _size = size;
             var _pValues = values;
             Direct.CmdPushConstants(_commandBuffer, _layout, _stageFlags, _offset, _size, _pValues);
+        }
+
+        public void CmdResetQueryPool(IVkQueryPool queryPool, int firstQuery, int queryCount)
+        {
+            var _commandBuffer = Handle;
+            var _queryPool = queryPool?.Handle ?? VkQueryPool.HandleType.Null;
+            var _firstQuery = firstQuery;
+            var _queryCount = queryCount;
+            Direct.CmdResetQueryPool(_commandBuffer, _queryPool, _firstQuery, _queryCount);
+        }
+
+        public void CmdBeginQuery(IVkQueryPool queryPool, int query, VkQueryControlFlags flags)
+        {
+            var _commandBuffer = Handle;
+            var _queryPool = queryPool?.Handle ?? VkQueryPool.HandleType.Null;
+            var _query = query;
+            var _flags = flags;
+            Direct.CmdBeginQuery(_commandBuffer, _queryPool, _query, _flags);
+        }
+
+        public void CmdEndQuery(IVkQueryPool queryPool, int query)
+        {
+            var _commandBuffer = Handle;
+            var _queryPool = queryPool?.Handle ?? VkQueryPool.HandleType.Null;
+            var _query = query;
+            Direct.CmdEndQuery(_commandBuffer, _queryPool, _query);
+        }
+
+        public void CmdCopyQueryPoolResults(IVkQueryPool queryPool, int firstQuery, int queryCount, IVkBuffer dstBuffer, ulong dstOffset, ulong stride, VkQueryResultFlags flags)
+        {
+            var _commandBuffer = Handle;
+            var _queryPool = queryPool?.Handle ?? VkQueryPool.HandleType.Null;
+            var _firstQuery = firstQuery;
+            var _queryCount = queryCount;
+            var _dstBuffer = dstBuffer?.Handle ?? VkBuffer.HandleType.Null;
+            var _dstOffset = dstOffset;
+            var _stride = stride;
+            var _flags = flags;
+            Direct.CmdCopyQueryPoolResults(_commandBuffer, _queryPool, _firstQuery, _queryCount, _dstBuffer, _dstOffset, _stride, _flags);
+        }
+
+        public void CmdWriteTimestamp(VkPipelineStageFlags pipelineStage, IVkQueryPool queryPool, int query)
+        {
+            var _commandBuffer = Handle;
+            var _pipelineStage = pipelineStage;
+            var _queryPool = queryPool?.Handle ?? VkQueryPool.HandleType.Null;
+            var _query = query;
+            Direct.CmdWriteTimestamp(_commandBuffer, _pipelineStage, _queryPool, _query);
         }
 
     }

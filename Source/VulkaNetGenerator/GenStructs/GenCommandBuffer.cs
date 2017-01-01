@@ -339,5 +339,10 @@ namespace VulkaNetGenerator.GenStructs
             VkStencilFaceFlags faceMask,
             int reference)
         { }
+
+        public void CmdSetBlendConstants(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            VkColor4* blendConstants)
+        { }
     }
 }

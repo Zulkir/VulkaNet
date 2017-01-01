@@ -477,6 +477,11 @@ namespace VulkaNet
                 VkStencilFaceFlags faceMask,
                 int reference);
 
+            public CmdSetBlendConstantsDelegate CmdSetBlendConstants { get; }
+            public delegate void CmdSetBlendConstantsDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                VkColor4* blendConstants);
+
             public DestroyFenceDelegate DestroyFence { get; }
             public delegate void DestroyFenceDelegate(
                 HandleType device,
@@ -955,6 +960,7 @@ namespace VulkaNet
                 CmdSetStencilCompareMask = GetDeviceDelegate<CmdSetStencilCompareMaskDelegate>("vkCmdSetStencilCompareMask");
                 CmdSetStencilWriteMask = GetDeviceDelegate<CmdSetStencilWriteMaskDelegate>("vkCmdSetStencilWriteMask");
                 CmdSetStencilReference = GetDeviceDelegate<CmdSetStencilReferenceDelegate>("vkCmdSetStencilReference");
+                CmdSetBlendConstants = GetDeviceDelegate<CmdSetBlendConstantsDelegate>("vkCmdSetBlendConstants");
                 DestroyFence = GetDeviceDelegate<DestroyFenceDelegate>("vkDestroyFence");
                 GetFenceStatus = GetDeviceDelegate<GetFenceStatusDelegate>("vkGetFenceStatus");
                 DestroySemaphore = GetDeviceDelegate<DestroySemaphoreDelegate>("vkDestroySemaphore");

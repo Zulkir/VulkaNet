@@ -90,6 +90,7 @@
     <Compile Include="VkDescriptorSetLayoutCreateInfo.cs" />
     <Compile Include="VkDescriptorType.cs" />
     <Compile Include="VkDeviceMemory.cs" />
+    <Compile Include="VkDispatchIndirectCommand.cs" />
     <Compile Include="VkDrawIndexedIndirectCommand.cs" />
     <Compile Include="VkDrawIndirectCommand.cs" />
     <Compile Include="VkDynamicState.cs" />

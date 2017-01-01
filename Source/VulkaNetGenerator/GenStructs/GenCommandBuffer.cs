@@ -344,5 +344,18 @@ namespace VulkaNetGenerator.GenStructs
             [FromProperty("this")] GenCommandBuffer commandBuffer,
             VkColor4* blendConstants)
         { }
+
+        public void CmdDispatch(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            int x,
+            int y,
+            int z)
+        { }
+
+        public void CmdDispatchIndirect(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            GenBuffer buffer,
+            DeviceSize offset)
+        { }
     }
 }

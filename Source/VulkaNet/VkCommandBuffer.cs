@@ -74,6 +74,8 @@ namespace VulkaNet
         void CmdSetStencilWriteMask(VkStencilFaceFlags faceMask, int writeMask);
         void CmdSetStencilReference(VkStencilFaceFlags faceMask, int reference);
         void CmdSetBlendConstants(VkColor4 blendConstants);
+        void CmdDispatch(int x, int y, int z);
+        void CmdDispatchIndirect(IVkBuffer buffer, ulong offset);
     }
 
     public unsafe class VkCommandBuffer : IVkCommandBuffer
@@ -648,6 +650,23 @@ namespace VulkaNet
             var _commandBuffer = Handle;
             var _blendConstants = &blendConstants;
             Direct.CmdSetBlendConstants(_commandBuffer, _blendConstants);
+        }
+
+        public void CmdDispatch(int x, int y, int z)
+        {
+            var _commandBuffer = Handle;
+            var _x = x;
+            var _y = y;
+            var _z = z;
+            Direct.CmdDispatch(_commandBuffer, _x, _y, _z);
+        }
+
+        public void CmdDispatchIndirect(IVkBuffer buffer, ulong offset)
+        {
+            var _commandBuffer = Handle;
+            var _buffer = buffer?.Handle ?? VkBuffer.HandleType.Null;
+            var _offset = offset;
+            Direct.CmdDispatchIndirect(_commandBuffer, _buffer, _offset);
         }
 
     }

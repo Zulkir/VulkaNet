@@ -296,5 +296,17 @@ namespace VulkaNetGenerator.GenStructs
             [CountFor("viewports")] int viewportCount,
             [IsArray] VkViewport* pViewports)
         { }
+
+        public void CmdSetLineWidth(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            float lineWidth)
+        { }
+
+        public void CmdSetDepthBias(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            float depthBiasConstantFactor,
+            float depthBiasClamp,
+            float depthBiasSlopeFactor)
+        { }
     }
 }

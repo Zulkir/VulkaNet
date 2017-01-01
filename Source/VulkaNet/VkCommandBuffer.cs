@@ -66,6 +66,8 @@ namespace VulkaNet
         void CmdDrawIndexedIndirect(IVkBuffer buffer, ulong offset, int drawCount, int stride);
         void CmdBindVertexBuffers(int firstBinding, IReadOnlyList<IVkBuffer> buffers, IReadOnlyList<ulong> offsets);
         void CmdSetViewport(int firstViewport, IReadOnlyList<VkViewport> viewports);
+        void CmdSetLineWidth(float lineWidth);
+        void CmdSetDepthBias(float depthBiasConstantFactor, float depthBiasClamp, float depthBiasSlopeFactor);
     }
 
     public unsafe class VkCommandBuffer : IVkCommandBuffer
@@ -569,6 +571,22 @@ namespace VulkaNet
                 var _pViewports = viewports.MarshalDirect(ref unmanaged);
                 Direct.CmdSetViewport(_commandBuffer, _firstViewport, _viewportCount, _pViewports);
             }
+        }
+
+        public void CmdSetLineWidth(float lineWidth)
+        {
+            var _commandBuffer = Handle;
+            var _lineWidth = lineWidth;
+            Direct.CmdSetLineWidth(_commandBuffer, _lineWidth);
+        }
+
+        public void CmdSetDepthBias(float depthBiasConstantFactor, float depthBiasClamp, float depthBiasSlopeFactor)
+        {
+            var _commandBuffer = Handle;
+            var _depthBiasConstantFactor = depthBiasConstantFactor;
+            var _depthBiasClamp = depthBiasClamp;
+            var _depthBiasSlopeFactor = depthBiasSlopeFactor;
+            Direct.CmdSetDepthBias(_commandBuffer, _depthBiasConstantFactor, _depthBiasClamp, _depthBiasSlopeFactor);
         }
 
     }

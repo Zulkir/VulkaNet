@@ -434,6 +434,18 @@ namespace VulkaNet
                 int viewportCount,
                 VkViewport* pViewports);
 
+            public CmdSetLineWidthDelegate CmdSetLineWidth { get; }
+            public delegate void CmdSetLineWidthDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                float lineWidth);
+
+            public CmdSetDepthBiasDelegate CmdSetDepthBias { get; }
+            public delegate void CmdSetDepthBiasDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                float depthBiasConstantFactor,
+                float depthBiasClamp,
+                float depthBiasSlopeFactor);
+
             public DestroyFenceDelegate DestroyFence { get; }
             public delegate void DestroyFenceDelegate(
                 HandleType device,
@@ -905,6 +917,8 @@ namespace VulkaNet
                 CmdDrawIndexedIndirect = GetDeviceDelegate<CmdDrawIndexedIndirectDelegate>("vkCmdDrawIndexedIndirect");
                 CmdBindVertexBuffers = GetDeviceDelegate<CmdBindVertexBuffersDelegate>("vkCmdBindVertexBuffers");
                 CmdSetViewport = GetDeviceDelegate<CmdSetViewportDelegate>("vkCmdSetViewport");
+                CmdSetLineWidth = GetDeviceDelegate<CmdSetLineWidthDelegate>("vkCmdSetLineWidth");
+                CmdSetDepthBias = GetDeviceDelegate<CmdSetDepthBiasDelegate>("vkCmdSetDepthBias");
                 DestroyFence = GetDeviceDelegate<DestroyFenceDelegate>("vkDestroyFence");
                 GetFenceStatus = GetDeviceDelegate<GetFenceStatusDelegate>("vkGetFenceStatus");
                 DestroySemaphore = GetDeviceDelegate<DestroySemaphoreDelegate>("vkDestroySemaphore");

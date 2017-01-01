@@ -53,6 +53,12 @@ namespace VulkaNet
         void CmdClearAttachments(int attachmentCount, VkClearAttachment attachments, int rectCount, VkClearRect rects);
         void CmdFillBuffer(IVkBuffer dstBuffer, ulong dstOffset, ulong size, int data);
         void CmdUpdateBuffer(IVkBuffer dstBuffer, ulong dstOffset, ulong dataSize, IntPtr data);
+        void CmdCopyBuffer(IVkBuffer srcBuffer, IVkBuffer dstBuffer, IReadOnlyList<VkBufferCopy> regions);
+        void CmdCopyImage(IVkImage srcImage, VkImageLayout srcImageLayout, IVkImage dstImage, VkImageLayout dstImageLayout, IReadOnlyList<VkImageCopy> regions);
+        void CmdCopyBufferToImage(IVkBuffer srcBuffer, IVkImage dstImage, VkImageLayout dstImageLayout, IReadOnlyList<VkBufferImageCopy> regions);
+        void CmdCopyImageToBuffer(IVkImage srcImage, VkImageLayout srcImageLayout, IVkBuffer dstBuffer, IReadOnlyList<VkBufferImageCopy> regions);
+        void CmdBlitImage(IVkImage srcImage, VkImageLayout srcImageLayout, IVkImage dstImage, VkImageLayout dstImageLayout, IReadOnlyList<VkImageBlit> regions, VkFilter filter);
+        void CmdResolveImage(IVkImage srcImage, VkImageLayout srcImageLayout, IVkImage dstImage, VkImageLayout dstImageLayout, IReadOnlyList<VkImageResolve> regions);
     }
 
     public unsafe class VkCommandBuffer : IVkCommandBuffer
@@ -361,6 +367,117 @@ namespace VulkaNet
             var _dataSize = dataSize;
             var _pData = data;
             Direct.CmdUpdateBuffer(_commandBuffer, _dstBuffer, _dstOffset, _dataSize, _pData);
+        }
+
+        public void CmdCopyBuffer(IVkBuffer srcBuffer, IVkBuffer dstBuffer, IReadOnlyList<VkBufferCopy> regions)
+        {
+            var unmanagedSize =
+                regions.SizeOfMarshalDirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _commandBuffer = Handle;
+                var _srcBuffer = srcBuffer?.Handle ?? VkBuffer.HandleType.Null;
+                var _dstBuffer = dstBuffer?.Handle ?? VkBuffer.HandleType.Null;
+                var _regionCount = regions?.Count ?? 0;
+                var _pRegions = regions.MarshalDirect(ref unmanaged);
+                Direct.CmdCopyBuffer(_commandBuffer, _srcBuffer, _dstBuffer, _regionCount, _pRegions);
+            }
+        }
+
+        public void CmdCopyImage(IVkImage srcImage, VkImageLayout srcImageLayout, IVkImage dstImage, VkImageLayout dstImageLayout, IReadOnlyList<VkImageCopy> regions)
+        {
+            var unmanagedSize =
+                regions.SizeOfMarshalDirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _commandBuffer = Handle;
+                var _srcImage = srcImage?.Handle ?? VkImage.HandleType.Null;
+                var _srcImageLayout = srcImageLayout;
+                var _dstImage = dstImage?.Handle ?? VkImage.HandleType.Null;
+                var _dstImageLayout = dstImageLayout;
+                var _regionCount = regions?.Count ?? 0;
+                var _pRegions = regions.MarshalDirect(ref unmanaged);
+                Direct.CmdCopyImage(_commandBuffer, _srcImage, _srcImageLayout, _dstImage, _dstImageLayout, _regionCount, _pRegions);
+            }
+        }
+
+        public void CmdCopyBufferToImage(IVkBuffer srcBuffer, IVkImage dstImage, VkImageLayout dstImageLayout, IReadOnlyList<VkBufferImageCopy> regions)
+        {
+            var unmanagedSize =
+                regions.SizeOfMarshalDirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _commandBuffer = Handle;
+                var _srcBuffer = srcBuffer?.Handle ?? VkBuffer.HandleType.Null;
+                var _dstImage = dstImage?.Handle ?? VkImage.HandleType.Null;
+                var _dstImageLayout = dstImageLayout;
+                var _regionCount = regions?.Count ?? 0;
+                var _pRegions = regions.MarshalDirect(ref unmanaged);
+                Direct.CmdCopyBufferToImage(_commandBuffer, _srcBuffer, _dstImage, _dstImageLayout, _regionCount, _pRegions);
+            }
+        }
+
+        public void CmdCopyImageToBuffer(IVkImage srcImage, VkImageLayout srcImageLayout, IVkBuffer dstBuffer, IReadOnlyList<VkBufferImageCopy> regions)
+        {
+            var unmanagedSize =
+                regions.SizeOfMarshalDirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _commandBuffer = Handle;
+                var _srcImage = srcImage?.Handle ?? VkImage.HandleType.Null;
+                var _srcImageLayout = srcImageLayout;
+                var _dstBuffer = dstBuffer?.Handle ?? VkBuffer.HandleType.Null;
+                var _regionCount = regions?.Count ?? 0;
+                var _pRegions = regions.MarshalDirect(ref unmanaged);
+                Direct.CmdCopyImageToBuffer(_commandBuffer, _srcImage, _srcImageLayout, _dstBuffer, _regionCount, _pRegions);
+            }
+        }
+
+        public void CmdBlitImage(IVkImage srcImage, VkImageLayout srcImageLayout, IVkImage dstImage, VkImageLayout dstImageLayout, IReadOnlyList<VkImageBlit> regions, VkFilter filter)
+        {
+            var unmanagedSize =
+                regions.SizeOfMarshalDirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _commandBuffer = Handle;
+                var _srcImage = srcImage?.Handle ?? VkImage.HandleType.Null;
+                var _srcImageLayout = srcImageLayout;
+                var _dstImage = dstImage?.Handle ?? VkImage.HandleType.Null;
+                var _dstImageLayout = dstImageLayout;
+                var _regionCount = regions?.Count ?? 0;
+                var _pRegions = regions.MarshalDirect(ref unmanaged);
+                var _filter = filter;
+                Direct.CmdBlitImage(_commandBuffer, _srcImage, _srcImageLayout, _dstImage, _dstImageLayout, _regionCount, _pRegions, _filter);
+            }
+        }
+
+        public void CmdResolveImage(IVkImage srcImage, VkImageLayout srcImageLayout, IVkImage dstImage, VkImageLayout dstImageLayout, IReadOnlyList<VkImageResolve> regions)
+        {
+            var unmanagedSize =
+                regions.SizeOfMarshalDirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _commandBuffer = Handle;
+                var _srcImage = srcImage?.Handle ?? VkImage.HandleType.Null;
+                var _srcImageLayout = srcImageLayout;
+                var _dstImage = dstImage?.Handle ?? VkImage.HandleType.Null;
+                var _dstImageLayout = dstImageLayout;
+                var _regionCount = regions?.Count ?? 0;
+                var _pRegions = regions.MarshalDirect(ref unmanaged);
+                Direct.CmdResolveImage(_commandBuffer, _srcImage, _srcImageLayout, _dstImage, _dstImageLayout, _regionCount, _pRegions);
+            }
         }
 
     }

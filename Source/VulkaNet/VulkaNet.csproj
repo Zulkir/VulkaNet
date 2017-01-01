@@ -52,8 +52,10 @@
     <Compile Include="VkBlendOp.cs" />
     <Compile Include="VkBorderColor.cs" />
     <Compile Include="VkBuffer.cs" />
+    <Compile Include="VkBufferCopy.cs" />
     <Compile Include="VkBufferCreateFlags.cs" />
     <Compile Include="VkBufferCreateInfo.cs" />
+    <Compile Include="VkBufferImageCopy.cs" />
     <Compile Include="VkBufferMemoryBarrier.cs" />
     <Compile Include="VkBufferUsageFlags.cs" />
     <Compile Include="VkBufferView.cs" />
@@ -123,11 +125,15 @@
     <Compile Include="VkGraphicsPipelineCreateInfo.cs" />
     <Compile Include="VkImage.cs" />
     <Compile Include="VkImageAspectFlags.cs" />
+    <Compile Include="VkImageBlit.cs" />
+    <Compile Include="VkImageCopy.cs" />
     <Compile Include="VkImageCreateFlags.cs" />
     <Compile Include="VkImageCreateInfo.cs" />
     <Compile Include="VkImageLayout.cs" />
     <Compile Include="VkImageMemoryBarrier.cs" />
+    <Compile Include="VkImageResolve.cs" />
     <Compile Include="VkImageSubresource.cs" />
+    <Compile Include="VkImageSubresourceLayers.cs" />
     <Compile Include="VkImageSubresourceRange.cs" />
     <Compile Include="VkImageTiling.cs" />
     <Compile Include="VkImageType.cs" />

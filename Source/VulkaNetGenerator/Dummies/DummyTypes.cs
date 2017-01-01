@@ -53,6 +53,11 @@ namespace VulkaNetGenerator.Dummies
     public struct VkClearDepthStencilValue { }
     public struct VkClearRect { }
     public struct VkClearAttachment { }
+    public struct VkBufferCopy { }
+    public struct VkImageCopy { }
+    public struct VkBufferImageCopy { }
+    public struct VkImageBlit { }
+    public struct VkImageResolve { }
     
     public enum VkResult { }
     public enum VkStructureType { }

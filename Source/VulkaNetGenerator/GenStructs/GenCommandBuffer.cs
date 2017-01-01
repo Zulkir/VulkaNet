@@ -184,5 +184,62 @@ namespace VulkaNetGenerator.GenStructs
             DeviceSize dataSize,
             IntPtr pData)
         { }
+
+        public void CmdCopyBuffer(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            GenBuffer srcBuffer,
+            GenBuffer dstBuffer,
+            [CountFor("regions")] int regionCount,
+            [IsArray] VkBufferCopy* pRegions)
+        { }
+
+        public void CmdCopyImage(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            GenImage srcImage,
+            VkImageLayout srcImageLayout,
+            GenImage dstImage,
+            VkImageLayout dstImageLayout,
+            [CountFor("regions")] int regionCount,
+            [IsArray] VkImageCopy* pRegions)
+        { }
+
+        public void CmdCopyBufferToImage(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            GenBuffer srcBuffer,
+            GenImage dstImage,
+            VkImageLayout dstImageLayout,
+            [CountFor("regions")] int regionCount,
+            [IsArray] VkBufferImageCopy* pRegions)
+        { }
+
+        public void CmdCopyImageToBuffer(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            GenImage srcImage,
+            VkImageLayout srcImageLayout,
+            GenBuffer dstBuffer,
+            [CountFor("regions")] int regionCount,
+            [IsArray] VkBufferImageCopy* pRegions)
+        { }
+
+        public void CmdBlitImage(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            GenImage srcImage,
+            VkImageLayout srcImageLayout,
+            GenImage dstImage,
+            VkImageLayout dstImageLayout,
+            [CountFor("regions")] int regionCount,
+            [IsArray] VkImageBlit* pRegions,
+            VkFilter filter)
+        { }
+
+        public void CmdResolveImage(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            GenImage srcImage,
+            VkImageLayout srcImageLayout,
+            GenImage dstImage,
+            VkImageLayout dstImageLayout,
+            [CountFor("regions")] int regionCount,
+            [IsArray] VkImageResolve* pRegions)
+        { }
     }
 }

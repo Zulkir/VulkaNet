@@ -322,6 +322,63 @@ namespace VulkaNet
                 ulong dataSize,
                 IntPtr pData);
 
+            public CmdCopyBufferDelegate CmdCopyBuffer { get; }
+            public delegate void CmdCopyBufferDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                VkBuffer.HandleType srcBuffer,
+                VkBuffer.HandleType dstBuffer,
+                int regionCount,
+                VkBufferCopy* pRegions);
+
+            public CmdCopyImageDelegate CmdCopyImage { get; }
+            public delegate void CmdCopyImageDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                VkImage.HandleType srcImage,
+                VkImageLayout srcImageLayout,
+                VkImage.HandleType dstImage,
+                VkImageLayout dstImageLayout,
+                int regionCount,
+                VkImageCopy* pRegions);
+
+            public CmdCopyBufferToImageDelegate CmdCopyBufferToImage { get; }
+            public delegate void CmdCopyBufferToImageDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                VkBuffer.HandleType srcBuffer,
+                VkImage.HandleType dstImage,
+                VkImageLayout dstImageLayout,
+                int regionCount,
+                VkBufferImageCopy* pRegions);
+
+            public CmdCopyImageToBufferDelegate CmdCopyImageToBuffer { get; }
+            public delegate void CmdCopyImageToBufferDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                VkImage.HandleType srcImage,
+                VkImageLayout srcImageLayout,
+                VkBuffer.HandleType dstBuffer,
+                int regionCount,
+                VkBufferImageCopy* pRegions);
+
+            public CmdBlitImageDelegate CmdBlitImage { get; }
+            public delegate void CmdBlitImageDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                VkImage.HandleType srcImage,
+                VkImageLayout srcImageLayout,
+                VkImage.HandleType dstImage,
+                VkImageLayout dstImageLayout,
+                int regionCount,
+                VkImageBlit* pRegions,
+                VkFilter filter);
+
+            public CmdResolveImageDelegate CmdResolveImage { get; }
+            public delegate void CmdResolveImageDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                VkImage.HandleType srcImage,
+                VkImageLayout srcImageLayout,
+                VkImage.HandleType dstImage,
+                VkImageLayout dstImageLayout,
+                int regionCount,
+                VkImageResolve* pRegions);
+
             public DestroyFenceDelegate DestroyFence { get; }
             public delegate void DestroyFenceDelegate(
                 HandleType device,
@@ -780,6 +837,12 @@ namespace VulkaNet
                 CmdClearAttachments = GetDeviceDelegate<CmdClearAttachmentsDelegate>("vkCmdClearAttachments");
                 CmdFillBuffer = GetDeviceDelegate<CmdFillBufferDelegate>("vkCmdFillBuffer");
                 CmdUpdateBuffer = GetDeviceDelegate<CmdUpdateBufferDelegate>("vkCmdUpdateBuffer");
+                CmdCopyBuffer = GetDeviceDelegate<CmdCopyBufferDelegate>("vkCmdCopyBuffer");
+                CmdCopyImage = GetDeviceDelegate<CmdCopyImageDelegate>("vkCmdCopyImage");
+                CmdCopyBufferToImage = GetDeviceDelegate<CmdCopyBufferToImageDelegate>("vkCmdCopyBufferToImage");
+                CmdCopyImageToBuffer = GetDeviceDelegate<CmdCopyImageToBufferDelegate>("vkCmdCopyImageToBuffer");
+                CmdBlitImage = GetDeviceDelegate<CmdBlitImageDelegate>("vkCmdBlitImage");
+                CmdResolveImage = GetDeviceDelegate<CmdResolveImageDelegate>("vkCmdResolveImage");
                 DestroyFence = GetDeviceDelegate<DestroyFenceDelegate>("vkDestroyFence");
                 GetFenceStatus = GetDeviceDelegate<GetFenceStatusDelegate>("vkGetFenceStatus");
                 DestroySemaphore = GetDeviceDelegate<DestroySemaphoreDelegate>("vkDestroySemaphore");

@@ -59,6 +59,11 @@ namespace VulkaNet
         void CmdCopyImageToBuffer(IVkImage srcImage, VkImageLayout srcImageLayout, IVkBuffer dstBuffer, IReadOnlyList<VkBufferImageCopy> regions);
         void CmdBlitImage(IVkImage srcImage, VkImageLayout srcImageLayout, IVkImage dstImage, VkImageLayout dstImageLayout, IReadOnlyList<VkImageBlit> regions, VkFilter filter);
         void CmdResolveImage(IVkImage srcImage, VkImageLayout srcImageLayout, IVkImage dstImage, VkImageLayout dstImageLayout, IReadOnlyList<VkImageResolve> regions);
+        void CmdBindIndexBuffer(IVkBuffer buffer, ulong offset, VkIndexType indexType);
+        void CmdDraw(int vertexCount, int instanceCount, int firstVertex, int firstInstance);
+        void CmdDrawIndexed(int indexCount, int instanceCount, int firstIndex, int vertexOffset, int firstInstance);
+        void CmdDrawIndirect(IVkBuffer buffer, ulong offset, int drawCount, int stride);
+        void CmdDrawIndexedIndirect(IVkBuffer buffer, ulong offset, int drawCount, int stride);
     }
 
     public unsafe class VkCommandBuffer : IVkCommandBuffer
@@ -478,6 +483,56 @@ namespace VulkaNet
                 var _pRegions = regions.MarshalDirect(ref unmanaged);
                 Direct.CmdResolveImage(_commandBuffer, _srcImage, _srcImageLayout, _dstImage, _dstImageLayout, _regionCount, _pRegions);
             }
+        }
+
+        public void CmdBindIndexBuffer(IVkBuffer buffer, ulong offset, VkIndexType indexType)
+        {
+            var _commandBuffer = Handle;
+            var _buffer = buffer?.Handle ?? VkBuffer.HandleType.Null;
+            var _offset = offset;
+            var _indexType = indexType;
+            Direct.CmdBindIndexBuffer(_commandBuffer, _buffer, _offset, _indexType);
+        }
+
+        public void CmdDraw(int vertexCount, int instanceCount, int firstVertex, int firstInstance)
+        {
+            var _commandBuffer = Handle;
+            var _vertexCount = vertexCount;
+            var _instanceCount = instanceCount;
+            var _firstVertex = firstVertex;
+            var _firstInstance = firstInstance;
+            Direct.CmdDraw(_commandBuffer, _vertexCount, _instanceCount, _firstVertex, _firstInstance);
+        }
+
+        public void CmdDrawIndexed(int indexCount, int instanceCount, int firstIndex, int vertexOffset, int firstInstance)
+        {
+            var _commandBuffer = Handle;
+            var _indexCount = indexCount;
+            var _instanceCount = instanceCount;
+            var _firstIndex = firstIndex;
+            var _vertexOffset = vertexOffset;
+            var _firstInstance = firstInstance;
+            Direct.CmdDrawIndexed(_commandBuffer, _indexCount, _instanceCount, _firstIndex, _vertexOffset, _firstInstance);
+        }
+
+        public void CmdDrawIndirect(IVkBuffer buffer, ulong offset, int drawCount, int stride)
+        {
+            var _commandBuffer = Handle;
+            var _buffer = buffer?.Handle ?? VkBuffer.HandleType.Null;
+            var _offset = offset;
+            var _drawCount = drawCount;
+            var _stride = stride;
+            Direct.CmdDrawIndirect(_commandBuffer, _buffer, _offset, _drawCount, _stride);
+        }
+
+        public void CmdDrawIndexedIndirect(IVkBuffer buffer, ulong offset, int drawCount, int stride)
+        {
+            var _commandBuffer = Handle;
+            var _buffer = buffer?.Handle ?? VkBuffer.HandleType.Null;
+            var _offset = offset;
+            var _drawCount = drawCount;
+            var _stride = stride;
+            Direct.CmdDrawIndexedIndirect(_commandBuffer, _buffer, _offset, _drawCount, _stride);
         }
 
     }

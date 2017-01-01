@@ -90,6 +90,8 @@
     <Compile Include="VkDescriptorSetLayoutCreateInfo.cs" />
     <Compile Include="VkDescriptorType.cs" />
     <Compile Include="VkDeviceMemory.cs" />
+    <Compile Include="VkDrawIndexedIndirectCommand.cs" />
+    <Compile Include="VkDrawIndirectCommand.cs" />
     <Compile Include="VkDynamicState.cs" />
     <Compile Include="VkEvent.cs" />
     <Compile Include="VkEventCreateFlags.cs" />
@@ -142,6 +144,7 @@
     <Compile Include="VkImageViewCreateFlags.cs" />
     <Compile Include="VkImageViewCreateInfo.cs" />
     <Compile Include="VkImageViewType.cs" />
+    <Compile Include="VkIndexType.cs" />
     <Compile Include="VkIntColor4.cs" />
     <Compile Include="VkLogicOp.cs" />
     <Compile Include="VkMappedMemoryRange.cs" />

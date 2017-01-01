@@ -241,5 +241,47 @@ namespace VulkaNetGenerator.GenStructs
             [CountFor("regions")] int regionCount,
             [IsArray] VkImageResolve* pRegions)
         { }
+
+        public void CmdBindIndexBuffer(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            GenBuffer buffer,
+            DeviceSize offset,
+            VkIndexType indexType)
+        { }
+
+        public void CmdDraw(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            int vertexCount,
+            int instanceCount,
+            int firstVertex,
+            int firstInstance)
+        { }
+
+        public void CmdDrawIndexed(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            int indexCount,
+            int instanceCount,
+            int firstIndex,
+            int vertexOffset,
+            int firstInstance)
+        { }
+
+        public void CmdDrawIndirect(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            GenBuffer buffer,
+            DeviceSize offset,
+            int drawCount,
+            int stride)
+        { }
+
+        public void CmdDrawIndexedIndirect(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            GenBuffer buffer,
+            DeviceSize offset,
+            int drawCount,
+            int stride)
+        { }
+
+
     }
 }

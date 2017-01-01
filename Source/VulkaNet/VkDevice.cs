@@ -379,6 +379,46 @@ namespace VulkaNet
                 int regionCount,
                 VkImageResolve* pRegions);
 
+            public CmdBindIndexBufferDelegate CmdBindIndexBuffer { get; }
+            public delegate void CmdBindIndexBufferDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                VkBuffer.HandleType buffer,
+                ulong offset,
+                VkIndexType indexType);
+
+            public CmdDrawDelegate CmdDraw { get; }
+            public delegate void CmdDrawDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                int vertexCount,
+                int instanceCount,
+                int firstVertex,
+                int firstInstance);
+
+            public CmdDrawIndexedDelegate CmdDrawIndexed { get; }
+            public delegate void CmdDrawIndexedDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                int indexCount,
+                int instanceCount,
+                int firstIndex,
+                int vertexOffset,
+                int firstInstance);
+
+            public CmdDrawIndirectDelegate CmdDrawIndirect { get; }
+            public delegate void CmdDrawIndirectDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                VkBuffer.HandleType buffer,
+                ulong offset,
+                int drawCount,
+                int stride);
+
+            public CmdDrawIndexedIndirectDelegate CmdDrawIndexedIndirect { get; }
+            public delegate void CmdDrawIndexedIndirectDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                VkBuffer.HandleType buffer,
+                ulong offset,
+                int drawCount,
+                int stride);
+
             public DestroyFenceDelegate DestroyFence { get; }
             public delegate void DestroyFenceDelegate(
                 HandleType device,
@@ -843,6 +883,11 @@ namespace VulkaNet
                 CmdCopyImageToBuffer = GetDeviceDelegate<CmdCopyImageToBufferDelegate>("vkCmdCopyImageToBuffer");
                 CmdBlitImage = GetDeviceDelegate<CmdBlitImageDelegate>("vkCmdBlitImage");
                 CmdResolveImage = GetDeviceDelegate<CmdResolveImageDelegate>("vkCmdResolveImage");
+                CmdBindIndexBuffer = GetDeviceDelegate<CmdBindIndexBufferDelegate>("vkCmdBindIndexBuffer");
+                CmdDraw = GetDeviceDelegate<CmdDrawDelegate>("vkCmdDraw");
+                CmdDrawIndexed = GetDeviceDelegate<CmdDrawIndexedDelegate>("vkCmdDrawIndexed");
+                CmdDrawIndirect = GetDeviceDelegate<CmdDrawIndirectDelegate>("vkCmdDrawIndirect");
+                CmdDrawIndexedIndirect = GetDeviceDelegate<CmdDrawIndexedIndirectDelegate>("vkCmdDrawIndexedIndirect");
                 DestroyFence = GetDeviceDelegate<DestroyFenceDelegate>("vkDestroyFence");
                 GetFenceStatus = GetDeviceDelegate<GetFenceStatusDelegate>("vkGetFenceStatus");
                 DestroySemaphore = GetDeviceDelegate<DestroySemaphoreDelegate>("vkDestroySemaphore");

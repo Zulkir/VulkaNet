@@ -289,5 +289,12 @@ namespace VulkaNetGenerator.GenStructs
             [IsArray] GenBuffer* pBuffers,
             [IsArray] DeviceSize* pOffsets)
         { }
+
+        public void CmdSetViewport(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            int firstViewport,
+            [CountFor("viewports")] int viewportCount,
+            [IsArray] VkViewport* pViewports)
+        { }
     }
 }

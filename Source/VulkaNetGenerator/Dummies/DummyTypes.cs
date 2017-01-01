@@ -139,6 +139,7 @@ namespace VulkaNetGenerator.Dummies
     public enum VkQueryType { }
     public enum VkQueryResultFlags { }
     public enum VkIndexType { }
+    public enum VkStencilFaceFlags { }
 
     //public struct HndCommandPool { }
     //public struct HndRenderPass { }

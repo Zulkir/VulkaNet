@@ -308,5 +308,36 @@ namespace VulkaNetGenerator.GenStructs
             float depthBiasClamp,
             float depthBiasSlopeFactor)
         { }
+
+        public void CmdSetScissor(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            int firstScissor,
+            [CountFor("scissors")] int scissorCount,
+            [IsArray] VkRect2D* pScissors)
+        { }
+
+        public void CmdSetDepthBounds(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            float minDepthBounds,
+            float maxDepthBounds)
+        { }
+
+        public void CmdSetStencilCompareMask(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            VkStencilFaceFlags faceMask,
+            int compareMask)
+        { }
+
+        public void CmdSetStencilWriteMask(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            VkStencilFaceFlags faceMask,
+            int writeMask)
+        { }
+
+        public void CmdSetStencilReference(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            VkStencilFaceFlags faceMask,
+            int reference)
+        { }
     }
 }

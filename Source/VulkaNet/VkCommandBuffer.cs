@@ -68,6 +68,11 @@ namespace VulkaNet
         void CmdSetViewport(int firstViewport, IReadOnlyList<VkViewport> viewports);
         void CmdSetLineWidth(float lineWidth);
         void CmdSetDepthBias(float depthBiasConstantFactor, float depthBiasClamp, float depthBiasSlopeFactor);
+        void CmdSetScissor(int firstScissor, IReadOnlyList<VkRect2D> scissors);
+        void CmdSetDepthBounds(float minDepthBounds, float maxDepthBounds);
+        void CmdSetStencilCompareMask(VkStencilFaceFlags faceMask, int compareMask);
+        void CmdSetStencilWriteMask(VkStencilFaceFlags faceMask, int writeMask);
+        void CmdSetStencilReference(VkStencilFaceFlags faceMask, int reference);
     }
 
     public unsafe class VkCommandBuffer : IVkCommandBuffer
@@ -587,6 +592,54 @@ namespace VulkaNet
             var _depthBiasClamp = depthBiasClamp;
             var _depthBiasSlopeFactor = depthBiasSlopeFactor;
             Direct.CmdSetDepthBias(_commandBuffer, _depthBiasConstantFactor, _depthBiasClamp, _depthBiasSlopeFactor);
+        }
+
+        public void CmdSetScissor(int firstScissor, IReadOnlyList<VkRect2D> scissors)
+        {
+            var unmanagedSize =
+                scissors.SizeOfMarshalDirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _commandBuffer = Handle;
+                var _firstScissor = firstScissor;
+                var _scissorCount = scissors?.Count ?? 0;
+                var _pScissors = scissors.MarshalDirect(ref unmanaged);
+                Direct.CmdSetScissor(_commandBuffer, _firstScissor, _scissorCount, _pScissors);
+            }
+        }
+
+        public void CmdSetDepthBounds(float minDepthBounds, float maxDepthBounds)
+        {
+            var _commandBuffer = Handle;
+            var _minDepthBounds = minDepthBounds;
+            var _maxDepthBounds = maxDepthBounds;
+            Direct.CmdSetDepthBounds(_commandBuffer, _minDepthBounds, _maxDepthBounds);
+        }
+
+        public void CmdSetStencilCompareMask(VkStencilFaceFlags faceMask, int compareMask)
+        {
+            var _commandBuffer = Handle;
+            var _faceMask = faceMask;
+            var _compareMask = compareMask;
+            Direct.CmdSetStencilCompareMask(_commandBuffer, _faceMask, _compareMask);
+        }
+
+        public void CmdSetStencilWriteMask(VkStencilFaceFlags faceMask, int writeMask)
+        {
+            var _commandBuffer = Handle;
+            var _faceMask = faceMask;
+            var _writeMask = writeMask;
+            Direct.CmdSetStencilWriteMask(_commandBuffer, _faceMask, _writeMask);
+        }
+
+        public void CmdSetStencilReference(VkStencilFaceFlags faceMask, int reference)
+        {
+            var _commandBuffer = Handle;
+            var _faceMask = faceMask;
+            var _reference = reference;
+            Direct.CmdSetStencilReference(_commandBuffer, _faceMask, _reference);
         }
 
     }

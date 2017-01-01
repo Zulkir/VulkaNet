@@ -446,6 +446,37 @@ namespace VulkaNet
                 float depthBiasClamp,
                 float depthBiasSlopeFactor);
 
+            public CmdSetScissorDelegate CmdSetScissor { get; }
+            public delegate void CmdSetScissorDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                int firstScissor,
+                int scissorCount,
+                VkRect2D* pScissors);
+
+            public CmdSetDepthBoundsDelegate CmdSetDepthBounds { get; }
+            public delegate void CmdSetDepthBoundsDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                float minDepthBounds,
+                float maxDepthBounds);
+
+            public CmdSetStencilCompareMaskDelegate CmdSetStencilCompareMask { get; }
+            public delegate void CmdSetStencilCompareMaskDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                VkStencilFaceFlags faceMask,
+                int compareMask);
+
+            public CmdSetStencilWriteMaskDelegate CmdSetStencilWriteMask { get; }
+            public delegate void CmdSetStencilWriteMaskDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                VkStencilFaceFlags faceMask,
+                int writeMask);
+
+            public CmdSetStencilReferenceDelegate CmdSetStencilReference { get; }
+            public delegate void CmdSetStencilReferenceDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                VkStencilFaceFlags faceMask,
+                int reference);
+
             public DestroyFenceDelegate DestroyFence { get; }
             public delegate void DestroyFenceDelegate(
                 HandleType device,
@@ -919,6 +950,11 @@ namespace VulkaNet
                 CmdSetViewport = GetDeviceDelegate<CmdSetViewportDelegate>("vkCmdSetViewport");
                 CmdSetLineWidth = GetDeviceDelegate<CmdSetLineWidthDelegate>("vkCmdSetLineWidth");
                 CmdSetDepthBias = GetDeviceDelegate<CmdSetDepthBiasDelegate>("vkCmdSetDepthBias");
+                CmdSetScissor = GetDeviceDelegate<CmdSetScissorDelegate>("vkCmdSetScissor");
+                CmdSetDepthBounds = GetDeviceDelegate<CmdSetDepthBoundsDelegate>("vkCmdSetDepthBounds");
+                CmdSetStencilCompareMask = GetDeviceDelegate<CmdSetStencilCompareMaskDelegate>("vkCmdSetStencilCompareMask");
+                CmdSetStencilWriteMask = GetDeviceDelegate<CmdSetStencilWriteMaskDelegate>("vkCmdSetStencilWriteMask");
+                CmdSetStencilReference = GetDeviceDelegate<CmdSetStencilReferenceDelegate>("vkCmdSetStencilReference");
                 DestroyFence = GetDeviceDelegate<DestroyFenceDelegate>("vkDestroyFence");
                 GetFenceStatus = GetDeviceDelegate<GetFenceStatusDelegate>("vkGetFenceStatus");
                 DestroySemaphore = GetDeviceDelegate<DestroySemaphoreDelegate>("vkDestroySemaphore");

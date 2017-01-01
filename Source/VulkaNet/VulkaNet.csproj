@@ -263,6 +263,7 @@
     <Compile Include="VkSharingMode.cs" />
     <Compile Include="VkSpecializationInfo.cs" />
     <Compile Include="VkSpecializationMapEntry.cs" />
+    <Compile Include="VkStencilFaceFlags.cs" />
     <Compile Include="VkStencilOp.cs" />
     <Compile Include="VkStencilOpState.cs" />
     <Compile Include="VkStructureType.cs" />

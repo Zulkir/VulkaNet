@@ -282,6 +282,12 @@ namespace VulkaNetGenerator.GenStructs
             int stride)
         { }
 
-
+        public void CmdBindVertexBuffers(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            int firstBinding,
+            [FromProperty("Math.Min(buffers?.Count ?? 0, offsets?.Count ?? 0)")] int bindingCount,
+            [IsArray] GenBuffer* pBuffers,
+            [IsArray] DeviceSize* pOffsets)
+        { }
     }
 }

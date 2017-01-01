@@ -419,6 +419,14 @@ namespace VulkaNet
                 int drawCount,
                 int stride);
 
+            public CmdBindVertexBuffersDelegate CmdBindVertexBuffers { get; }
+            public delegate void CmdBindVertexBuffersDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                int firstBinding,
+                int bindingCount,
+                VkBuffer.HandleType* pBuffers,
+                ulong* pOffsets);
+
             public DestroyFenceDelegate DestroyFence { get; }
             public delegate void DestroyFenceDelegate(
                 HandleType device,
@@ -888,6 +896,7 @@ namespace VulkaNet
                 CmdDrawIndexed = GetDeviceDelegate<CmdDrawIndexedDelegate>("vkCmdDrawIndexed");
                 CmdDrawIndirect = GetDeviceDelegate<CmdDrawIndirectDelegate>("vkCmdDrawIndirect");
                 CmdDrawIndexedIndirect = GetDeviceDelegate<CmdDrawIndexedIndirectDelegate>("vkCmdDrawIndexedIndirect");
+                CmdBindVertexBuffers = GetDeviceDelegate<CmdBindVertexBuffersDelegate>("vkCmdBindVertexBuffers");
                 DestroyFence = GetDeviceDelegate<DestroyFenceDelegate>("vkDestroyFence");
                 GetFenceStatus = GetDeviceDelegate<GetFenceStatusDelegate>("vkGetFenceStatus");
                 DestroySemaphore = GetDeviceDelegate<DestroySemaphoreDelegate>("vkDestroySemaphore");

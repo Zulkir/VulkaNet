@@ -94,6 +94,14 @@ namespace VulkaNet
         public static float* MarshalDirect(this IReadOnlyList<float> list, ref byte* unmanaged) =>
             (float*)MarshalDirect(list, ref unmanaged, (e, d) => { *(float*)d = e; }, sizeof(float));
 
+        // Ulong
+
+        public static int SizeOfMarshalDirect(this IReadOnlyList<ulong> list) =>
+            SizeOfMarshalDirect(list, sizeof(ulong), x => 0);
+
+        public static ulong* MarshalDirect(this IReadOnlyList<ulong> list, ref byte* unmanaged) =>
+            (ulong*)MarshalDirect(list, ref unmanaged, (e, d) => { *(ulong*)d = e; }, sizeof(ulong));
+
         // String
 
         public static int SizeOfMarshalIndirect(this IReadOnlyList<string> list) =>

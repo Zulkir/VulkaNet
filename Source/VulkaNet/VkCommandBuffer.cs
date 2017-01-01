@@ -64,6 +64,7 @@ namespace VulkaNet
         void CmdDrawIndexed(int indexCount, int instanceCount, int firstIndex, int vertexOffset, int firstInstance);
         void CmdDrawIndirect(IVkBuffer buffer, ulong offset, int drawCount, int stride);
         void CmdDrawIndexedIndirect(IVkBuffer buffer, ulong offset, int drawCount, int stride);
+        void CmdBindVertexBuffers(int firstBinding, IReadOnlyList<IVkBuffer> buffers, IReadOnlyList<ulong> offsets);
     }
 
     public unsafe class VkCommandBuffer : IVkCommandBuffer
@@ -533,6 +534,24 @@ namespace VulkaNet
             var _drawCount = drawCount;
             var _stride = stride;
             Direct.CmdDrawIndexedIndirect(_commandBuffer, _buffer, _offset, _drawCount, _stride);
+        }
+
+        public void CmdBindVertexBuffers(int firstBinding, IReadOnlyList<IVkBuffer> buffers, IReadOnlyList<ulong> offsets)
+        {
+            var unmanagedSize =
+                buffers.SizeOfMarshalDirect() +
+                offsets.SizeOfMarshalDirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _commandBuffer = Handle;
+                var _firstBinding = firstBinding;
+                var _bindingCount = Math.Min(buffers?.Count ?? 0, offsets?.Count ?? 0);
+                var _pBuffers = buffers.MarshalDirect(ref unmanaged);
+                var _pOffsets = offsets.MarshalDirect(ref unmanaged);
+                Direct.CmdBindVertexBuffers(_commandBuffer, _firstBinding, _bindingCount, _pBuffers, _pOffsets);
+            }
         }
 
     }

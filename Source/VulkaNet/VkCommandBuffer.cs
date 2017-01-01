@@ -48,6 +48,11 @@ namespace VulkaNet
         void CmdEndQuery(IVkQueryPool queryPool, int query);
         void CmdCopyQueryPoolResults(IVkQueryPool queryPool, int firstQuery, int queryCount, IVkBuffer dstBuffer, ulong dstOffset, ulong stride, VkQueryResultFlags flags);
         void CmdWriteTimestamp(VkPipelineStageFlags pipelineStage, IVkQueryPool queryPool, int query);
+        void CmdClearColorImage(IVkImage image, VkImageLayout imageLayout, VkClearColorValue color, IReadOnlyList<VkImageSubresourceRange> ranges);
+        void CmdClearDepthStencilImage(IVkImage image, VkImageLayout imageLayout, VkClearDepthStencilValue depthStencil, IReadOnlyList<VkImageSubresourceRange> ranges);
+        void CmdClearAttachments(int attachmentCount, VkClearAttachment attachments, int rectCount, VkClearRect rects);
+        void CmdFillBuffer(IVkBuffer dstBuffer, ulong dstOffset, ulong size, int data);
+        void CmdUpdateBuffer(IVkBuffer dstBuffer, ulong dstOffset, ulong dataSize, IntPtr data);
     }
 
     public unsafe class VkCommandBuffer : IVkCommandBuffer
@@ -290,6 +295,72 @@ namespace VulkaNet
             var _queryPool = queryPool?.Handle ?? VkQueryPool.HandleType.Null;
             var _query = query;
             Direct.CmdWriteTimestamp(_commandBuffer, _pipelineStage, _queryPool, _query);
+        }
+
+        public void CmdClearColorImage(IVkImage image, VkImageLayout imageLayout, VkClearColorValue color, IReadOnlyList<VkImageSubresourceRange> ranges)
+        {
+            var unmanagedSize =
+                ranges.SizeOfMarshalDirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _commandBuffer = Handle;
+                var _image = image?.Handle ?? VkImage.HandleType.Null;
+                var _imageLayout = imageLayout;
+                var _pColor = &color;
+                var _rangeCount = ranges?.Count ?? 0;
+                var _pRanges = ranges.MarshalDirect(ref unmanaged);
+                Direct.CmdClearColorImage(_commandBuffer, _image, _imageLayout, _pColor, _rangeCount, _pRanges);
+            }
+        }
+
+        public void CmdClearDepthStencilImage(IVkImage image, VkImageLayout imageLayout, VkClearDepthStencilValue depthStencil, IReadOnlyList<VkImageSubresourceRange> ranges)
+        {
+            var unmanagedSize =
+                ranges.SizeOfMarshalDirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _commandBuffer = Handle;
+                var _image = image?.Handle ?? VkImage.HandleType.Null;
+                var _imageLayout = imageLayout;
+                var _pDepthStencil = &depthStencil;
+                var _rangeCount = ranges?.Count ?? 0;
+                var _pRanges = ranges.MarshalDirect(ref unmanaged);
+                Direct.CmdClearDepthStencilImage(_commandBuffer, _image, _imageLayout, _pDepthStencil, _rangeCount, _pRanges);
+            }
+        }
+
+        public void CmdClearAttachments(int attachmentCount, VkClearAttachment attachments, int rectCount, VkClearRect rects)
+        {
+            var _commandBuffer = Handle;
+            var _attachmentCount = attachmentCount;
+            var _pAttachments = &attachments;
+            var _rectCount = rectCount;
+            var _pRects = &rects;
+            Direct.CmdClearAttachments(_commandBuffer, _attachmentCount, _pAttachments, _rectCount, _pRects);
+        }
+
+        public void CmdFillBuffer(IVkBuffer dstBuffer, ulong dstOffset, ulong size, int data)
+        {
+            var _commandBuffer = Handle;
+            var _dstBuffer = dstBuffer?.Handle ?? VkBuffer.HandleType.Null;
+            var _dstOffset = dstOffset;
+            var _size = size;
+            var _data = data;
+            Direct.CmdFillBuffer(_commandBuffer, _dstBuffer, _dstOffset, _size, _data);
+        }
+
+        public void CmdUpdateBuffer(IVkBuffer dstBuffer, ulong dstOffset, ulong dataSize, IntPtr data)
+        {
+            var _commandBuffer = Handle;
+            var _dstBuffer = dstBuffer?.Handle ?? VkBuffer.HandleType.Null;
+            var _dstOffset = dstOffset;
+            var _dataSize = dataSize;
+            var _pData = data;
+            Direct.CmdUpdateBuffer(_commandBuffer, _dstBuffer, _dstOffset, _dataSize, _pData);
         }
 
     }

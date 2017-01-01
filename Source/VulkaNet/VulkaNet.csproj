@@ -59,6 +59,10 @@
     <Compile Include="VkBufferView.cs" />
     <Compile Include="VkBufferViewCreateFlags.cs" />
     <Compile Include="VkBufferViewCreateInfo.cs" />
+    <Compile Include="VkClearAttachment.cs" />
+    <Compile Include="VkClearColorValue.cs" />
+    <Compile Include="VkClearDepthStencilValue.cs" />
+    <Compile Include="VkClearRect.cs" />
     <Compile Include="VkClearValue.cs" />
     <Compile Include="VkColor4.cs" />
     <Compile Include="VkColorComponentFlagBits.cs" />
@@ -132,6 +136,7 @@
     <Compile Include="VkImageViewCreateFlags.cs" />
     <Compile Include="VkImageViewCreateInfo.cs" />
     <Compile Include="VkImageViewType.cs" />
+    <Compile Include="VkIntColor4.cs" />
     <Compile Include="VkLogicOp.cs" />
     <Compile Include="VkMappedMemoryRange.cs" />
     <Compile Include="VkMemoryAllocateInfo.cs" />
@@ -259,6 +264,7 @@
     <Compile Include="VkSubpassDescriptionFlags.cs" />
     <Compile Include="VkSubresourceLayout.cs" />
     <Compile Include="VkSystemAllocationScope.cs" />
+    <Compile Include="VkUintColor4.cs" />
     <Compile Include="VkUintVector2.cs" />
     <Compile Include="VkUintVector3.cs" />
     <Compile Include="VkUuid.cs" />

@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 /*
 Copyright (c) 2016 VulkaNet Project - Daniil Rodin
 
@@ -27,11 +27,11 @@ using System.Runtime.InteropServices;
 namespace VulkaNet
 {
     [StructLayout(LayoutKind.Sequential, Pack = 4)]
-    public struct VkColor4
+    public struct VkIntColor4
     {
-        public float R;
-        public float G;
-        public float B;
-        public float A;
+        public int R;
+        public int G;
+        public int B;
+        public int A;
     }
 }

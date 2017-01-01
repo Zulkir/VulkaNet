@@ -49,6 +49,10 @@ namespace VulkaNetGenerator.Dummies
     public struct VkMemoryRequirements { }
     public struct VkPushConstantRange { }
     public struct VkDescriptorPoolSize { }
+    public struct VkClearColorValue { }
+    public struct VkClearDepthStencilValue { }
+    public struct VkClearRect { }
+    public struct VkClearAttachment { }
     
     public enum VkResult { }
     public enum VkStructureType { }

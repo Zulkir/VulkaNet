@@ -26,12 +26,11 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    [StructLayout(LayoutKind.Sequential, Pack = 4)]
-    public struct VkColor4
+    [StructLayout(LayoutKind.Sequential)]
+    public struct VkClearRect
     {
-        public float R;
-        public float G;
-        public float B;
-        public float A;
+        public VkRect2D Rect;
+        public int BaseArrayLayer;
+        public int LayerCount;
     }
 }

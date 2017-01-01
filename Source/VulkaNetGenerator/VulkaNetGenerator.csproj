@@ -56,6 +56,7 @@
     <Compile Include="Dummies\DummyTypes.cs" />
     <Compile Include="Attributes\FixedArrayAttribute.cs" />
     <Compile Include="Dummies\Sizet.cs" />
+    <Compile Include="Dummies\DeviceSize.cs" />
     <Compile Include="GenStructs\GenAllocationCallbacks.cs" />
     <Compile Include="GenStructs\GenApplicationInfo.cs" />
     <Compile Include="GenStructs\GenAttachmentDescription.cs" />

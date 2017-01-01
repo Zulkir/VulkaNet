@@ -280,6 +280,48 @@ namespace VulkaNet
                 VkQueryPool.HandleType queryPool,
                 int query);
 
+            public CmdClearColorImageDelegate CmdClearColorImage { get; }
+            public delegate void CmdClearColorImageDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                VkImage.HandleType image,
+                VkImageLayout imageLayout,
+                VkClearColorValue* pColor,
+                int rangeCount,
+                VkImageSubresourceRange* pRanges);
+
+            public CmdClearDepthStencilImageDelegate CmdClearDepthStencilImage { get; }
+            public delegate void CmdClearDepthStencilImageDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                VkImage.HandleType image,
+                VkImageLayout imageLayout,
+                VkClearDepthStencilValue* pDepthStencil,
+                int rangeCount,
+                VkImageSubresourceRange* pRanges);
+
+            public CmdClearAttachmentsDelegate CmdClearAttachments { get; }
+            public delegate void CmdClearAttachmentsDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                int attachmentCount,
+                VkClearAttachment* pAttachments,
+                int rectCount,
+                VkClearRect* pRects);
+
+            public CmdFillBufferDelegate CmdFillBuffer { get; }
+            public delegate void CmdFillBufferDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                VkBuffer.HandleType dstBuffer,
+                ulong dstOffset,
+                ulong size,
+                int data);
+
+            public CmdUpdateBufferDelegate CmdUpdateBuffer { get; }
+            public delegate void CmdUpdateBufferDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                VkBuffer.HandleType dstBuffer,
+                ulong dstOffset,
+                ulong dataSize,
+                IntPtr pData);
+
             public DestroyFenceDelegate DestroyFence { get; }
             public delegate void DestroyFenceDelegate(
                 HandleType device,
@@ -733,6 +775,11 @@ namespace VulkaNet
                 CmdEndQuery = GetDeviceDelegate<CmdEndQueryDelegate>("vkCmdEndQuery");
                 CmdCopyQueryPoolResults = GetDeviceDelegate<CmdCopyQueryPoolResultsDelegate>("vkCmdCopyQueryPoolResults");
                 CmdWriteTimestamp = GetDeviceDelegate<CmdWriteTimestampDelegate>("vkCmdWriteTimestamp");
+                CmdClearColorImage = GetDeviceDelegate<CmdClearColorImageDelegate>("vkCmdClearColorImage");
+                CmdClearDepthStencilImage = GetDeviceDelegate<CmdClearDepthStencilImageDelegate>("vkCmdClearDepthStencilImage");
+                CmdClearAttachments = GetDeviceDelegate<CmdClearAttachmentsDelegate>("vkCmdClearAttachments");
+                CmdFillBuffer = GetDeviceDelegate<CmdFillBufferDelegate>("vkCmdFillBuffer");
+                CmdUpdateBuffer = GetDeviceDelegate<CmdUpdateBufferDelegate>("vkCmdUpdateBuffer");
                 DestroyFence = GetDeviceDelegate<DestroyFenceDelegate>("vkDestroyFence");
                 GetFenceStatus = GetDeviceDelegate<GetFenceStatusDelegate>("vkGetFenceStatus");
                 DestroySemaphore = GetDeviceDelegate<DestroySemaphoreDelegate>("vkDestroySemaphore");

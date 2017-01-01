@@ -22,6 +22,7 @@ THE SOFTWARE.
 */
 #endregion
 
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace VulkaNet
@@ -34,5 +35,14 @@ namespace VulkaNet
         public int LevelCount;
         public int BaseArrayLayer;
         public int LayerCount;
+    }
+
+    public static unsafe class VkImageSubresourceRangeExtensions
+    {
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkImageSubresourceRange> list) =>
+            list.SizeOfMarshalDirect(sizeof(VkImageSubresourceRange), x => 0);
+
+        public static VkImageSubresourceRange* MarshalDirect(this IReadOnlyList<VkImageSubresourceRange> list, ref byte* unmanaged) =>
+            (VkImageSubresourceRange*)list.MarshalDirect(ref unmanaged, (elem, dst) => { *(VkImageSubresourceRange*)dst = elem; }, sizeof(VkImageSubresourceRange));
     }
 }

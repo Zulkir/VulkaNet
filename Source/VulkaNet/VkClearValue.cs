@@ -23,16 +23,40 @@ THE SOFTWARE.
 #endregion
 
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using VulkaNet.InternalHelpers;
 
 namespace VulkaNet
 {
-    // todo: implement
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct VkClearValue
     {
-        public int X;
-        public int Y;
-        public int Z;
-        public int W;
+        private VkBlob16 raw;
+
+        public VkClearColorValue Color
+        {
+            get
+            {
+                var rawLoc = raw;
+                return *(VkClearColorValue*)&rawLoc;
+            }
+            set { raw = *(VkBlob16*)&value; }
+        }
+
+        public VkClearDepthStencilValue DepthStencil
+        {
+            get
+            {
+                var rawLoc = raw;
+                return *(VkClearDepthStencilValue*)&rawLoc;
+            }
+            set
+            {
+                var rawLoc = new VkBlob16();
+                *(VkClearDepthStencilValue*)&rawLoc = value;
+                raw = rawLoc;
+            }
+        }
     }
 
     public static unsafe class VkClearValueExtensions

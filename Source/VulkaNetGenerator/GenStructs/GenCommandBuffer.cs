@@ -142,5 +142,47 @@ namespace VulkaNetGenerator.GenStructs
             GenQueryPool queryPool,
             int query)
         { }
+
+        public void CmdClearColorImage(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            GenImage image,
+            VkImageLayout imageLayout,
+            VkClearColorValue* pColor,
+            [CountFor("ranges")] int rangeCount,
+            [IsArray] VkImageSubresourceRange* pRanges)
+        { }
+
+        public void CmdClearDepthStencilImage(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            GenImage image,
+            VkImageLayout imageLayout,
+            VkClearDepthStencilValue* pDepthStencil,
+            [CountFor("ranges")] int rangeCount,
+            [IsArray] VkImageSubresourceRange* pRanges)
+        { }
+
+        public void CmdClearAttachments(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            int attachmentCount,
+            VkClearAttachment* pAttachments,
+            int rectCount,
+            VkClearRect* pRects)
+        { }
+
+        public void CmdFillBuffer(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            GenBuffer dstBuffer,
+            DeviceSize dstOffset,
+            DeviceSize size,
+            int data)
+        { }
+
+        public void CmdUpdateBuffer(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            GenBuffer dstBuffer,
+            DeviceSize dstOffset,
+            DeviceSize dataSize,
+            IntPtr pData)
+        { }
     }
 }

@@ -23,15 +23,43 @@ THE SOFTWARE.
 #endregion
 
 using System.Runtime.InteropServices;
+using VulkaNet.InternalHelpers;
 
 namespace VulkaNet
 {
-    [StructLayout(LayoutKind.Sequential, Pack = 4)]
-    public struct VkColor4
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct VkClearColorValue
     {
-        public float R;
-        public float G;
-        public float B;
-        public float A;
+        private VkBlob16 raw;
+
+        public VkColor4 Float32
+        {
+            get
+            {
+                var rawLoc = raw;
+                return *(VkColor4*)&rawLoc;
+            }
+            set { raw = *(VkBlob16*)&value; }
+        }
+
+        public VkIntColor4 Int32
+        {
+            get
+            {
+                var rawLoc = raw;
+                return *(VkIntColor4*)&rawLoc;
+            }
+            set { raw = *(VkBlob16*)&value; }
+        }
+
+        public VkUintColor4 Uint32
+        {
+            get
+            {
+                var rawLoc = raw;
+                return *(VkUintColor4*)&rawLoc;
+            }
+            set { raw = *(VkBlob16*)&value; }
+        }
     }
 }

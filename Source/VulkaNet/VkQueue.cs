@@ -32,6 +32,7 @@ namespace VulkaNet
         VkQueue.HandleType Handle { get; }
         VkResult Submit(IReadOnlyList<IVkSubmitInfo> submits, IVkFence fence);
         VkResult WaitIdle();
+        VkResult BindSparse(IReadOnlyList<IVkBindSparseInfo> bindInfo, IVkFence fence);
     }
 
     public unsafe class VkQueue : IVkQueue
@@ -78,6 +79,22 @@ namespace VulkaNet
         {
             var _queue = Handle;
             return Direct.QueueWaitIdle(_queue);
+        }
+
+        public VkResult BindSparse(IReadOnlyList<IVkBindSparseInfo> bindInfo, IVkFence fence)
+        {
+            var unmanagedSize =
+                bindInfo.SizeOfMarshalDirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _queue = Handle;
+                var _bindInfoCount = bindInfo?.Count ?? 0;
+                var _pBindInfo = bindInfo.MarshalDirect(ref unmanaged);
+                var _fence = fence?.Handle ?? VkFence.HandleType.Null;
+                return Direct.QueueBindSparse(_queue, _bindInfoCount, _pBindInfo, _fence);
+            }
         }
 
     }

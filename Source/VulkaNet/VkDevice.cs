@@ -67,6 +67,7 @@ namespace VulkaNet
         VkResult FreeDescriptorSets(IVkDescriptorPool descriptorPool, IReadOnlyList<IVkDescriptorSet> descriptorSets);
         void UpdateDescriptorSets(IReadOnlyList<IVkWriteDescriptorSet> descriptorWrites, IReadOnlyList<IVkCopyDescriptorSet> descriptorCopies);
         VkObjectResult<IVkQueryPool> CreateQueryPool(IVkQueryPoolCreateInfo createInfo, IVkAllocationCallbacks allocator);
+        IReadOnlyList<VkSparseImageMemoryRequirements> GetImageSparseMemoryRequirements(IVkImage image);
     }
 
     public unsafe class VkDevice : IVkDevice
@@ -126,6 +127,13 @@ namespace VulkaNet
             public QueueWaitIdleDelegate QueueWaitIdle { get; }
             public delegate VkResult QueueWaitIdleDelegate(
                 VkQueue.HandleType queue);
+
+            public QueueBindSparseDelegate QueueBindSparse { get; }
+            public delegate VkResult QueueBindSparseDelegate(
+                VkQueue.HandleType queue,
+                int bindInfoCount,
+                VkBindSparseInfo.Raw* pBindInfo,
+                VkFence.HandleType fence);
 
             public DestroyCommandPoolDelegate DestroyCommandPool { get; }
             public delegate void DestroyCommandPoolDelegate(
@@ -919,6 +927,13 @@ namespace VulkaNet
                 VkAllocationCallbacks.Raw* pAllocator,
                 VkQueryPool.HandleType* pQueryPool);
 
+            public GetImageSparseMemoryRequirementsDelegate GetImageSparseMemoryRequirements { get; }
+            public delegate void GetImageSparseMemoryRequirementsDelegate(
+                HandleType device,
+                VkImage.HandleType image,
+                int* pSparseMemoryRequirementCount,
+                VkSparseImageMemoryRequirements* pSparseMemoryRequirements);
+
             public DirectFunctions(IVkDevice device)
             {
                 this.device = device;
@@ -927,6 +942,7 @@ namespace VulkaNet
                 GetDeviceQueue = GetDeviceDelegate<GetDeviceQueueDelegate>("vkGetDeviceQueue");
                 QueueSubmit = GetDeviceDelegate<QueueSubmitDelegate>("vkQueueSubmit");
                 QueueWaitIdle = GetDeviceDelegate<QueueWaitIdleDelegate>("vkQueueWaitIdle");
+                QueueBindSparse = GetDeviceDelegate<QueueBindSparseDelegate>("vkQueueBindSparse");
                 DestroyCommandPool = GetDeviceDelegate<DestroyCommandPoolDelegate>("vkDestroyCommandPool");
                 ResetCommandPool = GetDeviceDelegate<ResetCommandPoolDelegate>("vkResetCommandPool");
                 FreeCommandBuffers = GetDeviceDelegate<FreeCommandBuffersDelegate>("vkFreeCommandBuffers");
@@ -1041,6 +1057,7 @@ namespace VulkaNet
                 FreeDescriptorSets = GetDeviceDelegate<FreeDescriptorSetsDelegate>("vkFreeDescriptorSets");
                 UpdateDescriptorSets = GetDeviceDelegate<UpdateDescriptorSetsDelegate>("vkUpdateDescriptorSets");
                 CreateQueryPool = GetDeviceDelegate<CreateQueryPoolDelegate>("vkCreateQueryPool");
+                GetImageSparseMemoryRequirements = GetDeviceDelegate<GetImageSparseMemoryRequirementsDelegate>("vkGetImageSparseMemoryRequirements");
             }
 
             public TDelegate GetDeviceDelegate<TDelegate>(string name)
@@ -1599,6 +1616,20 @@ namespace VulkaNet
                 var result = Direct.CreateQueryPool(_device, _pCreateInfo, _pAllocator, &_pQueryPool);
                 var instance = result == VkResult.Success ? new VkQueryPool(this, _pQueryPool, allocator) : null;
                 return new VkObjectResult<IVkQueryPool>(result, instance);
+            }
+        }
+
+        public IReadOnlyList<VkSparseImageMemoryRequirements> GetImageSparseMemoryRequirements(IVkImage image)
+        {
+            var _device = Handle;
+            var _image = image?.Handle ?? VkImage.HandleType.Null;
+            var _pSparseMemoryRequirementCount = (int)0;
+            Direct.GetImageSparseMemoryRequirements(_device, _image, &_pSparseMemoryRequirementCount, (VkSparseImageMemoryRequirements*)0);
+            var resultArray = new VkSparseImageMemoryRequirements[(int)_pSparseMemoryRequirementCount];
+            fixed (VkSparseImageMemoryRequirements* pResultArray = resultArray)
+            {
+                Direct.GetImageSparseMemoryRequirements(_device, _image, &_pSparseMemoryRequirementCount, (VkSparseImageMemoryRequirements*)pResultArray);
+                return resultArray;
             }
         }
 

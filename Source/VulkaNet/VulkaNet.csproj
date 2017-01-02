@@ -48,6 +48,7 @@
     <Compile Include="VkAttachmentLoadOp.cs" />
     <Compile Include="VkAttachmentReference.cs" />
     <Compile Include="VkAttachmentStoreOp.cs" />
+    <Compile Include="VkBindSparseInfo.cs" />
     <Compile Include="VkBlendFactor.cs" />
     <Compile Include="VkBlendOp.cs" />
     <Compile Include="VkBorderColor.cs" />
@@ -262,6 +263,15 @@
     <Compile Include="VkShaderModuleCreateInfo.cs" />
     <Compile Include="VkShaderStageFlagBits.cs" />
     <Compile Include="VkSharingMode.cs" />
+    <Compile Include="VkSparseBufferMemoryBindInfo.cs" />
+    <Compile Include="VkSparseImageFormatFlags.cs" />
+    <Compile Include="VkSparseImageFormatProperties.cs" />
+    <Compile Include="VkSparseImageMemoryBind.cs" />
+    <Compile Include="VkSparseImageMemoryBindInfo.cs" />
+    <Compile Include="VkSparseImageMemoryRequirements.cs" />
+    <Compile Include="VkSparseImageOpaqueMemoryBindInfo.cs" />
+    <Compile Include="VkSparseMemoryBind.cs" />
+    <Compile Include="VkSparseMemoryBindFlags.cs" />
     <Compile Include="VkSpecializationInfo.cs" />
     <Compile Include="VkSpecializationMapEntry.cs" />
     <Compile Include="VkStencilFaceFlags.cs" />

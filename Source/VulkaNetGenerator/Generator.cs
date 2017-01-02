@@ -535,6 +535,7 @@ namespace VulkaNetGenerator
                                 }
 
                                 var rawReturnParam = raw.Parameters.SingleOrDefault(x => x.IsReturnParam);
+                                var returnSizeParam = raw.Parameters.SingleOrDefault(x => x.IsReturnSize);
 
                                 foreach (var rParam in raw.Parameters)
                                 {
@@ -554,7 +555,7 @@ namespace VulkaNetGenerator
                                     writer.WriteLine($"var _{rParam.Name} = {rval};");
                                 }
 
-                                if (rawReturnParam != null)
+                                if (rawReturnParam != null && returnSizeParam == null)
                                 {
                                     if (rawReturnParam.IsArray)
                                     {
@@ -578,17 +579,19 @@ namespace VulkaNetGenerator
                                 {
                                     writer.WriteLine($"return Direct.{raw.Name}({rawParamsStr});");
                                 }
-                                else if (wrapper.ReturnTypeStr == "VkObjectResult<byte[]>" && raw.ReturnTypeStr == "VkResult")
+                                else if (returnSizeParam != null)
                                 {
-                                    var returnSizeParam = raw.Parameters.Single(x => x.IsReturnSize);
+                                    var wrapperTypeStr = wrapper.ReturnTypeStr == "VkObjectResult<byte[]>"
+                                        ? "byte"
+                                        : Regex.Match(new WrapperParameter(rawReturnParam).TypeStr, @"^IReadOnlyList<(.+)>$").Groups[1].Value;
                                     var firstParamStr = string.Join(", ", raw.Parameters
                                         .Select(x => 
                                             x.IsReturnSize ? $"&_{x.Name}" : 
                                             x.IsReturnParam ? $"({x.TypeStr})0" :
                                             $"_{x.Name}"));
                                     writer.WriteLine($"Direct.{raw.Name}({firstParamStr});");
-                                    writer.WriteLine($"var resultArray = new byte[(int)_{returnSizeParam.Name}];");
-                                    writer.WriteLine("fixed (byte* pResultArray = resultArray)");
+                                    writer.WriteLine($"var resultArray = new {wrapperTypeStr}[(int)_{returnSizeParam.Name}];");
+                                    writer.WriteLine($"fixed ({wrapperTypeStr}* pResultArray = resultArray)");
                                     using (writer.Curly())
                                     {
                                         var secondParamStr = string.Join(", ", raw.Parameters
@@ -596,8 +599,16 @@ namespace VulkaNetGenerator
                                                 x.IsReturnSize ? $"&_{x.Name}" :
                                                 x.IsReturnParam ? $"({x.TypeStr})pResultArray" :
                                                 $"_{x.Name}"));
-                                        writer.WriteLine($"var result = Direct.{raw.Name}({secondParamStr});");
-                                        writer.WriteLine("return new VkObjectResult<byte[]>(result, resultArray);");
+                                        if (raw.ReturnTypeStr != "void")
+                                        {
+                                            writer.WriteLine($"var result = Direct.{raw.Name}({secondParamStr});");
+                                            writer.WriteLine($"return new {wrapper.ReturnTypeStr}(result, resultArray);");
+                                        }
+                                        else
+                                        {
+                                            writer.WriteLine($"Direct.{raw.Name}({secondParamStr});");
+                                            writer.WriteLine($"return resultArray;");
+                                        }
                                     }
                                 }
                                 else if (wrapper.ReturnTypeStr == "VkObjectResult<IntPtr>" && raw.ReturnTypeStr == "VkResult")
@@ -638,7 +649,7 @@ namespace VulkaNetGenerator
                                     throw new NotSupportedException("Unexpected return type combination.");
                                 }
 
-                                if (rawReturnParam?.IsArray ?? false)
+                                if ((rawReturnParam?.IsArray ?? false) && returnSizeParam == null)
                                 {
                                     writer.UnTab();
                                     writer.WriteLine("}");

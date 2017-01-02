@@ -17,5 +17,13 @@ namespace VulkaNetGenerator.GenStructs
         public VkResult QueueWaitIdle(
             [FromProperty("this")] GenQueue queue)
             => default(VkResult);
+
+        [MethodName("BindSparse")]
+        public VkResult QueueBindSparse(
+            [FromProperty("this")] GenQueue queue,
+            [CountFor("bindInfo")] int bindInfoCount,
+            [IsArray] GenBindSparseInfo* pBindInfo,
+            GenFence fence)
+            => default(VkResult);
     }
 }

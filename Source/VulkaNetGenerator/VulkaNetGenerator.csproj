@@ -60,6 +60,7 @@
     <Compile Include="GenStructs\GenAllocationCallbacks.cs" />
     <Compile Include="GenStructs\GenApplicationInfo.cs" />
     <Compile Include="GenStructs\GenAttachmentDescription.cs" />
+    <Compile Include="GenStructs\GenBindSparseInfo.cs" />
     <Compile Include="GenStructs\GenBuffer.cs" />
     <Compile Include="GenStructs\GenBufferCreateInfo.cs" />
     <Compile Include="GenStructs\GenBufferMemoryBarrier.cs" />
@@ -132,6 +133,11 @@
     <Compile Include="GenStructs\GenSemaphore.cs" />
     <Compile Include="GenStructs\GenSemaphoreCreateInfo.cs" />
     <Compile Include="GenStructs\GenShaderModuleCreateInfo.cs" />
+    <Compile Include="GenStructs\GenSparseBufferMemoryBindInfo.cs" />
+    <Compile Include="GenStructs\GenSparseImageMemoryBind.cs" />
+    <Compile Include="GenStructs\GenSparseImageMemoryBindInfo.cs" />
+    <Compile Include="GenStructs\GenSparseImageOpaqueMemoryBindInfo.cs" />
+    <Compile Include="GenStructs\GenSparseMemoryBind.cs" />
     <Compile Include="GenStructs\GenSpecializationInfo.cs" />
     <Compile Include="GenStructs\GenSubmitInfo.cs" />
     <Compile Include="Dummies\IGenHandledObject.cs" />

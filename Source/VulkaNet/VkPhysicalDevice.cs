@@ -34,6 +34,7 @@ namespace VulkaNet
         IReadOnlyList<IVkQueueFamilyProperties> QueueFamilyProperties { get; }
         IVkPhysicalDeviceFeatures Features { get; }
         IVkPhysicalDeviceMemoryProperties MemoryProperties { get; }
+        IReadOnlyList<VkSparseImageFormatProperties> GetSparseImageFormatProperties(VkFormat format, VkImageType type, VkSampleCountFlagBits samples, VkImageUsageFlags usage, VkImageTiling tiling);
         VkObjectResult<IVkDevice> CreateDevice(IVkDeviceCreateInfo createInfo, IVkAllocationCallbacks allocator);
     }
 
@@ -88,6 +89,17 @@ namespace VulkaNet
                 IntPtr physicalDevice,
                 VkPhysicalDeviceMemoryProperties.Raw* pMemoryProperties);
 
+            public GetPhysicalDeviceSparseImageFormatPropertiesDelegate GetPhysicalDeviceSparseImageFormatProperties { get; }
+            public delegate void GetPhysicalDeviceSparseImageFormatPropertiesDelegate(
+                IntPtr physicalDevice,
+                VkFormat format,
+                VkImageType type,
+                VkSampleCountFlagBits samples,
+                VkImageUsageFlags usage,
+                VkImageTiling tiling,
+                int* pPropertyCount,
+                VkSparseImageFormatProperties* pProperties);
+
             public DirectFunctions(IVkInstance instance)
             {
                 GetPhysicalDeviceProperties =
@@ -100,6 +112,8 @@ namespace VulkaNet
                     VkHelpers.GetInstanceDelegate<GetPhysicalDeviceFeaturesDelegate>(instance, "vkGetPhysicalDeviceFeatures");
                 GetPhysicalDeviceMemoryProperties =
                     VkHelpers.GetInstanceDelegate<GetPhysicalDeviceMemoryPropertiesDelegate>(instance, "vkGetPhysicalDeviceMemoryProperties");
+                GetPhysicalDeviceSparseImageFormatProperties =
+                    VkHelpers.GetInstanceDelegate<GetPhysicalDeviceSparseImageFormatPropertiesDelegate>(instance, "vkGetPhysicalDeviceSparseImageFormatProperties");
             }
         }
 
@@ -121,7 +135,7 @@ namespace VulkaNet
                 return rawArray.Select(x => new VkQueueFamilyProperties(&x)).ToArray();
             }
         }
-
+        
         public VkObjectResult<IVkDevice> CreateDevice(IVkDeviceCreateInfo createInfo, IVkAllocationCallbacks allocator)
         {
             var size =
@@ -153,6 +167,19 @@ namespace VulkaNet
             VkPhysicalDeviceMemoryProperties.Raw raw;
             Direct.GetPhysicalDeviceMemoryProperties(Handle, &raw);
             return new VkPhysicalDeviceMemoryProperties(&raw);
+        }
+
+        public IReadOnlyList<VkSparseImageFormatProperties> GetSparseImageFormatProperties(VkFormat format, VkImageType type, VkSampleCountFlagBits samples, VkImageUsageFlags usage,
+            VkImageTiling tiling)
+        {
+            int count;
+            Direct.GetPhysicalDeviceSparseImageFormatProperties(Handle, format, type, samples, usage, tiling, &count, (VkSparseImageFormatProperties*)0);
+            var resultArray = new VkSparseImageFormatProperties[count];
+            fixed (VkSparseImageFormatProperties* pResultArray = resultArray)
+            {
+                Direct.GetPhysicalDeviceSparseImageFormatProperties(Handle, format, type, samples, usage, tiling, &count, pResultArray);
+                return resultArray;
+            }
         }
     }
 }

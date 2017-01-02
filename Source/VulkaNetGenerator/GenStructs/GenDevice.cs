@@ -214,5 +214,12 @@ namespace VulkaNetGenerator.GenStructs
             GenAllocationCallbacks* pAllocator,
             [Return] GenQueryPool* pQueryPool)
             => default(VkResult);
+
+        public void GetImageSparseMemoryRequirements(
+            [FromProperty("this")] GenDevice device,
+            GenImage image,
+            [ReturnSize] int* pSparseMemoryRequirementCount,
+            [Return, IsArray] VkSparseImageMemoryRequirements* pSparseMemoryRequirements)
+        { }
     }
 }

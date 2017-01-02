@@ -58,6 +58,8 @@ namespace VulkaNetGenerator.Dummies
     public struct VkBufferImageCopy { }
     public struct VkImageBlit { }
     public struct VkImageResolve { }
+    public struct VkSparseImageMemoryRequirements { }
+    public struct VkOffset3D { }
     
     public enum VkResult { }
     public enum VkStructureType { }
@@ -140,6 +142,7 @@ namespace VulkaNetGenerator.Dummies
     public enum VkQueryResultFlags { }
     public enum VkIndexType { }
     public enum VkStencilFaceFlags { }
+    public enum VkSparseMemoryBindFlags { }
 
     //public struct HndCommandPool { }
     //public struct HndRenderPass { }

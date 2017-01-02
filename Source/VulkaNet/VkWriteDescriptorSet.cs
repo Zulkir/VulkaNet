@@ -126,20 +126,5 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkWriteDescriptorSet> list) =>
-            list == null || list.Count == 0
-                ? 0
-                : sizeof(VkWriteDescriptorSet.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
-
-        public static VkWriteDescriptorSet.Raw** MarshalIndirect(this IReadOnlyList<VkWriteDescriptorSet> list, ref byte* unmanaged)
-        {
-            if (list == null || list.Count == 0)
-                return (VkWriteDescriptorSet.Raw**)0;
-            var result = (VkWriteDescriptorSet.Raw**)unmanaged;
-            unmanaged += sizeof(VkWriteDescriptorSet.Raw*) * list.Count;
-            for (int i = 0; i < list.Count; i++)
-                result[i] = list[i].MarshalIndirect(ref unmanaged);
-            return result;
-        }
     }
 }

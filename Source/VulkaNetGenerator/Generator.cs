@@ -52,8 +52,9 @@ namespace VulkaNetGenerator
 
                 var rawFields = BuildRawFields(type);
                 var wrapperProperties = BuildWrapperProps(rawFields);
+                var isActuallyStruct = !rawFields.Any(x => x.TypeStr == "VkStructureType");
 
-                if (input || rawFields.Any(x => x.TypeStr == "IntPtr") || wrapperProperties.Any(x => x.TypeStr == "IntPtr"))
+                if (!isActuallyStruct || rawFields.Any(x => x.TypeStr == "IntPtr") || wrapperProperties.Any(x => x.TypeStr == "IntPtr"))
                     writer.WriteLine("using System;");
                 if (input || wrapperProperties.Any(x => x.TypeStr.Contains("ReadOnlyList")))
                 {
@@ -66,7 +67,9 @@ namespace VulkaNetGenerator
                 writer.WriteLine("namespace VulkaNet");
                 using (writer.Curly())
                 {
-                    writer.WriteLine($"public unsafe class Vk{name}");
+                    var typeTypeStr = isActuallyStruct ? "struct" : "class";
+
+                    writer.WriteLine($"public unsafe {typeTypeStr} Vk{name}");
                     using (writer.Curly())
                     {
                         foreach (var prop in wrapperProperties)
@@ -90,9 +93,12 @@ namespace VulkaNetGenerator
                         {
                             writer.WriteLine();
 
-                            writer.WriteLine($"public Vk{name}() {{ }}");
-                            writer.WriteLine();
-
+                            if (!isActuallyStruct)
+                            {
+                                writer.WriteLine($"public Vk{name}() {{ }}");
+                                writer.WriteLine();
+                            }
+                            
                             writer.WriteLine($"public Vk{name}(Raw* raw)");
                             using (writer.Curly())
                             {
@@ -121,12 +127,15 @@ namespace VulkaNetGenerator
                             writer.WriteLine($"public static int SizeOfMarshalDirect(this Vk{name} s)");
                             using (writer.Curly())
                             {
-                                writer.WriteLine("if (s == null)");
-                                writer.Tab();
-                                writer.WriteLine("throw new InvalidOperationException(\"Trying to directly marshal a null.\");");
-                                writer.UnTab();
-                                writer.WriteLine();
-
+                                if (!isActuallyStruct)
+                                {
+                                    writer.WriteLine("if (s == null)");
+                                    writer.Tab();
+                                    writer.WriteLine("throw new InvalidOperationException(\"Trying to directly marshal a null.\");");
+                                    writer.UnTab();
+                                    writer.WriteLine();
+                                }
+                                
                                 if (unmanagedProps.Any())
                                 {
                                     writer.WriteLine("return");
@@ -147,12 +156,15 @@ namespace VulkaNetGenerator
                             writer.WriteLine($"public static Vk{name}.Raw MarshalDirect(this Vk{name} s, ref byte* unmanaged)");
                             using (writer.Curly())
                             {
-                                writer.WriteLine("if (s == null)");
-                                writer.Tab();
-                                writer.WriteLine("throw new InvalidOperationException(\"Trying to directly marshal a null.\");");
-                                writer.UnTab();
-                                writer.WriteLine();
-
+                                if (!isActuallyStruct)
+                                {
+                                    writer.WriteLine("if (s == null)");
+                                    writer.Tab();
+                                    writer.WriteLine("throw new InvalidOperationException(\"Trying to directly marshal a null.\");");
+                                    writer.UnTab();
+                                    writer.WriteLine();
+                                }
+                                
                                 foreach (var prop in unmanagedProps)
                                     writer.WriteLine($"var {prop.Raw.Name} = s.{prop.Name}.{prop.MarshalMethod}(ref unmanaged);");
                                 writer.WriteLine();
@@ -177,17 +189,23 @@ namespace VulkaNetGenerator
 
                             writer.WriteLine($"public static int SizeOfMarshalIndirect(this Vk{name} s) =>");
                             writer.Tab();
-                            writer.WriteLine($"s == null ? 0 : s.SizeOfMarshalDirect() + Vk{name}.Raw.SizeInBytes;");
+                            if (!isActuallyStruct)
+                                writer.WriteLine($"s == null ? 0 : s.SizeOfMarshalDirect() + Vk{name}.Raw.SizeInBytes;");
+                            else
+                                writer.WriteLine($"s.SizeOfMarshalDirect() + Vk{name}.Raw.SizeInBytes;");
                             writer.UnTab();
                             writer.WriteLine();
 
                             writer.WriteLine($"public static Vk{name}.Raw* MarshalIndirect(this Vk{name} s, ref byte* unmanaged)");
                             using (writer.Curly())
                             {
-                                writer.WriteLine("if (s == null)");
-                                writer.Tab();
-                                writer.WriteLine($"return (Vk{name}.Raw*)0;");
-                                writer.UnTab();
+                                if (!isActuallyStruct)
+                                {
+                                    writer.WriteLine("if (s == null)");
+                                    writer.Tab();
+                                    writer.WriteLine($"return (Vk{name}.Raw*)0;");
+                                    writer.UnTab();
+                                }
                                 writer.WriteLine($"var result = (Vk{name}.Raw*)unmanaged;");
                                 writer.WriteLine($"unmanaged += Vk{name}.Raw.SizeInBytes;");
                                 writer.WriteLine("*result = s.MarshalDirect(ref unmanaged);");
@@ -221,7 +239,7 @@ namespace VulkaNetGenerator
                                 writer.WriteLine("return result;");
                             }
                             writer.WriteLine();
-
+                            /*
                             writer.WriteLine($"public static int SizeOfMarshalIndirect(this IReadOnlyList<Vk{name}> list) =>");
                             writer.Tab();
                             writer.WriteLine("list == null || list.Count == 0");
@@ -246,7 +264,7 @@ namespace VulkaNetGenerator
                                 writer.WriteLine("result[i] = list[i].MarshalIndirect(ref unmanaged);");
                                 writer.UnTab();
                                 writer.WriteLine("return result;");
-                            }
+                            }*/
                         }
                     }
                 }

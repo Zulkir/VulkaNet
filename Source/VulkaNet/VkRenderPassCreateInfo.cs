@@ -120,20 +120,5 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkRenderPassCreateInfo> list) =>
-            list == null || list.Count == 0
-                ? 0
-                : sizeof(VkRenderPassCreateInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
-
-        public static VkRenderPassCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<VkRenderPassCreateInfo> list, ref byte* unmanaged)
-        {
-            if (list == null || list.Count == 0)
-                return (VkRenderPassCreateInfo.Raw**)0;
-            var result = (VkRenderPassCreateInfo.Raw**)unmanaged;
-            unmanaged += sizeof(VkRenderPassCreateInfo.Raw*) * list.Count;
-            for (int i = 0; i < list.Count; i++)
-                result[i] = list[i].MarshalIndirect(ref unmanaged);
-            return result;
-        }
     }
 }

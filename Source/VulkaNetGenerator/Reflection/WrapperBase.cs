@@ -37,20 +37,21 @@
                 return "IVkStructWrapper";
             if (raw.IsArray)
             {
-                var elemTypeStr = DeriveTypeInternal(raw.TypeStr.Substring(0, raw.TypeStr.Length - 1));
+                var elemTypeStr = DeriveTypeInternal(raw.TypeStr.Substring(0, raw.TypeStr.Length - 1), false);
                 return $"IReadOnlyList<{elemTypeStr}>";
             }
-            return DeriveTypeInternal(raw.TypeStr);
+            return DeriveTypeInternal(raw.TypeStr, raw.IsActuallyStruct);
         }
 
-        private static string DeriveTypeInternal(string rawTypeStr)
+        private static string DeriveTypeInternal(string rawTypeStr, bool isActuallyStruct)
         {
             if (rawTypeStr.EndsWith(".Raw*"))
-                return rawTypeStr.Substring(0, rawTypeStr.Length - ".Raw*".Length);
+                if (isActuallyStruct)
+                    return rawTypeStr.Substring(0, rawTypeStr.Length - ".Raw*".Length) + "?";
+                else
+                    return rawTypeStr.Substring(0, rawTypeStr.Length - ".Raw*".Length);
             if (rawTypeStr.EndsWith(".Raw"))
                 return rawTypeStr.Substring(0, rawTypeStr.Length - ".Raw".Length);
-            //if (rawTypeStr.EndsWith("*"))
-            //    return $"IReadOnlyList<{DeriveTypeInternal(rawTypeStr.Substring(0, rawTypeStr.Length - 1))}>";
             if (rawTypeStr.EndsWith(".HandleType*"))
                 return "I" + rawTypeStr.Substring(0, rawTypeStr.Length - ".HandleType*".Length);
             if (rawTypeStr.EndsWith(".HandleType"))

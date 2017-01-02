@@ -104,20 +104,5 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkCommandBufferBeginInfo> list) =>
-            list == null || list.Count == 0
-                ? 0
-                : sizeof(VkCommandBufferBeginInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
-
-        public static VkCommandBufferBeginInfo.Raw** MarshalIndirect(this IReadOnlyList<VkCommandBufferBeginInfo> list, ref byte* unmanaged)
-        {
-            if (list == null || list.Count == 0)
-                return (VkCommandBufferBeginInfo.Raw**)0;
-            var result = (VkCommandBufferBeginInfo.Raw**)unmanaged;
-            unmanaged += sizeof(VkCommandBufferBeginInfo.Raw*) * list.Count;
-            for (int i = 0; i < list.Count; i++)
-                result[i] = list[i].MarshalIndirect(ref unmanaged);
-            return result;
-        }
     }
 }

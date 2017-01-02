@@ -26,7 +26,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public unsafe class VkPhysicalDeviceSparseProperties
+    public unsafe struct VkPhysicalDeviceSparseProperties
     {
         public bool ResidencyStandard2DBlockShape { get; set; }
         public bool ResidencyStandard2DMultisampleBlockShape { get; set; }
@@ -45,8 +45,6 @@ namespace VulkaNet
 
             public static int SizeInBytes { get; } = Marshal.SizeOf<Raw>();
         }
-
-        public VkPhysicalDeviceSparseProperties() { }
 
         public VkPhysicalDeviceSparseProperties(Raw* raw)
         {

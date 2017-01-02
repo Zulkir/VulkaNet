@@ -22,14 +22,13 @@ THE SOFTWARE.
 */
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public unsafe class VkSparseMemoryBind
+    public unsafe struct VkSparseMemoryBind
     {
         public ulong ResourceOffset { get; set; }
         public ulong Size { get; set; }
@@ -54,17 +53,11 @@ namespace VulkaNet
     {
         public static int SizeOfMarshalDirect(this VkSparseMemoryBind s)
         {
-            if (s == null)
-                throw new InvalidOperationException("Trying to directly marshal a null.");
-
             return 0;
         }
 
         public static VkSparseMemoryBind.Raw MarshalDirect(this VkSparseMemoryBind s, ref byte* unmanaged)
         {
-            if (s == null)
-                throw new InvalidOperationException("Trying to directly marshal a null.");
-
 
             VkSparseMemoryBind.Raw result;
             result.resourceOffset = s.ResourceOffset;
@@ -76,12 +69,10 @@ namespace VulkaNet
         }
 
         public static int SizeOfMarshalIndirect(this VkSparseMemoryBind s) =>
-            s == null ? 0 : s.SizeOfMarshalDirect() + VkSparseMemoryBind.Raw.SizeInBytes;
+            s.SizeOfMarshalDirect() + VkSparseMemoryBind.Raw.SizeInBytes;
 
         public static VkSparseMemoryBind.Raw* MarshalIndirect(this VkSparseMemoryBind s, ref byte* unmanaged)
         {
-            if (s == null)
-                return (VkSparseMemoryBind.Raw*)0;
             var result = (VkSparseMemoryBind.Raw*)unmanaged;
             unmanaged += VkSparseMemoryBind.Raw.SizeInBytes;
             *result = s.MarshalDirect(ref unmanaged);
@@ -104,20 +95,5 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkSparseMemoryBind> list) =>
-            list == null || list.Count == 0
-                ? 0
-                : sizeof(VkSparseMemoryBind.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
-
-        public static VkSparseMemoryBind.Raw** MarshalIndirect(this IReadOnlyList<VkSparseMemoryBind> list, ref byte* unmanaged)
-        {
-            if (list == null || list.Count == 0)
-                return (VkSparseMemoryBind.Raw**)0;
-            var result = (VkSparseMemoryBind.Raw**)unmanaged;
-            unmanaged += sizeof(VkSparseMemoryBind.Raw*) * list.Count;
-            for (int i = 0; i < list.Count; i++)
-                result[i] = list[i].MarshalIndirect(ref unmanaged);
-            return result;
-        }
     }
 }

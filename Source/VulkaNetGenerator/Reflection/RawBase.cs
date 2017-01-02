@@ -43,6 +43,7 @@ namespace VulkaNetGenerator.Reflection
         public bool IsArray { get; }
         public bool IsHandle { get; }
         public string FromProperty { get; }
+        public bool IsActuallyStruct { get; }
 
         protected readonly Type genType;
         protected readonly CustomAttributeData[] attributes;
@@ -63,8 +64,9 @@ namespace VulkaNetGenerator.Reflection
             IsArray = DeriveIsArray(attributes);
             ShouldMarshal = DeriveSholdMarshal(genType, IsUnmanagedPtr, IsArray);
             FromProperty = GetAttrValue<FromPropertyAttribute>(attributes);
+            IsActuallyStruct = DeriveIsActuallyStruct(genType);
         }
-
+        
         private static string DeriveTypeStr(Type type, string fixedBufferSize, bool isHandle)
         {
             if (fixedBufferSize != null)
@@ -150,6 +152,14 @@ namespace VulkaNetGenerator.Reflection
                 internalType.Name.StartsWith("Gen") &&
                 !typeof(IGenHandledObject).IsAssignableFrom(internalType) &&
                 !typeof(IGenNonDispatchableHandledObject).IsAssignableFrom(internalType);
+        }
+
+        private static bool DeriveIsActuallyStruct(Type genType)
+        {
+            return
+                !typeof(IGenHandledObject).IsAssignableFrom(genType) &&
+                !typeof(IGenNonDispatchableHandledObject).IsAssignableFrom(genType) &&
+                genType.GetFields().Any(x => x.FieldType == typeof(VkStructureType));
         }
 
         protected static bool HasAttribute<T>(CustomAttributeData[] attributes) =>

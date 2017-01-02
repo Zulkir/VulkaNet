@@ -26,7 +26,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public unsafe class VkPhysicalDeviceProperties
+    public unsafe struct VkPhysicalDeviceProperties
     {
         public uint ApiVersion { get; set; }
         public uint DriverVersion { get; set; }
@@ -53,8 +53,6 @@ namespace VulkaNet
 
             public static int SizeInBytes { get; } = Marshal.SizeOf<Raw>();
         }
-
-        public VkPhysicalDeviceProperties() { }
 
         public VkPhysicalDeviceProperties(Raw* raw)
         {

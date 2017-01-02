@@ -22,14 +22,13 @@ THE SOFTWARE.
 */
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public unsafe class VkDescriptorSetLayoutBinding
+    public unsafe struct VkDescriptorSetLayoutBinding
     {
         public int Binding { get; set; }
         public VkDescriptorType DescriptorType { get; set; }
@@ -54,18 +53,12 @@ namespace VulkaNet
     {
         public static int SizeOfMarshalDirect(this VkDescriptorSetLayoutBinding s)
         {
-            if (s == null)
-                throw new InvalidOperationException("Trying to directly marshal a null.");
-
             return
                 s.ImmutableSamplers.SizeOfMarshalDirect();
         }
 
         public static VkDescriptorSetLayoutBinding.Raw MarshalDirect(this VkDescriptorSetLayoutBinding s, ref byte* unmanaged)
         {
-            if (s == null)
-                throw new InvalidOperationException("Trying to directly marshal a null.");
-
             var pImmutableSamplers = s.ImmutableSamplers.MarshalDirect(ref unmanaged);
 
             VkDescriptorSetLayoutBinding.Raw result;
@@ -78,12 +71,10 @@ namespace VulkaNet
         }
 
         public static int SizeOfMarshalIndirect(this VkDescriptorSetLayoutBinding s) =>
-            s == null ? 0 : s.SizeOfMarshalDirect() + VkDescriptorSetLayoutBinding.Raw.SizeInBytes;
+            s.SizeOfMarshalDirect() + VkDescriptorSetLayoutBinding.Raw.SizeInBytes;
 
         public static VkDescriptorSetLayoutBinding.Raw* MarshalIndirect(this VkDescriptorSetLayoutBinding s, ref byte* unmanaged)
         {
-            if (s == null)
-                return (VkDescriptorSetLayoutBinding.Raw*)0;
             var result = (VkDescriptorSetLayoutBinding.Raw*)unmanaged;
             unmanaged += VkDescriptorSetLayoutBinding.Raw.SizeInBytes;
             *result = s.MarshalDirect(ref unmanaged);
@@ -106,20 +97,5 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkDescriptorSetLayoutBinding> list) =>
-            list == null || list.Count == 0
-                ? 0
-                : sizeof(VkDescriptorSetLayoutBinding.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
-
-        public static VkDescriptorSetLayoutBinding.Raw** MarshalIndirect(this IReadOnlyList<VkDescriptorSetLayoutBinding> list, ref byte* unmanaged)
-        {
-            if (list == null || list.Count == 0)
-                return (VkDescriptorSetLayoutBinding.Raw**)0;
-            var result = (VkDescriptorSetLayoutBinding.Raw**)unmanaged;
-            unmanaged += sizeof(VkDescriptorSetLayoutBinding.Raw*) * list.Count;
-            for (int i = 0; i < list.Count; i++)
-                result[i] = list[i].MarshalIndirect(ref unmanaged);
-            return result;
-        }
     }
 }

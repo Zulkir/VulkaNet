@@ -27,7 +27,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public unsafe class VkPhysicalDeviceLimits
+    public unsafe struct VkPhysicalDeviceLimits
     {
         public uint MaxImageDimension1D { get; set; }
         public uint MaxImageDimension2D { get; set; }
@@ -248,8 +248,6 @@ namespace VulkaNet
 
             public static int SizeInBytes { get; } = Marshal.SizeOf<Raw>();
         }
-
-        public VkPhysicalDeviceLimits() { }
 
         public VkPhysicalDeviceLimits(Raw* raw)
         {

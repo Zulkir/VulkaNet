@@ -22,14 +22,13 @@ THE SOFTWARE.
 */
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public unsafe class VkSubpassDependency
+    public unsafe struct VkSubpassDependency
     {
         public int SrcSubpass { get; set; }
         public int DstSubpass { get; set; }
@@ -58,17 +57,11 @@ namespace VulkaNet
     {
         public static int SizeOfMarshalDirect(this VkSubpassDependency s)
         {
-            if (s == null)
-                throw new InvalidOperationException("Trying to directly marshal a null.");
-
             return 0;
         }
 
         public static VkSubpassDependency.Raw MarshalDirect(this VkSubpassDependency s, ref byte* unmanaged)
         {
-            if (s == null)
-                throw new InvalidOperationException("Trying to directly marshal a null.");
-
 
             VkSubpassDependency.Raw result;
             result.srcSubpass = s.SrcSubpass;
@@ -82,12 +75,10 @@ namespace VulkaNet
         }
 
         public static int SizeOfMarshalIndirect(this VkSubpassDependency s) =>
-            s == null ? 0 : s.SizeOfMarshalDirect() + VkSubpassDependency.Raw.SizeInBytes;
+            s.SizeOfMarshalDirect() + VkSubpassDependency.Raw.SizeInBytes;
 
         public static VkSubpassDependency.Raw* MarshalIndirect(this VkSubpassDependency s, ref byte* unmanaged)
         {
-            if (s == null)
-                return (VkSubpassDependency.Raw*)0;
             var result = (VkSubpassDependency.Raw*)unmanaged;
             unmanaged += VkSubpassDependency.Raw.SizeInBytes;
             *result = s.MarshalDirect(ref unmanaged);
@@ -110,20 +101,5 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkSubpassDependency> list) =>
-            list == null || list.Count == 0
-                ? 0
-                : sizeof(VkSubpassDependency.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
-
-        public static VkSubpassDependency.Raw** MarshalIndirect(this IReadOnlyList<VkSubpassDependency> list, ref byte* unmanaged)
-        {
-            if (list == null || list.Count == 0)
-                return (VkSubpassDependency.Raw**)0;
-            var result = (VkSubpassDependency.Raw**)unmanaged;
-            unmanaged += sizeof(VkSubpassDependency.Raw*) * list.Count;
-            for (int i = 0; i < list.Count; i++)
-                result[i] = list[i].MarshalIndirect(ref unmanaged);
-            return result;
-        }
     }
 }

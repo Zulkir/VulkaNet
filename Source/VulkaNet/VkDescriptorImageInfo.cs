@@ -22,14 +22,13 @@ THE SOFTWARE.
 */
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public unsafe class VkDescriptorImageInfo
+    public unsafe struct VkDescriptorImageInfo
     {
         public IVkBuffer Buffer { get; set; }
         public ulong Offset { get; set; }
@@ -50,17 +49,11 @@ namespace VulkaNet
     {
         public static int SizeOfMarshalDirect(this VkDescriptorImageInfo s)
         {
-            if (s == null)
-                throw new InvalidOperationException("Trying to directly marshal a null.");
-
             return 0;
         }
 
         public static VkDescriptorImageInfo.Raw MarshalDirect(this VkDescriptorImageInfo s, ref byte* unmanaged)
         {
-            if (s == null)
-                throw new InvalidOperationException("Trying to directly marshal a null.");
-
 
             VkDescriptorImageInfo.Raw result;
             result.buffer = s.Buffer?.Handle ?? VkBuffer.HandleType.Null;
@@ -70,12 +63,10 @@ namespace VulkaNet
         }
 
         public static int SizeOfMarshalIndirect(this VkDescriptorImageInfo s) =>
-            s == null ? 0 : s.SizeOfMarshalDirect() + VkDescriptorImageInfo.Raw.SizeInBytes;
+            s.SizeOfMarshalDirect() + VkDescriptorImageInfo.Raw.SizeInBytes;
 
         public static VkDescriptorImageInfo.Raw* MarshalIndirect(this VkDescriptorImageInfo s, ref byte* unmanaged)
         {
-            if (s == null)
-                return (VkDescriptorImageInfo.Raw*)0;
             var result = (VkDescriptorImageInfo.Raw*)unmanaged;
             unmanaged += VkDescriptorImageInfo.Raw.SizeInBytes;
             *result = s.MarshalDirect(ref unmanaged);
@@ -98,20 +89,5 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkDescriptorImageInfo> list) =>
-            list == null || list.Count == 0
-                ? 0
-                : sizeof(VkDescriptorImageInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
-
-        public static VkDescriptorImageInfo.Raw** MarshalIndirect(this IReadOnlyList<VkDescriptorImageInfo> list, ref byte* unmanaged)
-        {
-            if (list == null || list.Count == 0)
-                return (VkDescriptorImageInfo.Raw**)0;
-            var result = (VkDescriptorImageInfo.Raw**)unmanaged;
-            unmanaged += sizeof(VkDescriptorImageInfo.Raw*) * list.Count;
-            for (int i = 0; i < list.Count; i++)
-                result[i] = list[i].MarshalIndirect(ref unmanaged);
-            return result;
-        }
     }
 }

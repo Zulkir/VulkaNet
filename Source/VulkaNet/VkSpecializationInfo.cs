@@ -29,7 +29,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public unsafe class VkSpecializationInfo
+    public unsafe struct VkSpecializationInfo
     {
         public IReadOnlyList<VkSpecializationMapEntry> MapEntries { get; set; }
         public IntPtr DataSize { get; set; }
@@ -51,18 +51,12 @@ namespace VulkaNet
     {
         public static int SizeOfMarshalDirect(this VkSpecializationInfo s)
         {
-            if (s == null)
-                throw new InvalidOperationException("Trying to directly marshal a null.");
-
             return
                 s.MapEntries.SizeOfMarshalDirect();
         }
 
         public static VkSpecializationInfo.Raw MarshalDirect(this VkSpecializationInfo s, ref byte* unmanaged)
         {
-            if (s == null)
-                throw new InvalidOperationException("Trying to directly marshal a null.");
-
             var pMapEntries = s.MapEntries.MarshalDirect(ref unmanaged);
 
             VkSpecializationInfo.Raw result;
@@ -74,12 +68,10 @@ namespace VulkaNet
         }
 
         public static int SizeOfMarshalIndirect(this VkSpecializationInfo s) =>
-            s == null ? 0 : s.SizeOfMarshalDirect() + VkSpecializationInfo.Raw.SizeInBytes;
+            s.SizeOfMarshalDirect() + VkSpecializationInfo.Raw.SizeInBytes;
 
         public static VkSpecializationInfo.Raw* MarshalIndirect(this VkSpecializationInfo s, ref byte* unmanaged)
         {
-            if (s == null)
-                return (VkSpecializationInfo.Raw*)0;
             var result = (VkSpecializationInfo.Raw*)unmanaged;
             unmanaged += VkSpecializationInfo.Raw.SizeInBytes;
             *result = s.MarshalDirect(ref unmanaged);
@@ -102,20 +94,5 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkSpecializationInfo> list) =>
-            list == null || list.Count == 0
-                ? 0
-                : sizeof(VkSpecializationInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
-
-        public static VkSpecializationInfo.Raw** MarshalIndirect(this IReadOnlyList<VkSpecializationInfo> list, ref byte* unmanaged)
-        {
-            if (list == null || list.Count == 0)
-                return (VkSpecializationInfo.Raw**)0;
-            var result = (VkSpecializationInfo.Raw**)unmanaged;
-            unmanaged += sizeof(VkSpecializationInfo.Raw*) * list.Count;
-            for (int i = 0; i < list.Count; i++)
-                result[i] = list[i].MarshalIndirect(ref unmanaged);
-            return result;
-        }
     }
 }

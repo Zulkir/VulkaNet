@@ -22,14 +22,13 @@ THE SOFTWARE.
 */
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public unsafe class VkSubpassDescription
+    public unsafe struct VkSubpassDescription
     {
         public VkSubpassDescriptionFlags Flags { get; set; }
         public VkPipelineBindPoint PipelineBindPoint { get; set; }
@@ -61,9 +60,6 @@ namespace VulkaNet
     {
         public static int SizeOfMarshalDirect(this VkSubpassDescription s)
         {
-            if (s == null)
-                throw new InvalidOperationException("Trying to directly marshal a null.");
-
             return
                 s.InputAttachments.SizeOfMarshalDirect() +
                 s.ColorAttachments.SizeOfMarshalDirect() +
@@ -74,9 +70,6 @@ namespace VulkaNet
 
         public static VkSubpassDescription.Raw MarshalDirect(this VkSubpassDescription s, ref byte* unmanaged)
         {
-            if (s == null)
-                throw new InvalidOperationException("Trying to directly marshal a null.");
-
             var pInputAttachments = s.InputAttachments.MarshalDirect(ref unmanaged);
             var pColorAttachments = s.ColorAttachments.MarshalDirect(ref unmanaged);
             var pResolveAttachments = s.ResolveAttachments.MarshalDirect(ref unmanaged);
@@ -98,12 +91,10 @@ namespace VulkaNet
         }
 
         public static int SizeOfMarshalIndirect(this VkSubpassDescription s) =>
-            s == null ? 0 : s.SizeOfMarshalDirect() + VkSubpassDescription.Raw.SizeInBytes;
+            s.SizeOfMarshalDirect() + VkSubpassDescription.Raw.SizeInBytes;
 
         public static VkSubpassDescription.Raw* MarshalIndirect(this VkSubpassDescription s, ref byte* unmanaged)
         {
-            if (s == null)
-                return (VkSubpassDescription.Raw*)0;
             var result = (VkSubpassDescription.Raw*)unmanaged;
             unmanaged += VkSubpassDescription.Raw.SizeInBytes;
             *result = s.MarshalDirect(ref unmanaged);
@@ -126,20 +117,5 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkSubpassDescription> list) =>
-            list == null || list.Count == 0
-                ? 0
-                : sizeof(VkSubpassDescription.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
-
-        public static VkSubpassDescription.Raw** MarshalIndirect(this IReadOnlyList<VkSubpassDescription> list, ref byte* unmanaged)
-        {
-            if (list == null || list.Count == 0)
-                return (VkSubpassDescription.Raw**)0;
-            var result = (VkSubpassDescription.Raw**)unmanaged;
-            unmanaged += sizeof(VkSubpassDescription.Raw*) * list.Count;
-            for (int i = 0; i < list.Count; i++)
-                result[i] = list[i].MarshalIndirect(ref unmanaged);
-            return result;
-        }
     }
 }

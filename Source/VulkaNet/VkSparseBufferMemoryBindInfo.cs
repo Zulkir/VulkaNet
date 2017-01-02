@@ -22,14 +22,13 @@ THE SOFTWARE.
 */
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public unsafe class VkSparseBufferMemoryBindInfo
+    public unsafe struct VkSparseBufferMemoryBindInfo
     {
         public IVkBuffer Buffer { get; set; }
         public IReadOnlyList<VkSparseMemoryBind> Binds { get; set; }
@@ -49,18 +48,12 @@ namespace VulkaNet
     {
         public static int SizeOfMarshalDirect(this VkSparseBufferMemoryBindInfo s)
         {
-            if (s == null)
-                throw new InvalidOperationException("Trying to directly marshal a null.");
-
             return
                 s.Binds.SizeOfMarshalDirect();
         }
 
         public static VkSparseBufferMemoryBindInfo.Raw MarshalDirect(this VkSparseBufferMemoryBindInfo s, ref byte* unmanaged)
         {
-            if (s == null)
-                throw new InvalidOperationException("Trying to directly marshal a null.");
-
             var pBinds = s.Binds.MarshalDirect(ref unmanaged);
 
             VkSparseBufferMemoryBindInfo.Raw result;
@@ -71,12 +64,10 @@ namespace VulkaNet
         }
 
         public static int SizeOfMarshalIndirect(this VkSparseBufferMemoryBindInfo s) =>
-            s == null ? 0 : s.SizeOfMarshalDirect() + VkSparseBufferMemoryBindInfo.Raw.SizeInBytes;
+            s.SizeOfMarshalDirect() + VkSparseBufferMemoryBindInfo.Raw.SizeInBytes;
 
         public static VkSparseBufferMemoryBindInfo.Raw* MarshalIndirect(this VkSparseBufferMemoryBindInfo s, ref byte* unmanaged)
         {
-            if (s == null)
-                return (VkSparseBufferMemoryBindInfo.Raw*)0;
             var result = (VkSparseBufferMemoryBindInfo.Raw*)unmanaged;
             unmanaged += VkSparseBufferMemoryBindInfo.Raw.SizeInBytes;
             *result = s.MarshalDirect(ref unmanaged);
@@ -99,20 +90,5 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkSparseBufferMemoryBindInfo> list) =>
-            list == null || list.Count == 0
-                ? 0
-                : sizeof(VkSparseBufferMemoryBindInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
-
-        public static VkSparseBufferMemoryBindInfo.Raw** MarshalIndirect(this IReadOnlyList<VkSparseBufferMemoryBindInfo> list, ref byte* unmanaged)
-        {
-            if (list == null || list.Count == 0)
-                return (VkSparseBufferMemoryBindInfo.Raw**)0;
-            var result = (VkSparseBufferMemoryBindInfo.Raw**)unmanaged;
-            unmanaged += sizeof(VkSparseBufferMemoryBindInfo.Raw*) * list.Count;
-            for (int i = 0; i < list.Count; i++)
-                result[i] = list[i].MarshalIndirect(ref unmanaged);
-            return result;
-        }
     }
 }

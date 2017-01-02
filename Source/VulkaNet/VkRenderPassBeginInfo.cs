@@ -29,16 +29,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkRenderPassBeginInfo
-    {
-        IVkStructWrapper Next { get; }
-        IVkRenderPass RenderPass { get; }
-        IVkFramebuffer Framebuffer { get; }
-        VkRect2D RenderArea { get; }
-        IReadOnlyList<VkClearValue> ClearValues { get; }
-    }
-
-    public unsafe class VkRenderPassBeginInfo : IVkRenderPassBeginInfo
+    public unsafe class VkRenderPassBeginInfo
     {
         public IVkStructWrapper Next { get; set; }
         public IVkRenderPass RenderPass { get; set; }
@@ -63,7 +54,7 @@ namespace VulkaNet
 
     public static unsafe class VkRenderPassBeginInfoExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkRenderPassBeginInfo s)
+        public static int SizeOfMarshalDirect(this VkRenderPassBeginInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -73,7 +64,7 @@ namespace VulkaNet
                 s.ClearValues.SizeOfMarshalDirect();
         }
 
-        public static VkRenderPassBeginInfo.Raw MarshalDirect(this IVkRenderPassBeginInfo s, ref byte* unmanaged)
+        public static VkRenderPassBeginInfo.Raw MarshalDirect(this VkRenderPassBeginInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -92,10 +83,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkRenderPassBeginInfo s) =>
+        public static int SizeOfMarshalIndirect(this VkRenderPassBeginInfo s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkRenderPassBeginInfo.Raw.SizeInBytes;
 
-        public static VkRenderPassBeginInfo.Raw* MarshalIndirect(this IVkRenderPassBeginInfo s, ref byte* unmanaged)
+        public static VkRenderPassBeginInfo.Raw* MarshalIndirect(this VkRenderPassBeginInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkRenderPassBeginInfo.Raw*)0;
@@ -105,12 +96,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkRenderPassBeginInfo> list) => 
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkRenderPassBeginInfo> list) => 
             list == null || list.Count == 0 
                 ? 0
                 : sizeof(VkRenderPassBeginInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkRenderPassBeginInfo.Raw* MarshalDirect(this IReadOnlyList<IVkRenderPassBeginInfo> list, ref byte* unmanaged)
+        public static VkRenderPassBeginInfo.Raw* MarshalDirect(this IReadOnlyList<VkRenderPassBeginInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkRenderPassBeginInfo.Raw*)0;
@@ -121,12 +112,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkRenderPassBeginInfo> list) =>
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkRenderPassBeginInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkRenderPassBeginInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkRenderPassBeginInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkRenderPassBeginInfo> list, ref byte* unmanaged)
+        public static VkRenderPassBeginInfo.Raw** MarshalIndirect(this IReadOnlyList<VkRenderPassBeginInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkRenderPassBeginInfo.Raw**)0;

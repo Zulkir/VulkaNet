@@ -29,15 +29,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkShaderModuleCreateInfo
-    {
-        IVkStructWrapper Next { get; }
-        VkShaderModuleCreateFlags Flags { get; }
-        IntPtr CodeSize { get; }
-        IntPtr Code { get; }
-    }
-
-    public unsafe class VkShaderModuleCreateInfo : IVkShaderModuleCreateInfo
+    public unsafe class VkShaderModuleCreateInfo
     {
         public IVkStructWrapper Next { get; set; }
         public VkShaderModuleCreateFlags Flags { get; set; }
@@ -59,7 +51,7 @@ namespace VulkaNet
 
     public static unsafe class VkShaderModuleCreateInfoExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkShaderModuleCreateInfo s)
+        public static int SizeOfMarshalDirect(this VkShaderModuleCreateInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -68,7 +60,7 @@ namespace VulkaNet
                 s.Next.SizeOfMarshalIndirect();
         }
 
-        public static VkShaderModuleCreateInfo.Raw MarshalDirect(this IVkShaderModuleCreateInfo s, ref byte* unmanaged)
+        public static VkShaderModuleCreateInfo.Raw MarshalDirect(this VkShaderModuleCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -84,10 +76,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkShaderModuleCreateInfo s) =>
+        public static int SizeOfMarshalIndirect(this VkShaderModuleCreateInfo s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkShaderModuleCreateInfo.Raw.SizeInBytes;
 
-        public static VkShaderModuleCreateInfo.Raw* MarshalIndirect(this IVkShaderModuleCreateInfo s, ref byte* unmanaged)
+        public static VkShaderModuleCreateInfo.Raw* MarshalIndirect(this VkShaderModuleCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkShaderModuleCreateInfo.Raw*)0;
@@ -97,12 +89,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkShaderModuleCreateInfo> list) => 
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkShaderModuleCreateInfo> list) => 
             list == null || list.Count == 0 
                 ? 0
                 : sizeof(VkShaderModuleCreateInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkShaderModuleCreateInfo.Raw* MarshalDirect(this IReadOnlyList<IVkShaderModuleCreateInfo> list, ref byte* unmanaged)
+        public static VkShaderModuleCreateInfo.Raw* MarshalDirect(this IReadOnlyList<VkShaderModuleCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkShaderModuleCreateInfo.Raw*)0;
@@ -113,12 +105,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkShaderModuleCreateInfo> list) =>
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkShaderModuleCreateInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkShaderModuleCreateInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkShaderModuleCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkShaderModuleCreateInfo> list, ref byte* unmanaged)
+        public static VkShaderModuleCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<VkShaderModuleCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkShaderModuleCreateInfo.Raw**)0;

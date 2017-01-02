@@ -29,18 +29,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkImageViewCreateInfo
-    {
-        IVkStructWrapper Next { get; }
-        VkImageViewCreateFlags Flags { get; }
-        IVkImage Image { get; }
-        VkImageViewType ViewType { get; }
-        VkFormat Format { get; }
-        VkComponentMapping Components { get; }
-        VkImageSubresourceRange SubresourceRange { get; }
-    }
-
-    public unsafe class VkImageViewCreateInfo : IVkImageViewCreateInfo
+    public unsafe class VkImageViewCreateInfo
     {
         public IVkStructWrapper Next { get; set; }
         public VkImageViewCreateFlags Flags { get; set; }
@@ -68,7 +57,7 @@ namespace VulkaNet
 
     public static unsafe class VkImageViewCreateInfoExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkImageViewCreateInfo s)
+        public static int SizeOfMarshalDirect(this VkImageViewCreateInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -77,7 +66,7 @@ namespace VulkaNet
                 s.Next.SizeOfMarshalIndirect();
         }
 
-        public static VkImageViewCreateInfo.Raw MarshalDirect(this IVkImageViewCreateInfo s, ref byte* unmanaged)
+        public static VkImageViewCreateInfo.Raw MarshalDirect(this VkImageViewCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -96,10 +85,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkImageViewCreateInfo s) =>
+        public static int SizeOfMarshalIndirect(this VkImageViewCreateInfo s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkImageViewCreateInfo.Raw.SizeInBytes;
 
-        public static VkImageViewCreateInfo.Raw* MarshalIndirect(this IVkImageViewCreateInfo s, ref byte* unmanaged)
+        public static VkImageViewCreateInfo.Raw* MarshalIndirect(this VkImageViewCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkImageViewCreateInfo.Raw*)0;
@@ -109,12 +98,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkImageViewCreateInfo> list) => 
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkImageViewCreateInfo> list) => 
             list == null || list.Count == 0 
                 ? 0
                 : sizeof(VkImageViewCreateInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkImageViewCreateInfo.Raw* MarshalDirect(this IReadOnlyList<IVkImageViewCreateInfo> list, ref byte* unmanaged)
+        public static VkImageViewCreateInfo.Raw* MarshalDirect(this IReadOnlyList<VkImageViewCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkImageViewCreateInfo.Raw*)0;
@@ -125,12 +114,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkImageViewCreateInfo> list) =>
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkImageViewCreateInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkImageViewCreateInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkImageViewCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkImageViewCreateInfo> list, ref byte* unmanaged)
+        public static VkImageViewCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<VkImageViewCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkImageViewCreateInfo.Raw**)0;

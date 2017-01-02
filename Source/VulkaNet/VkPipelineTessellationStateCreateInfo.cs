@@ -29,14 +29,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkPipelineTessellationStateCreateInfo
-    {
-        IVkStructWrapper Next { get; }
-        VkPipelineTessellationStateCreateFlags Flags { get; }
-        int PatchControlPoints { get; }
-    }
-
-    public unsafe class VkPipelineTessellationStateCreateInfo : IVkPipelineTessellationStateCreateInfo
+    public unsafe class VkPipelineTessellationStateCreateInfo
     {
         public IVkStructWrapper Next { get; set; }
         public VkPipelineTessellationStateCreateFlags Flags { get; set; }
@@ -56,7 +49,7 @@ namespace VulkaNet
 
     public static unsafe class VkPipelineTessellationStateCreateInfoExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkPipelineTessellationStateCreateInfo s)
+        public static int SizeOfMarshalDirect(this VkPipelineTessellationStateCreateInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -65,7 +58,7 @@ namespace VulkaNet
                 s.Next.SizeOfMarshalIndirect();
         }
 
-        public static VkPipelineTessellationStateCreateInfo.Raw MarshalDirect(this IVkPipelineTessellationStateCreateInfo s, ref byte* unmanaged)
+        public static VkPipelineTessellationStateCreateInfo.Raw MarshalDirect(this VkPipelineTessellationStateCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -80,10 +73,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkPipelineTessellationStateCreateInfo s) =>
+        public static int SizeOfMarshalIndirect(this VkPipelineTessellationStateCreateInfo s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkPipelineTessellationStateCreateInfo.Raw.SizeInBytes;
 
-        public static VkPipelineTessellationStateCreateInfo.Raw* MarshalIndirect(this IVkPipelineTessellationStateCreateInfo s, ref byte* unmanaged)
+        public static VkPipelineTessellationStateCreateInfo.Raw* MarshalIndirect(this VkPipelineTessellationStateCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkPipelineTessellationStateCreateInfo.Raw*)0;
@@ -93,12 +86,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkPipelineTessellationStateCreateInfo> list) => 
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkPipelineTessellationStateCreateInfo> list) => 
             list == null || list.Count == 0 
                 ? 0
                 : sizeof(VkPipelineTessellationStateCreateInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkPipelineTessellationStateCreateInfo.Raw* MarshalDirect(this IReadOnlyList<IVkPipelineTessellationStateCreateInfo> list, ref byte* unmanaged)
+        public static VkPipelineTessellationStateCreateInfo.Raw* MarshalDirect(this IReadOnlyList<VkPipelineTessellationStateCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkPipelineTessellationStateCreateInfo.Raw*)0;
@@ -109,12 +102,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkPipelineTessellationStateCreateInfo> list) =>
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkPipelineTessellationStateCreateInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkPipelineTessellationStateCreateInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkPipelineTessellationStateCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkPipelineTessellationStateCreateInfo> list, ref byte* unmanaged)
+        public static VkPipelineTessellationStateCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<VkPipelineTessellationStateCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkPipelineTessellationStateCreateInfo.Raw**)0;

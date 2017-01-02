@@ -29,17 +29,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkPipelineColorBlendStateCreateInfo
-    {
-        IVkStructWrapper Next { get; }
-        VkPipelineColorBlendStateCreateFlags Flags { get; }
-        bool LogicOpEnable { get; }
-        VkLogicOp LogicOp { get; }
-        IReadOnlyList<VkPipelineColorBlendAttachmentState> Attachments { get; }
-        VkColor4 BlendConstants { get; }
-    }
-
-    public unsafe class VkPipelineColorBlendStateCreateInfo : IVkPipelineColorBlendStateCreateInfo
+    public unsafe class VkPipelineColorBlendStateCreateInfo
     {
         public IVkStructWrapper Next { get; set; }
         public VkPipelineColorBlendStateCreateFlags Flags { get; set; }
@@ -66,7 +56,7 @@ namespace VulkaNet
 
     public static unsafe class VkPipelineColorBlendStateCreateInfoExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkPipelineColorBlendStateCreateInfo s)
+        public static int SizeOfMarshalDirect(this VkPipelineColorBlendStateCreateInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -76,7 +66,7 @@ namespace VulkaNet
                 s.Attachments.SizeOfMarshalDirect();
         }
 
-        public static VkPipelineColorBlendStateCreateInfo.Raw MarshalDirect(this IVkPipelineColorBlendStateCreateInfo s, ref byte* unmanaged)
+        public static VkPipelineColorBlendStateCreateInfo.Raw MarshalDirect(this VkPipelineColorBlendStateCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -96,10 +86,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkPipelineColorBlendStateCreateInfo s) =>
+        public static int SizeOfMarshalIndirect(this VkPipelineColorBlendStateCreateInfo s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkPipelineColorBlendStateCreateInfo.Raw.SizeInBytes;
 
-        public static VkPipelineColorBlendStateCreateInfo.Raw* MarshalIndirect(this IVkPipelineColorBlendStateCreateInfo s, ref byte* unmanaged)
+        public static VkPipelineColorBlendStateCreateInfo.Raw* MarshalIndirect(this VkPipelineColorBlendStateCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkPipelineColorBlendStateCreateInfo.Raw*)0;
@@ -109,12 +99,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkPipelineColorBlendStateCreateInfo> list) => 
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkPipelineColorBlendStateCreateInfo> list) => 
             list == null || list.Count == 0 
                 ? 0
                 : sizeof(VkPipelineColorBlendStateCreateInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkPipelineColorBlendStateCreateInfo.Raw* MarshalDirect(this IReadOnlyList<IVkPipelineColorBlendStateCreateInfo> list, ref byte* unmanaged)
+        public static VkPipelineColorBlendStateCreateInfo.Raw* MarshalDirect(this IReadOnlyList<VkPipelineColorBlendStateCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkPipelineColorBlendStateCreateInfo.Raw*)0;
@@ -125,12 +115,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkPipelineColorBlendStateCreateInfo> list) =>
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkPipelineColorBlendStateCreateInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkPipelineColorBlendStateCreateInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkPipelineColorBlendStateCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkPipelineColorBlendStateCreateInfo> list, ref byte* unmanaged)
+        public static VkPipelineColorBlendStateCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<VkPipelineColorBlendStateCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkPipelineColorBlendStateCreateInfo.Raw**)0;

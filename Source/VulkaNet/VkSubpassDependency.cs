@@ -29,18 +29,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkSubpassDependency
-    {
-        int SrcSubpass { get; }
-        int DstSubpass { get; }
-        VkPipelineStageFlags SrcStageMask { get; }
-        VkPipelineStageFlags DstStageMask { get; }
-        VkAccessFlags SrcAccessMask { get; }
-        VkAccessFlags DstAccessMask { get; }
-        VkDependencyFlags DependencyFlags { get; }
-    }
-
-    public unsafe class VkSubpassDependency : IVkSubpassDependency
+    public unsafe class VkSubpassDependency
     {
         public int SrcSubpass { get; set; }
         public int DstSubpass { get; set; }
@@ -67,7 +56,7 @@ namespace VulkaNet
 
     public static unsafe class VkSubpassDependencyExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkSubpassDependency s)
+        public static int SizeOfMarshalDirect(this VkSubpassDependency s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -75,7 +64,7 @@ namespace VulkaNet
             return 0;
         }
 
-        public static VkSubpassDependency.Raw MarshalDirect(this IVkSubpassDependency s, ref byte* unmanaged)
+        public static VkSubpassDependency.Raw MarshalDirect(this VkSubpassDependency s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -92,10 +81,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkSubpassDependency s) =>
+        public static int SizeOfMarshalIndirect(this VkSubpassDependency s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkSubpassDependency.Raw.SizeInBytes;
 
-        public static VkSubpassDependency.Raw* MarshalIndirect(this IVkSubpassDependency s, ref byte* unmanaged)
+        public static VkSubpassDependency.Raw* MarshalIndirect(this VkSubpassDependency s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkSubpassDependency.Raw*)0;
@@ -105,12 +94,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkSubpassDependency> list) => 
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkSubpassDependency> list) => 
             list == null || list.Count == 0 
                 ? 0
                 : sizeof(VkSubpassDependency.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkSubpassDependency.Raw* MarshalDirect(this IReadOnlyList<IVkSubpassDependency> list, ref byte* unmanaged)
+        public static VkSubpassDependency.Raw* MarshalDirect(this IReadOnlyList<VkSubpassDependency> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkSubpassDependency.Raw*)0;
@@ -121,12 +110,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkSubpassDependency> list) =>
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkSubpassDependency> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkSubpassDependency.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkSubpassDependency.Raw** MarshalIndirect(this IReadOnlyList<IVkSubpassDependency> list, ref byte* unmanaged)
+        public static VkSubpassDependency.Raw** MarshalIndirect(this IReadOnlyList<VkSubpassDependency> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkSubpassDependency.Raw**)0;

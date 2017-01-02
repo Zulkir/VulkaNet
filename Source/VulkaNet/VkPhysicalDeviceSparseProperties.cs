@@ -26,16 +26,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkPhysicalDeviceSparseProperties
-    {
-        bool ResidencyStandard2DBlockShape { get; }
-        bool ResidencyStandard2DMultisampleBlockShape { get; }
-        bool ResidencyStandard3DBlockShape { get; }
-        bool ResidencyAlignedMipSize { get; }
-        bool ResidencyNonResidentStrict { get; }
-    }
-
-    public unsafe class VkPhysicalDeviceSparseProperties : IVkPhysicalDeviceSparseProperties
+    public unsafe class VkPhysicalDeviceSparseProperties
     {
         public bool ResidencyStandard2DBlockShape { get; set; }
         public bool ResidencyStandard2DMultisampleBlockShape { get; set; }

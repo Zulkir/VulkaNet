@@ -29,15 +29,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkCommandBufferAllocateInfo
-    {
-        IVkStructWrapper Next { get; }
-        IVkCommandPool CommandPool { get; }
-        VkCommandBufferLevel Level { get; }
-        int CommandBufferCount { get; }
-    }
-
-    public unsafe class VkCommandBufferAllocateInfo : IVkCommandBufferAllocateInfo
+    public unsafe class VkCommandBufferAllocateInfo
     {
         public IVkStructWrapper Next { get; set; }
         public IVkCommandPool CommandPool { get; set; }
@@ -59,7 +51,7 @@ namespace VulkaNet
 
     public static unsafe class VkCommandBufferAllocateInfoExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkCommandBufferAllocateInfo s)
+        public static int SizeOfMarshalDirect(this VkCommandBufferAllocateInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -68,7 +60,7 @@ namespace VulkaNet
                 s.Next.SizeOfMarshalIndirect();
         }
 
-        public static VkCommandBufferAllocateInfo.Raw MarshalDirect(this IVkCommandBufferAllocateInfo s, ref byte* unmanaged)
+        public static VkCommandBufferAllocateInfo.Raw MarshalDirect(this VkCommandBufferAllocateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -84,10 +76,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkCommandBufferAllocateInfo s) =>
+        public static int SizeOfMarshalIndirect(this VkCommandBufferAllocateInfo s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkCommandBufferAllocateInfo.Raw.SizeInBytes;
 
-        public static VkCommandBufferAllocateInfo.Raw* MarshalIndirect(this IVkCommandBufferAllocateInfo s, ref byte* unmanaged)
+        public static VkCommandBufferAllocateInfo.Raw* MarshalIndirect(this VkCommandBufferAllocateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkCommandBufferAllocateInfo.Raw*)0;
@@ -97,12 +89,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkCommandBufferAllocateInfo> list) => 
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkCommandBufferAllocateInfo> list) => 
             list == null || list.Count == 0 
                 ? 0
                 : sizeof(VkCommandBufferAllocateInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkCommandBufferAllocateInfo.Raw* MarshalDirect(this IReadOnlyList<IVkCommandBufferAllocateInfo> list, ref byte* unmanaged)
+        public static VkCommandBufferAllocateInfo.Raw* MarshalDirect(this IReadOnlyList<VkCommandBufferAllocateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkCommandBufferAllocateInfo.Raw*)0;
@@ -113,12 +105,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkCommandBufferAllocateInfo> list) =>
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkCommandBufferAllocateInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkCommandBufferAllocateInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkCommandBufferAllocateInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkCommandBufferAllocateInfo> list, ref byte* unmanaged)
+        public static VkCommandBufferAllocateInfo.Raw** MarshalIndirect(this IReadOnlyList<VkCommandBufferAllocateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkCommandBufferAllocateInfo.Raw**)0;

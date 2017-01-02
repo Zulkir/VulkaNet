@@ -29,19 +29,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkCopyDescriptorSet
-    {
-        IVkStructWrapper Next { get; }
-        IVkDescriptorSet SrcSet { get; }
-        int SrcBinding { get; }
-        int SrcArrayElement { get; }
-        IVkDescriptorSet DstSet { get; }
-        int DstBinding { get; }
-        int DstArrayElement { get; }
-        int DescriptorCount { get; }
-    }
-
-    public unsafe class VkCopyDescriptorSet : IVkCopyDescriptorSet
+    public unsafe class VkCopyDescriptorSet
     {
         public IVkStructWrapper Next { get; set; }
         public IVkDescriptorSet SrcSet { get; set; }
@@ -71,7 +59,7 @@ namespace VulkaNet
 
     public static unsafe class VkCopyDescriptorSetExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkCopyDescriptorSet s)
+        public static int SizeOfMarshalDirect(this VkCopyDescriptorSet s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -80,7 +68,7 @@ namespace VulkaNet
                 s.Next.SizeOfMarshalIndirect();
         }
 
-        public static VkCopyDescriptorSet.Raw MarshalDirect(this IVkCopyDescriptorSet s, ref byte* unmanaged)
+        public static VkCopyDescriptorSet.Raw MarshalDirect(this VkCopyDescriptorSet s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -100,10 +88,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkCopyDescriptorSet s) =>
+        public static int SizeOfMarshalIndirect(this VkCopyDescriptorSet s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkCopyDescriptorSet.Raw.SizeInBytes;
 
-        public static VkCopyDescriptorSet.Raw* MarshalIndirect(this IVkCopyDescriptorSet s, ref byte* unmanaged)
+        public static VkCopyDescriptorSet.Raw* MarshalIndirect(this VkCopyDescriptorSet s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkCopyDescriptorSet.Raw*)0;
@@ -113,12 +101,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkCopyDescriptorSet> list) => 
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkCopyDescriptorSet> list) => 
             list == null || list.Count == 0 
                 ? 0
                 : sizeof(VkCopyDescriptorSet.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkCopyDescriptorSet.Raw* MarshalDirect(this IReadOnlyList<IVkCopyDescriptorSet> list, ref byte* unmanaged)
+        public static VkCopyDescriptorSet.Raw* MarshalDirect(this IReadOnlyList<VkCopyDescriptorSet> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkCopyDescriptorSet.Raw*)0;
@@ -129,12 +117,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkCopyDescriptorSet> list) =>
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkCopyDescriptorSet> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkCopyDescriptorSet.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkCopyDescriptorSet.Raw** MarshalIndirect(this IReadOnlyList<IVkCopyDescriptorSet> list, ref byte* unmanaged)
+        public static VkCopyDescriptorSet.Raw** MarshalIndirect(this IReadOnlyList<VkCopyDescriptorSet> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkCopyDescriptorSet.Raw**)0;

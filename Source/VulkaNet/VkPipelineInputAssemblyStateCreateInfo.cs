@@ -29,15 +29,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkPipelineInputAssemblyStateCreateInfo
-    {
-        IVkStructWrapper Next { get; }
-        VkPipelineInputAssemblyStateCreateFlags Flags { get; }
-        VkPrimitiveTopology Topology { get; }
-        bool PrimitiveRestartEnable { get; }
-    }
-
-    public unsafe class VkPipelineInputAssemblyStateCreateInfo : IVkPipelineInputAssemblyStateCreateInfo
+    public unsafe class VkPipelineInputAssemblyStateCreateInfo
     {
         public IVkStructWrapper Next { get; set; }
         public VkPipelineInputAssemblyStateCreateFlags Flags { get; set; }
@@ -59,7 +51,7 @@ namespace VulkaNet
 
     public static unsafe class VkPipelineInputAssemblyStateCreateInfoExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkPipelineInputAssemblyStateCreateInfo s)
+        public static int SizeOfMarshalDirect(this VkPipelineInputAssemblyStateCreateInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -68,7 +60,7 @@ namespace VulkaNet
                 s.Next.SizeOfMarshalIndirect();
         }
 
-        public static VkPipelineInputAssemblyStateCreateInfo.Raw MarshalDirect(this IVkPipelineInputAssemblyStateCreateInfo s, ref byte* unmanaged)
+        public static VkPipelineInputAssemblyStateCreateInfo.Raw MarshalDirect(this VkPipelineInputAssemblyStateCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -84,10 +76,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkPipelineInputAssemblyStateCreateInfo s) =>
+        public static int SizeOfMarshalIndirect(this VkPipelineInputAssemblyStateCreateInfo s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkPipelineInputAssemblyStateCreateInfo.Raw.SizeInBytes;
 
-        public static VkPipelineInputAssemblyStateCreateInfo.Raw* MarshalIndirect(this IVkPipelineInputAssemblyStateCreateInfo s, ref byte* unmanaged)
+        public static VkPipelineInputAssemblyStateCreateInfo.Raw* MarshalIndirect(this VkPipelineInputAssemblyStateCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkPipelineInputAssemblyStateCreateInfo.Raw*)0;
@@ -97,12 +89,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkPipelineInputAssemblyStateCreateInfo> list) => 
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkPipelineInputAssemblyStateCreateInfo> list) => 
             list == null || list.Count == 0 
                 ? 0
                 : sizeof(VkPipelineInputAssemblyStateCreateInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkPipelineInputAssemblyStateCreateInfo.Raw* MarshalDirect(this IReadOnlyList<IVkPipelineInputAssemblyStateCreateInfo> list, ref byte* unmanaged)
+        public static VkPipelineInputAssemblyStateCreateInfo.Raw* MarshalDirect(this IReadOnlyList<VkPipelineInputAssemblyStateCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkPipelineInputAssemblyStateCreateInfo.Raw*)0;
@@ -113,12 +105,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkPipelineInputAssemblyStateCreateInfo> list) =>
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkPipelineInputAssemblyStateCreateInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkPipelineInputAssemblyStateCreateInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkPipelineInputAssemblyStateCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkPipelineInputAssemblyStateCreateInfo> list, ref byte* unmanaged)
+        public static VkPipelineInputAssemblyStateCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<VkPipelineInputAssemblyStateCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkPipelineInputAssemblyStateCreateInfo.Raw**)0;

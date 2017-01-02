@@ -29,14 +29,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkMemoryBarrier
-    {
-        IVkStructWrapper Next { get; }
-        VkAccessFlags SrcAccessMask { get; }
-        VkAccessFlags DstAccessMask { get; }
-    }
-
-    public unsafe class VkMemoryBarrier : IVkMemoryBarrier
+    public unsafe class VkMemoryBarrier
     {
         public IVkStructWrapper Next { get; set; }
         public VkAccessFlags SrcAccessMask { get; set; }
@@ -56,7 +49,7 @@ namespace VulkaNet
 
     public static unsafe class VkMemoryBarrierExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkMemoryBarrier s)
+        public static int SizeOfMarshalDirect(this VkMemoryBarrier s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -65,7 +58,7 @@ namespace VulkaNet
                 s.Next.SizeOfMarshalIndirect();
         }
 
-        public static VkMemoryBarrier.Raw MarshalDirect(this IVkMemoryBarrier s, ref byte* unmanaged)
+        public static VkMemoryBarrier.Raw MarshalDirect(this VkMemoryBarrier s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -80,10 +73,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkMemoryBarrier s) =>
+        public static int SizeOfMarshalIndirect(this VkMemoryBarrier s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkMemoryBarrier.Raw.SizeInBytes;
 
-        public static VkMemoryBarrier.Raw* MarshalIndirect(this IVkMemoryBarrier s, ref byte* unmanaged)
+        public static VkMemoryBarrier.Raw* MarshalIndirect(this VkMemoryBarrier s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkMemoryBarrier.Raw*)0;
@@ -93,12 +86,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkMemoryBarrier> list) => 
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkMemoryBarrier> list) => 
             list == null || list.Count == 0 
                 ? 0
                 : sizeof(VkMemoryBarrier.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkMemoryBarrier.Raw* MarshalDirect(this IReadOnlyList<IVkMemoryBarrier> list, ref byte* unmanaged)
+        public static VkMemoryBarrier.Raw* MarshalDirect(this IReadOnlyList<VkMemoryBarrier> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkMemoryBarrier.Raw*)0;
@@ -109,12 +102,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkMemoryBarrier> list) =>
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkMemoryBarrier> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkMemoryBarrier.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkMemoryBarrier.Raw** MarshalIndirect(this IReadOnlyList<IVkMemoryBarrier> list, ref byte* unmanaged)
+        public static VkMemoryBarrier.Raw** MarshalIndirect(this IReadOnlyList<VkMemoryBarrier> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkMemoryBarrier.Raw**)0;

@@ -29,21 +29,11 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkComputePipelineCreateInfo
-    {
-        IVkStructWrapper Next { get; }
-        VkPipelineCreateFlags Flags { get; }
-        IVkPipelineShaderStageCreateInfo Stage { get; }
-        IVkPipelineLayout Layout { get; }
-        IVkPipeline BasePipelineHandle { get; }
-        int BasePipelineIndex { get; }
-    }
-
-    public unsafe class VkComputePipelineCreateInfo : IVkComputePipelineCreateInfo
+    public unsafe class VkComputePipelineCreateInfo
     {
         public IVkStructWrapper Next { get; set; }
         public VkPipelineCreateFlags Flags { get; set; }
-        public IVkPipelineShaderStageCreateInfo Stage { get; set; }
+        public VkPipelineShaderStageCreateInfo Stage { get; set; }
         public IVkPipelineLayout Layout { get; set; }
         public IVkPipeline BasePipelineHandle { get; set; }
         public int BasePipelineIndex { get; set; }
@@ -65,7 +55,7 @@ namespace VulkaNet
 
     public static unsafe class VkComputePipelineCreateInfoExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkComputePipelineCreateInfo s)
+        public static int SizeOfMarshalDirect(this VkComputePipelineCreateInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -75,7 +65,7 @@ namespace VulkaNet
                 s.Stage.SizeOfMarshalDirect();
         }
 
-        public static VkComputePipelineCreateInfo.Raw MarshalDirect(this IVkComputePipelineCreateInfo s, ref byte* unmanaged)
+        public static VkComputePipelineCreateInfo.Raw MarshalDirect(this VkComputePipelineCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -94,10 +84,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkComputePipelineCreateInfo s) =>
+        public static int SizeOfMarshalIndirect(this VkComputePipelineCreateInfo s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkComputePipelineCreateInfo.Raw.SizeInBytes;
 
-        public static VkComputePipelineCreateInfo.Raw* MarshalIndirect(this IVkComputePipelineCreateInfo s, ref byte* unmanaged)
+        public static VkComputePipelineCreateInfo.Raw* MarshalIndirect(this VkComputePipelineCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkComputePipelineCreateInfo.Raw*)0;
@@ -107,12 +97,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkComputePipelineCreateInfo> list) => 
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkComputePipelineCreateInfo> list) => 
             list == null || list.Count == 0 
                 ? 0
                 : sizeof(VkComputePipelineCreateInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkComputePipelineCreateInfo.Raw* MarshalDirect(this IReadOnlyList<IVkComputePipelineCreateInfo> list, ref byte* unmanaged)
+        public static VkComputePipelineCreateInfo.Raw* MarshalDirect(this IReadOnlyList<VkComputePipelineCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkComputePipelineCreateInfo.Raw*)0;
@@ -123,12 +113,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkComputePipelineCreateInfo> list) =>
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkComputePipelineCreateInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkComputePipelineCreateInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkComputePipelineCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkComputePipelineCreateInfo> list, ref byte* unmanaged)
+        public static VkComputePipelineCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<VkComputePipelineCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkComputePipelineCreateInfo.Raw**)0;

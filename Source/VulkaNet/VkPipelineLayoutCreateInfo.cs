@@ -29,15 +29,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkPipelineLayoutCreateInfo
-    {
-        IVkStructWrapper Next { get; }
-        VkPipelineLayoutCreateFlags Flags { get; }
-        IReadOnlyList<IVkDescriptorSetLayout> SetLayouts { get; }
-        IReadOnlyList<VkPushConstantRange> PushConstantRanges { get; }
-    }
-
-    public unsafe class VkPipelineLayoutCreateInfo : IVkPipelineLayoutCreateInfo
+    public unsafe class VkPipelineLayoutCreateInfo
     {
         public IVkStructWrapper Next { get; set; }
         public VkPipelineLayoutCreateFlags Flags { get; set; }
@@ -61,7 +53,7 @@ namespace VulkaNet
 
     public static unsafe class VkPipelineLayoutCreateInfoExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkPipelineLayoutCreateInfo s)
+        public static int SizeOfMarshalDirect(this VkPipelineLayoutCreateInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -72,7 +64,7 @@ namespace VulkaNet
                 s.PushConstantRanges.SizeOfMarshalDirect();
         }
 
-        public static VkPipelineLayoutCreateInfo.Raw MarshalDirect(this IVkPipelineLayoutCreateInfo s, ref byte* unmanaged)
+        public static VkPipelineLayoutCreateInfo.Raw MarshalDirect(this VkPipelineLayoutCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -92,10 +84,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkPipelineLayoutCreateInfo s) =>
+        public static int SizeOfMarshalIndirect(this VkPipelineLayoutCreateInfo s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkPipelineLayoutCreateInfo.Raw.SizeInBytes;
 
-        public static VkPipelineLayoutCreateInfo.Raw* MarshalIndirect(this IVkPipelineLayoutCreateInfo s, ref byte* unmanaged)
+        public static VkPipelineLayoutCreateInfo.Raw* MarshalIndirect(this VkPipelineLayoutCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkPipelineLayoutCreateInfo.Raw*)0;
@@ -105,12 +97,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkPipelineLayoutCreateInfo> list) => 
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkPipelineLayoutCreateInfo> list) => 
             list == null || list.Count == 0 
                 ? 0
                 : sizeof(VkPipelineLayoutCreateInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkPipelineLayoutCreateInfo.Raw* MarshalDirect(this IReadOnlyList<IVkPipelineLayoutCreateInfo> list, ref byte* unmanaged)
+        public static VkPipelineLayoutCreateInfo.Raw* MarshalDirect(this IReadOnlyList<VkPipelineLayoutCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkPipelineLayoutCreateInfo.Raw*)0;
@@ -121,12 +113,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkPipelineLayoutCreateInfo> list) =>
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkPipelineLayoutCreateInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkPipelineLayoutCreateInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkPipelineLayoutCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkPipelineLayoutCreateInfo> list, ref byte* unmanaged)
+        public static VkPipelineLayoutCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<VkPipelineLayoutCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkPipelineLayoutCreateInfo.Raw**)0;

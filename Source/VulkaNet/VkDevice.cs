@@ -39,34 +39,34 @@ namespace VulkaNet
         IVkAllocationCallbacks Allocator { get; }
         IVkQueue GetDeviceQueue(int queueFamilyIndex, int queueIndex);
         VkResult WaitIdle();
-        VkObjectResult<IVkCommandPool> CreateCommandPool(IVkCommandPoolCreateInfo createInfo, IVkAllocationCallbacks allocator);
-        VkObjectResult<IReadOnlyList<IVkCommandBuffer>> AllocateCommandBuffers(IVkCommandBufferAllocateInfo allocateInfo);
-        VkObjectResult<IVkFence> CreateFence(IVkFenceCreateInfo createInfo, IVkAllocationCallbacks allocator);
+        VkObjectResult<IVkCommandPool> CreateCommandPool(VkCommandPoolCreateInfo createInfo, VkAllocationCallbacks allocator);
+        VkObjectResult<IReadOnlyList<IVkCommandBuffer>> AllocateCommandBuffers(VkCommandBufferAllocateInfo allocateInfo);
+        VkObjectResult<IVkFence> CreateFence(VkFenceCreateInfo createInfo, VkAllocationCallbacks allocator);
         VkResult ResetFences(IReadOnlyList<IVkFence> fences);
         VkResult WaitForFences(IReadOnlyList<IVkFence> fences, bool waitAll, ulong timeout);
-        VkObjectResult<IVkSemaphore> CreateSemaphore(IVkSemaphoreCreateInfo createInfo, IVkAllocationCallbacks allocator);
-        VkObjectResult<IVkEvent> CreateEvent(IVkEventCreateInfo createInfo, IVkAllocationCallbacks allocator);
-        VkObjectResult<IVkRenderPass> CreateRenderPass(IVkRenderPassCreateInfo createInfo, IVkAllocationCallbacks allocator);
-        VkObjectResult<IVkFramebuffer> CreateFramebuffer(IVkFramebufferCreateInfo createInfo, IVkAllocationCallbacks allocator);
-        VkObjectResult<IVkShaderModule> CreateShaderModule(IVkShaderModuleCreateInfo createInfo, IVkAllocationCallbacks allocator);
-        VkObjectResult<IVkPipeline> CreateComputePipelines(IVkPipelineCache pipelineCache, IReadOnlyList<IVkComputePipelineCreateInfo> createInfos, IVkAllocationCallbacks allocator);
-        VkObjectResult<IVkPipeline> CreateGraphicsPipelines(IVkPipelineCache pipelineCache, IReadOnlyList<IVkGraphicsPipelineCreateInfo> createInfos, IVkAllocationCallbacks allocator);
-        VkObjectResult<IVkPipelineCache> CreatePipelineCache(IVkPipelineCacheCreateInfo createInfo, IVkAllocationCallbacks allocator);
-        VkObjectResult<IVkDeviceMemory> AllocateMemory(IVkMemoryAllocateInfo allocateInfo, IVkAllocationCallbacks allocator);
-        VkResult FlushMappedMemoryRanges(IReadOnlyList<IVkMappedMemoryRange> memoryRanges);
-        VkResult InvalidateMappedMemoryRanges(IReadOnlyList<IVkMappedMemoryRange> memoryRanges);
-        VkObjectResult<IVkBuffer> CreateBuffer(IVkBufferCreateInfo createInfo, IVkAllocationCallbacks allocator);
-        VkObjectResult<IVkBufferView> CreateBufferView(IVkBufferViewCreateInfo createInfo, IVkAllocationCallbacks allocator);
-        VkObjectResult<IVkImage> CreateImage(IVkImageCreateInfo createInfo, IVkAllocationCallbacks allocator);
-        VkObjectResult<IVkImageView> CreateImageView(IVkImageViewCreateInfo createInfo, IVkAllocationCallbacks allocator);
-        VkObjectResult<IVkSampler> CreateSampler(IVkSamplerCreateInfo createInfo, IVkAllocationCallbacks allocator);
-        VkObjectResult<IVkDescriptorSetLayout> CreateDescriptorSetLayout(IVkDescriptorSetLayoutCreateInfo createInfo, IVkAllocationCallbacks allocator);
-        VkObjectResult<IVkPipelineLayout> CreatePipelineLayout(IVkPipelineLayoutCreateInfo createInfo, IVkAllocationCallbacks allocator);
-        VkObjectResult<IVkDescriptorPool> CreateDescriptorPool(IVkDescriptorPoolCreateInfo createInfo, IVkAllocationCallbacks allocator);
-        VkObjectResult<IReadOnlyList<IVkDescriptorSet>> AllocateDescriptorSets(IVkDescriptorSetAllocateInfo allocateInfo);
+        VkObjectResult<IVkSemaphore> CreateSemaphore(VkSemaphoreCreateInfo createInfo, VkAllocationCallbacks allocator);
+        VkObjectResult<IVkEvent> CreateEvent(VkEventCreateInfo createInfo, VkAllocationCallbacks allocator);
+        VkObjectResult<IVkRenderPass> CreateRenderPass(VkRenderPassCreateInfo createInfo, VkAllocationCallbacks allocator);
+        VkObjectResult<IVkFramebuffer> CreateFramebuffer(VkFramebufferCreateInfo createInfo, VkAllocationCallbacks allocator);
+        VkObjectResult<IVkShaderModule> CreateShaderModule(VkShaderModuleCreateInfo createInfo, VkAllocationCallbacks allocator);
+        VkObjectResult<IVkPipeline> CreateComputePipelines(IVkPipelineCache pipelineCache, IReadOnlyList<VkComputePipelineCreateInfo> createInfos, VkAllocationCallbacks allocator);
+        VkObjectResult<IVkPipeline> CreateGraphicsPipelines(IVkPipelineCache pipelineCache, IReadOnlyList<VkGraphicsPipelineCreateInfo> createInfos, VkAllocationCallbacks allocator);
+        VkObjectResult<IVkPipelineCache> CreatePipelineCache(VkPipelineCacheCreateInfo createInfo, VkAllocationCallbacks allocator);
+        VkObjectResult<IVkDeviceMemory> AllocateMemory(VkMemoryAllocateInfo allocateInfo, VkAllocationCallbacks allocator);
+        VkResult FlushMappedMemoryRanges(IReadOnlyList<VkMappedMemoryRange> memoryRanges);
+        VkResult InvalidateMappedMemoryRanges(IReadOnlyList<VkMappedMemoryRange> memoryRanges);
+        VkObjectResult<IVkBuffer> CreateBuffer(VkBufferCreateInfo createInfo, VkAllocationCallbacks allocator);
+        VkObjectResult<IVkBufferView> CreateBufferView(VkBufferViewCreateInfo createInfo, VkAllocationCallbacks allocator);
+        VkObjectResult<IVkImage> CreateImage(VkImageCreateInfo createInfo, VkAllocationCallbacks allocator);
+        VkObjectResult<IVkImageView> CreateImageView(VkImageViewCreateInfo createInfo, VkAllocationCallbacks allocator);
+        VkObjectResult<IVkSampler> CreateSampler(VkSamplerCreateInfo createInfo, VkAllocationCallbacks allocator);
+        VkObjectResult<IVkDescriptorSetLayout> CreateDescriptorSetLayout(VkDescriptorSetLayoutCreateInfo createInfo, VkAllocationCallbacks allocator);
+        VkObjectResult<IVkPipelineLayout> CreatePipelineLayout(VkPipelineLayoutCreateInfo createInfo, VkAllocationCallbacks allocator);
+        VkObjectResult<IVkDescriptorPool> CreateDescriptorPool(VkDescriptorPoolCreateInfo createInfo, VkAllocationCallbacks allocator);
+        VkObjectResult<IReadOnlyList<IVkDescriptorSet>> AllocateDescriptorSets(VkDescriptorSetAllocateInfo allocateInfo);
         VkResult FreeDescriptorSets(IVkDescriptorPool descriptorPool, IReadOnlyList<IVkDescriptorSet> descriptorSets);
-        void UpdateDescriptorSets(IReadOnlyList<IVkWriteDescriptorSet> descriptorWrites, IReadOnlyList<IVkCopyDescriptorSet> descriptorCopies);
-        VkObjectResult<IVkQueryPool> CreateQueryPool(IVkQueryPoolCreateInfo createInfo, IVkAllocationCallbacks allocator);
+        void UpdateDescriptorSets(IReadOnlyList<VkWriteDescriptorSet> descriptorWrites, IReadOnlyList<VkCopyDescriptorSet> descriptorCopies);
+        VkObjectResult<IVkQueryPool> CreateQueryPool(VkQueryPoolCreateInfo createInfo, VkAllocationCallbacks allocator);
         IReadOnlyList<VkSparseImageMemoryRequirements> GetImageSparseMemoryRequirements(IVkImage image);
     }
 
@@ -1099,7 +1099,7 @@ namespace VulkaNet
             return Direct.DeviceWaitIdle(_device);
         }
 
-        public VkObjectResult<IVkCommandPool> CreateCommandPool(IVkCommandPoolCreateInfo createInfo, IVkAllocationCallbacks allocator)
+        public VkObjectResult<IVkCommandPool> CreateCommandPool(VkCommandPoolCreateInfo createInfo, VkAllocationCallbacks allocator)
         {
             var unmanagedSize =
                 createInfo.SizeOfMarshalIndirect() +
@@ -1118,7 +1118,7 @@ namespace VulkaNet
             }
         }
 
-        public VkObjectResult<IReadOnlyList<IVkCommandBuffer>> AllocateCommandBuffers(IVkCommandBufferAllocateInfo allocateInfo)
+        public VkObjectResult<IReadOnlyList<IVkCommandBuffer>> AllocateCommandBuffers(VkCommandBufferAllocateInfo allocateInfo)
         {
             var unmanagedSize =
                 allocateInfo.SizeOfMarshalIndirect();
@@ -1138,7 +1138,7 @@ namespace VulkaNet
             }
         }
 
-        public VkObjectResult<IVkFence> CreateFence(IVkFenceCreateInfo createInfo, IVkAllocationCallbacks allocator)
+        public VkObjectResult<IVkFence> CreateFence(VkFenceCreateInfo createInfo, VkAllocationCallbacks allocator)
         {
             var unmanagedSize =
                 createInfo.SizeOfMarshalIndirect() +
@@ -1189,7 +1189,7 @@ namespace VulkaNet
             }
         }
 
-        public VkObjectResult<IVkSemaphore> CreateSemaphore(IVkSemaphoreCreateInfo createInfo, IVkAllocationCallbacks allocator)
+        public VkObjectResult<IVkSemaphore> CreateSemaphore(VkSemaphoreCreateInfo createInfo, VkAllocationCallbacks allocator)
         {
             var unmanagedSize =
                 createInfo.SizeOfMarshalIndirect() +
@@ -1208,7 +1208,7 @@ namespace VulkaNet
             }
         }
 
-        public VkObjectResult<IVkEvent> CreateEvent(IVkEventCreateInfo createInfo, IVkAllocationCallbacks allocator)
+        public VkObjectResult<IVkEvent> CreateEvent(VkEventCreateInfo createInfo, VkAllocationCallbacks allocator)
         {
             var unmanagedSize =
                 createInfo.SizeOfMarshalIndirect() +
@@ -1227,7 +1227,7 @@ namespace VulkaNet
             }
         }
 
-        public VkObjectResult<IVkRenderPass> CreateRenderPass(IVkRenderPassCreateInfo createInfo, IVkAllocationCallbacks allocator)
+        public VkObjectResult<IVkRenderPass> CreateRenderPass(VkRenderPassCreateInfo createInfo, VkAllocationCallbacks allocator)
         {
             var unmanagedSize =
                 createInfo.SizeOfMarshalIndirect() +
@@ -1246,7 +1246,7 @@ namespace VulkaNet
             }
         }
 
-        public VkObjectResult<IVkFramebuffer> CreateFramebuffer(IVkFramebufferCreateInfo createInfo, IVkAllocationCallbacks allocator)
+        public VkObjectResult<IVkFramebuffer> CreateFramebuffer(VkFramebufferCreateInfo createInfo, VkAllocationCallbacks allocator)
         {
             var unmanagedSize =
                 createInfo.SizeOfMarshalIndirect() +
@@ -1265,7 +1265,7 @@ namespace VulkaNet
             }
         }
 
-        public VkObjectResult<IVkShaderModule> CreateShaderModule(IVkShaderModuleCreateInfo createInfo, IVkAllocationCallbacks allocator)
+        public VkObjectResult<IVkShaderModule> CreateShaderModule(VkShaderModuleCreateInfo createInfo, VkAllocationCallbacks allocator)
         {
             var unmanagedSize =
                 createInfo.SizeOfMarshalIndirect() +
@@ -1284,7 +1284,7 @@ namespace VulkaNet
             }
         }
 
-        public VkObjectResult<IVkPipeline> CreateComputePipelines(IVkPipelineCache pipelineCache, IReadOnlyList<IVkComputePipelineCreateInfo> createInfos, IVkAllocationCallbacks allocator)
+        public VkObjectResult<IVkPipeline> CreateComputePipelines(IVkPipelineCache pipelineCache, IReadOnlyList<VkComputePipelineCreateInfo> createInfos, VkAllocationCallbacks allocator)
         {
             var unmanagedSize =
                 createInfos.SizeOfMarshalDirect() +
@@ -1305,7 +1305,7 @@ namespace VulkaNet
             }
         }
 
-        public VkObjectResult<IVkPipeline> CreateGraphicsPipelines(IVkPipelineCache pipelineCache, IReadOnlyList<IVkGraphicsPipelineCreateInfo> createInfos, IVkAllocationCallbacks allocator)
+        public VkObjectResult<IVkPipeline> CreateGraphicsPipelines(IVkPipelineCache pipelineCache, IReadOnlyList<VkGraphicsPipelineCreateInfo> createInfos, VkAllocationCallbacks allocator)
         {
             var unmanagedSize =
                 createInfos.SizeOfMarshalDirect() +
@@ -1326,7 +1326,7 @@ namespace VulkaNet
             }
         }
 
-        public VkObjectResult<IVkPipelineCache> CreatePipelineCache(IVkPipelineCacheCreateInfo createInfo, IVkAllocationCallbacks allocator)
+        public VkObjectResult<IVkPipelineCache> CreatePipelineCache(VkPipelineCacheCreateInfo createInfo, VkAllocationCallbacks allocator)
         {
             var unmanagedSize =
                 createInfo.SizeOfMarshalIndirect() +
@@ -1345,7 +1345,7 @@ namespace VulkaNet
             }
         }
 
-        public VkObjectResult<IVkDeviceMemory> AllocateMemory(IVkMemoryAllocateInfo allocateInfo, IVkAllocationCallbacks allocator)
+        public VkObjectResult<IVkDeviceMemory> AllocateMemory(VkMemoryAllocateInfo allocateInfo, VkAllocationCallbacks allocator)
         {
             var unmanagedSize =
                 allocateInfo.SizeOfMarshalIndirect() +
@@ -1364,7 +1364,7 @@ namespace VulkaNet
             }
         }
 
-        public VkResult FlushMappedMemoryRanges(IReadOnlyList<IVkMappedMemoryRange> memoryRanges)
+        public VkResult FlushMappedMemoryRanges(IReadOnlyList<VkMappedMemoryRange> memoryRanges)
         {
             var unmanagedSize =
                 memoryRanges.SizeOfMarshalDirect();
@@ -1379,7 +1379,7 @@ namespace VulkaNet
             }
         }
 
-        public VkResult InvalidateMappedMemoryRanges(IReadOnlyList<IVkMappedMemoryRange> memoryRanges)
+        public VkResult InvalidateMappedMemoryRanges(IReadOnlyList<VkMappedMemoryRange> memoryRanges)
         {
             var unmanagedSize =
                 memoryRanges.SizeOfMarshalDirect();
@@ -1394,7 +1394,7 @@ namespace VulkaNet
             }
         }
 
-        public VkObjectResult<IVkBuffer> CreateBuffer(IVkBufferCreateInfo createInfo, IVkAllocationCallbacks allocator)
+        public VkObjectResult<IVkBuffer> CreateBuffer(VkBufferCreateInfo createInfo, VkAllocationCallbacks allocator)
         {
             var unmanagedSize =
                 createInfo.SizeOfMarshalIndirect() +
@@ -1413,7 +1413,7 @@ namespace VulkaNet
             }
         }
 
-        public VkObjectResult<IVkBufferView> CreateBufferView(IVkBufferViewCreateInfo createInfo, IVkAllocationCallbacks allocator)
+        public VkObjectResult<IVkBufferView> CreateBufferView(VkBufferViewCreateInfo createInfo, VkAllocationCallbacks allocator)
         {
             var unmanagedSize =
                 createInfo.SizeOfMarshalIndirect() +
@@ -1432,7 +1432,7 @@ namespace VulkaNet
             }
         }
 
-        public VkObjectResult<IVkImage> CreateImage(IVkImageCreateInfo createInfo, IVkAllocationCallbacks allocator)
+        public VkObjectResult<IVkImage> CreateImage(VkImageCreateInfo createInfo, VkAllocationCallbacks allocator)
         {
             var unmanagedSize =
                 createInfo.SizeOfMarshalIndirect() +
@@ -1451,7 +1451,7 @@ namespace VulkaNet
             }
         }
 
-        public VkObjectResult<IVkImageView> CreateImageView(IVkImageViewCreateInfo createInfo, IVkAllocationCallbacks allocator)
+        public VkObjectResult<IVkImageView> CreateImageView(VkImageViewCreateInfo createInfo, VkAllocationCallbacks allocator)
         {
             var unmanagedSize =
                 createInfo.SizeOfMarshalIndirect() +
@@ -1470,7 +1470,7 @@ namespace VulkaNet
             }
         }
 
-        public VkObjectResult<IVkSampler> CreateSampler(IVkSamplerCreateInfo createInfo, IVkAllocationCallbacks allocator)
+        public VkObjectResult<IVkSampler> CreateSampler(VkSamplerCreateInfo createInfo, VkAllocationCallbacks allocator)
         {
             var unmanagedSize =
                 createInfo.SizeOfMarshalIndirect() +
@@ -1489,7 +1489,7 @@ namespace VulkaNet
             }
         }
 
-        public VkObjectResult<IVkDescriptorSetLayout> CreateDescriptorSetLayout(IVkDescriptorSetLayoutCreateInfo createInfo, IVkAllocationCallbacks allocator)
+        public VkObjectResult<IVkDescriptorSetLayout> CreateDescriptorSetLayout(VkDescriptorSetLayoutCreateInfo createInfo, VkAllocationCallbacks allocator)
         {
             var unmanagedSize =
                 createInfo.SizeOfMarshalIndirect() +
@@ -1508,7 +1508,7 @@ namespace VulkaNet
             }
         }
 
-        public VkObjectResult<IVkPipelineLayout> CreatePipelineLayout(IVkPipelineLayoutCreateInfo createInfo, IVkAllocationCallbacks allocator)
+        public VkObjectResult<IVkPipelineLayout> CreatePipelineLayout(VkPipelineLayoutCreateInfo createInfo, VkAllocationCallbacks allocator)
         {
             var unmanagedSize =
                 createInfo.SizeOfMarshalIndirect() +
@@ -1527,7 +1527,7 @@ namespace VulkaNet
             }
         }
 
-        public VkObjectResult<IVkDescriptorPool> CreateDescriptorPool(IVkDescriptorPoolCreateInfo createInfo, IVkAllocationCallbacks allocator)
+        public VkObjectResult<IVkDescriptorPool> CreateDescriptorPool(VkDescriptorPoolCreateInfo createInfo, VkAllocationCallbacks allocator)
         {
             var unmanagedSize =
                 createInfo.SizeOfMarshalIndirect() +
@@ -1546,7 +1546,7 @@ namespace VulkaNet
             }
         }
 
-        public VkObjectResult<IReadOnlyList<IVkDescriptorSet>> AllocateDescriptorSets(IVkDescriptorSetAllocateInfo allocateInfo)
+        public VkObjectResult<IReadOnlyList<IVkDescriptorSet>> AllocateDescriptorSets(VkDescriptorSetAllocateInfo allocateInfo)
         {
             var unmanagedSize =
                 allocateInfo.SizeOfMarshalIndirect();
@@ -1582,7 +1582,7 @@ namespace VulkaNet
             }
         }
 
-        public void UpdateDescriptorSets(IReadOnlyList<IVkWriteDescriptorSet> descriptorWrites, IReadOnlyList<IVkCopyDescriptorSet> descriptorCopies)
+        public void UpdateDescriptorSets(IReadOnlyList<VkWriteDescriptorSet> descriptorWrites, IReadOnlyList<VkCopyDescriptorSet> descriptorCopies)
         {
             var unmanagedSize =
                 descriptorWrites.SizeOfMarshalDirect() +
@@ -1600,7 +1600,7 @@ namespace VulkaNet
             }
         }
 
-        public VkObjectResult<IVkQueryPool> CreateQueryPool(IVkQueryPoolCreateInfo createInfo, IVkAllocationCallbacks allocator)
+        public VkObjectResult<IVkQueryPool> CreateQueryPool(VkQueryPoolCreateInfo createInfo, VkAllocationCallbacks allocator)
         {
             var unmanagedSize =
                 createInfo.SizeOfMarshalIndirect() +

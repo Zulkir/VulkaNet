@@ -29,23 +29,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkPipelineRasterizationStateCreateInfo
-    {
-        IVkStructWrapper Next { get; }
-        VkPipelineRasterizationStateCreateFlags Flags { get; }
-        bool DepthClampEnable { get; }
-        bool RasterizerDiscardEnable { get; }
-        VkPolygonMode PolygonMode { get; }
-        VkCullModeFlagBits CullMode { get; }
-        VkFrontFace FrontFace { get; }
-        bool DepthBiasEnable { get; }
-        float DepthBiasConstantFactor { get; }
-        float DepthBiasClamp { get; }
-        float DepthBiasSlopeFactor { get; }
-        float LineWidth { get; }
-    }
-
-    public unsafe class VkPipelineRasterizationStateCreateInfo : IVkPipelineRasterizationStateCreateInfo
+    public unsafe class VkPipelineRasterizationStateCreateInfo
     {
         public IVkStructWrapper Next { get; set; }
         public VkPipelineRasterizationStateCreateFlags Flags { get; set; }
@@ -83,7 +67,7 @@ namespace VulkaNet
 
     public static unsafe class VkPipelineRasterizationStateCreateInfoExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkPipelineRasterizationStateCreateInfo s)
+        public static int SizeOfMarshalDirect(this VkPipelineRasterizationStateCreateInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -92,7 +76,7 @@ namespace VulkaNet
                 s.Next.SizeOfMarshalIndirect();
         }
 
-        public static VkPipelineRasterizationStateCreateInfo.Raw MarshalDirect(this IVkPipelineRasterizationStateCreateInfo s, ref byte* unmanaged)
+        public static VkPipelineRasterizationStateCreateInfo.Raw MarshalDirect(this VkPipelineRasterizationStateCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -116,10 +100,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkPipelineRasterizationStateCreateInfo s) =>
+        public static int SizeOfMarshalIndirect(this VkPipelineRasterizationStateCreateInfo s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkPipelineRasterizationStateCreateInfo.Raw.SizeInBytes;
 
-        public static VkPipelineRasterizationStateCreateInfo.Raw* MarshalIndirect(this IVkPipelineRasterizationStateCreateInfo s, ref byte* unmanaged)
+        public static VkPipelineRasterizationStateCreateInfo.Raw* MarshalIndirect(this VkPipelineRasterizationStateCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkPipelineRasterizationStateCreateInfo.Raw*)0;
@@ -129,12 +113,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkPipelineRasterizationStateCreateInfo> list) => 
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkPipelineRasterizationStateCreateInfo> list) => 
             list == null || list.Count == 0 
                 ? 0
                 : sizeof(VkPipelineRasterizationStateCreateInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkPipelineRasterizationStateCreateInfo.Raw* MarshalDirect(this IReadOnlyList<IVkPipelineRasterizationStateCreateInfo> list, ref byte* unmanaged)
+        public static VkPipelineRasterizationStateCreateInfo.Raw* MarshalDirect(this IReadOnlyList<VkPipelineRasterizationStateCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkPipelineRasterizationStateCreateInfo.Raw*)0;
@@ -145,12 +129,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkPipelineRasterizationStateCreateInfo> list) =>
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkPipelineRasterizationStateCreateInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkPipelineRasterizationStateCreateInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkPipelineRasterizationStateCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkPipelineRasterizationStateCreateInfo> list, ref byte* unmanaged)
+        public static VkPipelineRasterizationStateCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<VkPipelineRasterizationStateCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkPipelineRasterizationStateCreateInfo.Raw**)0;

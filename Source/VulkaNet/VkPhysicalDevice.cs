@@ -30,12 +30,12 @@ namespace VulkaNet
 {
     public interface IVkPhysicalDevice : IVkInstanceChild
     {
-        IVkPhysicalDeviceProperties Properties { get; }
+        VkPhysicalDeviceProperties Properties { get; }
         IReadOnlyList<IVkQueueFamilyProperties> QueueFamilyProperties { get; }
-        IVkPhysicalDeviceFeatures Features { get; }
+        VkPhysicalDeviceFeatures Features { get; }
         IVkPhysicalDeviceMemoryProperties MemoryProperties { get; }
         IReadOnlyList<VkSparseImageFormatProperties> GetSparseImageFormatProperties(VkFormat format, VkImageType type, VkSampleCountFlagBits samples, VkImageUsageFlags usage, VkImageTiling tiling);
-        VkObjectResult<IVkDevice> CreateDevice(IVkDeviceCreateInfo createInfo, IVkAllocationCallbacks allocator);
+        VkObjectResult<IVkDevice> CreateDevice(VkDeviceCreateInfo createInfo, IVkAllocationCallbacks allocator);
     }
 
     public unsafe class VkPhysicalDevice : IVkPhysicalDevice
@@ -43,9 +43,9 @@ namespace VulkaNet
         public IVkInstance Instance { get; }
         public IntPtr Handle { get; }
         public DirectFunctions Direct { get; }
-        public IVkPhysicalDeviceProperties Properties { get; }
+        public VkPhysicalDeviceProperties Properties { get; }
         public IReadOnlyList<IVkQueueFamilyProperties> QueueFamilyProperties { get; }
-        public IVkPhysicalDeviceFeatures Features { get; }
+        public VkPhysicalDeviceFeatures Features { get; }
         public IVkPhysicalDeviceMemoryProperties MemoryProperties { get; }
 
         public VkPhysicalDevice(IVkInstance instance, IntPtr handle)
@@ -136,7 +136,7 @@ namespace VulkaNet
             }
         }
         
-        public VkObjectResult<IVkDevice> CreateDevice(IVkDeviceCreateInfo createInfo, IVkAllocationCallbacks allocator)
+        public VkObjectResult<IVkDevice> CreateDevice(VkDeviceCreateInfo createInfo, IVkAllocationCallbacks allocator)
         {
             var size =
                 createInfo.SizeOfMarshalDirect() +
@@ -144,7 +144,7 @@ namespace VulkaNet
             return VkHelpers.RunWithUnamangedData(size, u => CreateDevice(u, createInfo, allocator));
         }
 
-        private VkObjectResult<IVkDevice> CreateDevice(IntPtr data, IVkDeviceCreateInfo createInfo, IVkAllocationCallbacks allocator)
+        private VkObjectResult<IVkDevice> CreateDevice(IntPtr data, VkDeviceCreateInfo createInfo, IVkAllocationCallbacks allocator)
         {
             var unmanaged = (byte*)data;
             var createInfoRaw = createInfo.MarshalDirect(ref unmanaged);
@@ -155,7 +155,7 @@ namespace VulkaNet
             return new VkObjectResult<IVkDevice>(result, device);
         }
 
-        private IVkPhysicalDeviceFeatures GetPhysicalDeviceFeatures()
+        private VkPhysicalDeviceFeatures GetPhysicalDeviceFeatures()
         {
             VkPhysicalDeviceFeatures.Raw raw;
             Direct.GetPhysicalDeviceFeatures(Handle, &raw);

@@ -29,18 +29,11 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkCommandBufferBeginInfo
-    {
-        IVkStructWrapper Next { get; }
-        VkCommandBufferUsageFlags Flags { get; }
-        IVkCommandBufferInheritanceInfo InheritanceInfo { get; }
-    }
-
-    public unsafe class VkCommandBufferBeginInfo : IVkCommandBufferBeginInfo
+    public unsafe class VkCommandBufferBeginInfo
     {
         public IVkStructWrapper Next { get; set; }
         public VkCommandBufferUsageFlags Flags { get; set; }
-        public IVkCommandBufferInheritanceInfo InheritanceInfo { get; set; }
+        public VkCommandBufferInheritanceInfo InheritanceInfo { get; set; }
 
         [StructLayout(LayoutKind.Sequential)]
         public struct Raw
@@ -56,7 +49,7 @@ namespace VulkaNet
 
     public static unsafe class VkCommandBufferBeginInfoExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkCommandBufferBeginInfo s)
+        public static int SizeOfMarshalDirect(this VkCommandBufferBeginInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -66,7 +59,7 @@ namespace VulkaNet
                 s.InheritanceInfo.SizeOfMarshalIndirect();
         }
 
-        public static VkCommandBufferBeginInfo.Raw MarshalDirect(this IVkCommandBufferBeginInfo s, ref byte* unmanaged)
+        public static VkCommandBufferBeginInfo.Raw MarshalDirect(this VkCommandBufferBeginInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -82,10 +75,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkCommandBufferBeginInfo s) =>
+        public static int SizeOfMarshalIndirect(this VkCommandBufferBeginInfo s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkCommandBufferBeginInfo.Raw.SizeInBytes;
 
-        public static VkCommandBufferBeginInfo.Raw* MarshalIndirect(this IVkCommandBufferBeginInfo s, ref byte* unmanaged)
+        public static VkCommandBufferBeginInfo.Raw* MarshalIndirect(this VkCommandBufferBeginInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkCommandBufferBeginInfo.Raw*)0;
@@ -95,12 +88,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkCommandBufferBeginInfo> list) => 
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkCommandBufferBeginInfo> list) => 
             list == null || list.Count == 0 
                 ? 0
                 : sizeof(VkCommandBufferBeginInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkCommandBufferBeginInfo.Raw* MarshalDirect(this IReadOnlyList<IVkCommandBufferBeginInfo> list, ref byte* unmanaged)
+        public static VkCommandBufferBeginInfo.Raw* MarshalDirect(this IReadOnlyList<VkCommandBufferBeginInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkCommandBufferBeginInfo.Raw*)0;
@@ -111,12 +104,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkCommandBufferBeginInfo> list) =>
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkCommandBufferBeginInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkCommandBufferBeginInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkCommandBufferBeginInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkCommandBufferBeginInfo> list, ref byte* unmanaged)
+        public static VkCommandBufferBeginInfo.Raw** MarshalIndirect(this IReadOnlyList<VkCommandBufferBeginInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkCommandBufferBeginInfo.Raw**)0;

@@ -29,18 +29,11 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkDescriptorSetLayoutCreateInfo
-    {
-        IVkStructWrapper Next { get; }
-        VkDescriptorSetLayoutCreateFlags Flags { get; }
-        IReadOnlyList<IVkDescriptorSetLayoutBinding> Bindings { get; }
-    }
-
-    public unsafe class VkDescriptorSetLayoutCreateInfo : IVkDescriptorSetLayoutCreateInfo
+    public unsafe class VkDescriptorSetLayoutCreateInfo
     {
         public IVkStructWrapper Next { get; set; }
         public VkDescriptorSetLayoutCreateFlags Flags { get; set; }
-        public IReadOnlyList<IVkDescriptorSetLayoutBinding> Bindings { get; set; }
+        public IReadOnlyList<VkDescriptorSetLayoutBinding> Bindings { get; set; }
 
         [StructLayout(LayoutKind.Sequential)]
         public struct Raw
@@ -57,7 +50,7 @@ namespace VulkaNet
 
     public static unsafe class VkDescriptorSetLayoutCreateInfoExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkDescriptorSetLayoutCreateInfo s)
+        public static int SizeOfMarshalDirect(this VkDescriptorSetLayoutCreateInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -67,7 +60,7 @@ namespace VulkaNet
                 s.Bindings.SizeOfMarshalDirect();
         }
 
-        public static VkDescriptorSetLayoutCreateInfo.Raw MarshalDirect(this IVkDescriptorSetLayoutCreateInfo s, ref byte* unmanaged)
+        public static VkDescriptorSetLayoutCreateInfo.Raw MarshalDirect(this VkDescriptorSetLayoutCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -84,10 +77,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkDescriptorSetLayoutCreateInfo s) =>
+        public static int SizeOfMarshalIndirect(this VkDescriptorSetLayoutCreateInfo s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkDescriptorSetLayoutCreateInfo.Raw.SizeInBytes;
 
-        public static VkDescriptorSetLayoutCreateInfo.Raw* MarshalIndirect(this IVkDescriptorSetLayoutCreateInfo s, ref byte* unmanaged)
+        public static VkDescriptorSetLayoutCreateInfo.Raw* MarshalIndirect(this VkDescriptorSetLayoutCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkDescriptorSetLayoutCreateInfo.Raw*)0;
@@ -97,12 +90,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkDescriptorSetLayoutCreateInfo> list) => 
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkDescriptorSetLayoutCreateInfo> list) => 
             list == null || list.Count == 0 
                 ? 0
                 : sizeof(VkDescriptorSetLayoutCreateInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkDescriptorSetLayoutCreateInfo.Raw* MarshalDirect(this IReadOnlyList<IVkDescriptorSetLayoutCreateInfo> list, ref byte* unmanaged)
+        public static VkDescriptorSetLayoutCreateInfo.Raw* MarshalDirect(this IReadOnlyList<VkDescriptorSetLayoutCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkDescriptorSetLayoutCreateInfo.Raw*)0;
@@ -113,12 +106,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkDescriptorSetLayoutCreateInfo> list) =>
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkDescriptorSetLayoutCreateInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkDescriptorSetLayoutCreateInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkDescriptorSetLayoutCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkDescriptorSetLayoutCreateInfo> list, ref byte* unmanaged)
+        public static VkDescriptorSetLayoutCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<VkDescriptorSetLayoutCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkDescriptorSetLayoutCreateInfo.Raw**)0;

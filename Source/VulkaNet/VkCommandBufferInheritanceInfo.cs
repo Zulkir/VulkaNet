@@ -29,18 +29,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkCommandBufferInheritanceInfo
-    {
-        IVkStructWrapper Next { get; }
-        IVkRenderPass RenderPass { get; }
-        int Subpass { get; }
-        IVkFramebuffer Framebuffer { get; }
-        bool OcclusionQueryEnable { get; }
-        VkQueryControlFlags QueryFlags { get; }
-        VkQueryPipelineStatisticFlags PipelineStatistics { get; }
-    }
-
-    public unsafe class VkCommandBufferInheritanceInfo : IVkCommandBufferInheritanceInfo
+    public unsafe class VkCommandBufferInheritanceInfo
     {
         public IVkStructWrapper Next { get; set; }
         public IVkRenderPass RenderPass { get; set; }
@@ -68,7 +57,7 @@ namespace VulkaNet
 
     public static unsafe class VkCommandBufferInheritanceInfoExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkCommandBufferInheritanceInfo s)
+        public static int SizeOfMarshalDirect(this VkCommandBufferInheritanceInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -77,7 +66,7 @@ namespace VulkaNet
                 s.Next.SizeOfMarshalIndirect();
         }
 
-        public static VkCommandBufferInheritanceInfo.Raw MarshalDirect(this IVkCommandBufferInheritanceInfo s, ref byte* unmanaged)
+        public static VkCommandBufferInheritanceInfo.Raw MarshalDirect(this VkCommandBufferInheritanceInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -96,10 +85,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkCommandBufferInheritanceInfo s) =>
+        public static int SizeOfMarshalIndirect(this VkCommandBufferInheritanceInfo s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkCommandBufferInheritanceInfo.Raw.SizeInBytes;
 
-        public static VkCommandBufferInheritanceInfo.Raw* MarshalIndirect(this IVkCommandBufferInheritanceInfo s, ref byte* unmanaged)
+        public static VkCommandBufferInheritanceInfo.Raw* MarshalIndirect(this VkCommandBufferInheritanceInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkCommandBufferInheritanceInfo.Raw*)0;
@@ -109,12 +98,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkCommandBufferInheritanceInfo> list) => 
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkCommandBufferInheritanceInfo> list) => 
             list == null || list.Count == 0 
                 ? 0
                 : sizeof(VkCommandBufferInheritanceInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkCommandBufferInheritanceInfo.Raw* MarshalDirect(this IReadOnlyList<IVkCommandBufferInheritanceInfo> list, ref byte* unmanaged)
+        public static VkCommandBufferInheritanceInfo.Raw* MarshalDirect(this IReadOnlyList<VkCommandBufferInheritanceInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkCommandBufferInheritanceInfo.Raw*)0;
@@ -125,12 +114,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkCommandBufferInheritanceInfo> list) =>
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkCommandBufferInheritanceInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkCommandBufferInheritanceInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkCommandBufferInheritanceInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkCommandBufferInheritanceInfo> list, ref byte* unmanaged)
+        public static VkCommandBufferInheritanceInfo.Raw** MarshalIndirect(this IReadOnlyList<VkCommandBufferInheritanceInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkCommandBufferInheritanceInfo.Raw**)0;

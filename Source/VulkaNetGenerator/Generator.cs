@@ -66,15 +66,7 @@ namespace VulkaNetGenerator
                 writer.WriteLine("namespace VulkaNet");
                 using (writer.Curly())
                 {
-                    writer.WriteLine($"public interface IVk{name}");
-                    using (writer.Curly())
-                    {
-                        foreach (var prop in wrapperProperties)
-                            writer.WriteLine($"{prop.TypeStr} {prop.Name} {{ get; }}");
-                    }
-                    writer.WriteLine();
-
-                    writer.WriteLine($"public unsafe class Vk{name} : IVk{name}");
+                    writer.WriteLine($"public unsafe class Vk{name}");
                     using (writer.Curly())
                     {
                         foreach (var prop in wrapperProperties)
@@ -126,7 +118,7 @@ namespace VulkaNetGenerator
                         using (writer.Curly())
                         {
                             var unmanagedProps = wrapperProperties.Where(x => x.MarshalledAsUnmanaged).ToArray();
-                            writer.WriteLine($"public static int SizeOfMarshalDirect(this IVk{name} s)");
+                            writer.WriteLine($"public static int SizeOfMarshalDirect(this Vk{name} s)");
                             using (writer.Curly())
                             {
                                 writer.WriteLine("if (s == null)");
@@ -152,7 +144,7 @@ namespace VulkaNetGenerator
                             }
                             writer.WriteLine();
 
-                            writer.WriteLine($"public static Vk{name}.Raw MarshalDirect(this IVk{name} s, ref byte* unmanaged)");
+                            writer.WriteLine($"public static Vk{name}.Raw MarshalDirect(this Vk{name} s, ref byte* unmanaged)");
                             using (writer.Curly())
                             {
                                 writer.WriteLine("if (s == null)");
@@ -183,13 +175,13 @@ namespace VulkaNetGenerator
                             }
                             writer.WriteLine();
 
-                            writer.WriteLine($"public static int SizeOfMarshalIndirect(this IVk{name} s) =>");
+                            writer.WriteLine($"public static int SizeOfMarshalIndirect(this Vk{name} s) =>");
                             writer.Tab();
                             writer.WriteLine($"s == null ? 0 : s.SizeOfMarshalDirect() + Vk{name}.Raw.SizeInBytes;");
                             writer.UnTab();
                             writer.WriteLine();
 
-                            writer.WriteLine($"public static Vk{name}.Raw* MarshalIndirect(this IVk{name} s, ref byte* unmanaged)");
+                            writer.WriteLine($"public static Vk{name}.Raw* MarshalIndirect(this Vk{name} s, ref byte* unmanaged)");
                             using (writer.Curly())
                             {
                                 writer.WriteLine("if (s == null)");
@@ -203,7 +195,7 @@ namespace VulkaNetGenerator
                             }
                             writer.WriteLine();
 
-                            writer.WriteLine($"public static int SizeOfMarshalDirect(this IReadOnlyList<IVk{name}> list) => ");
+                            writer.WriteLine($"public static int SizeOfMarshalDirect(this IReadOnlyList<Vk{name}> list) => ");
                             writer.Tab();
                             writer.WriteLine("list == null || list.Count == 0 ");
                             writer.Tab();
@@ -213,7 +205,7 @@ namespace VulkaNetGenerator
                             writer.UnTab();
                             writer.WriteLine();
 
-                            writer.WriteLine($"public static Vk{name}.Raw* MarshalDirect(this IReadOnlyList<IVk{name}> list, ref byte* unmanaged)");
+                            writer.WriteLine($"public static Vk{name}.Raw* MarshalDirect(this IReadOnlyList<Vk{name}> list, ref byte* unmanaged)");
                             using (writer.Curly())
                             {
                                 writer.WriteLine("if (list == null || list.Count == 0)");
@@ -230,7 +222,7 @@ namespace VulkaNetGenerator
                             }
                             writer.WriteLine();
 
-                            writer.WriteLine($"public static int SizeOfMarshalIndirect(this IReadOnlyList<IVk{name}> list) =>");
+                            writer.WriteLine($"public static int SizeOfMarshalIndirect(this IReadOnlyList<Vk{name}> list) =>");
                             writer.Tab();
                             writer.WriteLine("list == null || list.Count == 0");
                             writer.Tab();
@@ -240,7 +232,7 @@ namespace VulkaNetGenerator
                             writer.UnTab();
                             writer.WriteLine();
 
-                            writer.WriteLine($"public static Vk{name}.Raw** MarshalIndirect(this IReadOnlyList<IVk{name}> list, ref byte* unmanaged)");
+                            writer.WriteLine($"public static Vk{name}.Raw** MarshalIndirect(this IReadOnlyList<Vk{name}> list, ref byte* unmanaged)");
                             using (writer.Curly())
                             {
                                 writer.WriteLine("if (list == null || list.Count == 0)");

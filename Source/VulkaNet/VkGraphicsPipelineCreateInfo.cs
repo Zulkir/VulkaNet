@@ -29,41 +29,20 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkGraphicsPipelineCreateInfo
-    {
-        IVkStructWrapper Next { get; }
-        VkPipelineCreateFlags Flags { get; }
-        IReadOnlyList<IVkPipelineShaderStageCreateInfo> Stages { get; }
-        IVkPipelineVertexInputStateCreateInfo VertexInputState { get; }
-        IVkPipelineInputAssemblyStateCreateInfo InputAssemblyState { get; }
-        IVkPipelineTessellationStateCreateInfo TessellationState { get; }
-        IVkPipelineViewportStateCreateInfo ViewportState { get; }
-        IVkPipelineRasterizationStateCreateInfo RasterizationState { get; }
-        IVkPipelineMultisampleStateCreateInfo MultisampleState { get; }
-        IVkPipelineDepthStencilStateCreateInfo DepthStencilState { get; }
-        IVkPipelineColorBlendStateCreateInfo ColorBlendState { get; }
-        IVkPipelineDynamicStateCreateInfo DynamicState { get; }
-        IVkPipelineLayout Layout { get; }
-        IVkRenderPass RenderPass { get; }
-        int Subpass { get; }
-        IVkPipeline BasePipelineHandle { get; }
-        int BasePipelineIndex { get; }
-    }
-
-    public unsafe class VkGraphicsPipelineCreateInfo : IVkGraphicsPipelineCreateInfo
+    public unsafe class VkGraphicsPipelineCreateInfo
     {
         public IVkStructWrapper Next { get; set; }
         public VkPipelineCreateFlags Flags { get; set; }
-        public IReadOnlyList<IVkPipelineShaderStageCreateInfo> Stages { get; set; }
-        public IVkPipelineVertexInputStateCreateInfo VertexInputState { get; set; }
-        public IVkPipelineInputAssemblyStateCreateInfo InputAssemblyState { get; set; }
-        public IVkPipelineTessellationStateCreateInfo TessellationState { get; set; }
-        public IVkPipelineViewportStateCreateInfo ViewportState { get; set; }
-        public IVkPipelineRasterizationStateCreateInfo RasterizationState { get; set; }
-        public IVkPipelineMultisampleStateCreateInfo MultisampleState { get; set; }
-        public IVkPipelineDepthStencilStateCreateInfo DepthStencilState { get; set; }
-        public IVkPipelineColorBlendStateCreateInfo ColorBlendState { get; set; }
-        public IVkPipelineDynamicStateCreateInfo DynamicState { get; set; }
+        public IReadOnlyList<VkPipelineShaderStageCreateInfo> Stages { get; set; }
+        public VkPipelineVertexInputStateCreateInfo VertexInputState { get; set; }
+        public VkPipelineInputAssemblyStateCreateInfo InputAssemblyState { get; set; }
+        public VkPipelineTessellationStateCreateInfo TessellationState { get; set; }
+        public VkPipelineViewportStateCreateInfo ViewportState { get; set; }
+        public VkPipelineRasterizationStateCreateInfo RasterizationState { get; set; }
+        public VkPipelineMultisampleStateCreateInfo MultisampleState { get; set; }
+        public VkPipelineDepthStencilStateCreateInfo DepthStencilState { get; set; }
+        public VkPipelineColorBlendStateCreateInfo ColorBlendState { get; set; }
+        public VkPipelineDynamicStateCreateInfo DynamicState { get; set; }
         public IVkPipelineLayout Layout { get; set; }
         public IVkRenderPass RenderPass { get; set; }
         public int Subpass { get; set; }
@@ -99,7 +78,7 @@ namespace VulkaNet
 
     public static unsafe class VkGraphicsPipelineCreateInfoExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkGraphicsPipelineCreateInfo s)
+        public static int SizeOfMarshalDirect(this VkGraphicsPipelineCreateInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -118,7 +97,7 @@ namespace VulkaNet
                 s.DynamicState.SizeOfMarshalIndirect();
         }
 
-        public static VkGraphicsPipelineCreateInfo.Raw MarshalDirect(this IVkGraphicsPipelineCreateInfo s, ref byte* unmanaged)
+        public static VkGraphicsPipelineCreateInfo.Raw MarshalDirect(this VkGraphicsPipelineCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -158,10 +137,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkGraphicsPipelineCreateInfo s) =>
+        public static int SizeOfMarshalIndirect(this VkGraphicsPipelineCreateInfo s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkGraphicsPipelineCreateInfo.Raw.SizeInBytes;
 
-        public static VkGraphicsPipelineCreateInfo.Raw* MarshalIndirect(this IVkGraphicsPipelineCreateInfo s, ref byte* unmanaged)
+        public static VkGraphicsPipelineCreateInfo.Raw* MarshalIndirect(this VkGraphicsPipelineCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkGraphicsPipelineCreateInfo.Raw*)0;
@@ -171,12 +150,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkGraphicsPipelineCreateInfo> list) => 
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkGraphicsPipelineCreateInfo> list) => 
             list == null || list.Count == 0 
                 ? 0
                 : sizeof(VkGraphicsPipelineCreateInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkGraphicsPipelineCreateInfo.Raw* MarshalDirect(this IReadOnlyList<IVkGraphicsPipelineCreateInfo> list, ref byte* unmanaged)
+        public static VkGraphicsPipelineCreateInfo.Raw* MarshalDirect(this IReadOnlyList<VkGraphicsPipelineCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkGraphicsPipelineCreateInfo.Raw*)0;
@@ -187,12 +166,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkGraphicsPipelineCreateInfo> list) =>
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkGraphicsPipelineCreateInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkGraphicsPipelineCreateInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkGraphicsPipelineCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkGraphicsPipelineCreateInfo> list, ref byte* unmanaged)
+        public static VkGraphicsPipelineCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<VkGraphicsPipelineCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkGraphicsPipelineCreateInfo.Raw**)0;

@@ -29,16 +29,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkQueryPoolCreateInfo
-    {
-        IVkStructWrapper Next { get; }
-        VkQueryPoolCreateFlags Flags { get; }
-        VkQueryType QueryType { get; }
-        int QueryCount { get; }
-        VkQueryPipelineStatisticFlags PipelineStatistics { get; }
-    }
-
-    public unsafe class VkQueryPoolCreateInfo : IVkQueryPoolCreateInfo
+    public unsafe class VkQueryPoolCreateInfo
     {
         public IVkStructWrapper Next { get; set; }
         public VkQueryPoolCreateFlags Flags { get; set; }
@@ -62,7 +53,7 @@ namespace VulkaNet
 
     public static unsafe class VkQueryPoolCreateInfoExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkQueryPoolCreateInfo s)
+        public static int SizeOfMarshalDirect(this VkQueryPoolCreateInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -71,7 +62,7 @@ namespace VulkaNet
                 s.Next.SizeOfMarshalIndirect();
         }
 
-        public static VkQueryPoolCreateInfo.Raw MarshalDirect(this IVkQueryPoolCreateInfo s, ref byte* unmanaged)
+        public static VkQueryPoolCreateInfo.Raw MarshalDirect(this VkQueryPoolCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -88,10 +79,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkQueryPoolCreateInfo s) =>
+        public static int SizeOfMarshalIndirect(this VkQueryPoolCreateInfo s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkQueryPoolCreateInfo.Raw.SizeInBytes;
 
-        public static VkQueryPoolCreateInfo.Raw* MarshalIndirect(this IVkQueryPoolCreateInfo s, ref byte* unmanaged)
+        public static VkQueryPoolCreateInfo.Raw* MarshalIndirect(this VkQueryPoolCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkQueryPoolCreateInfo.Raw*)0;
@@ -101,12 +92,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkQueryPoolCreateInfo> list) => 
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkQueryPoolCreateInfo> list) => 
             list == null || list.Count == 0 
                 ? 0
                 : sizeof(VkQueryPoolCreateInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkQueryPoolCreateInfo.Raw* MarshalDirect(this IReadOnlyList<IVkQueryPoolCreateInfo> list, ref byte* unmanaged)
+        public static VkQueryPoolCreateInfo.Raw* MarshalDirect(this IReadOnlyList<VkQueryPoolCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkQueryPoolCreateInfo.Raw*)0;
@@ -117,12 +108,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkQueryPoolCreateInfo> list) =>
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkQueryPoolCreateInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkQueryPoolCreateInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkQueryPoolCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkQueryPoolCreateInfo> list, ref byte* unmanaged)
+        public static VkQueryPoolCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<VkQueryPoolCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkQueryPoolCreateInfo.Raw**)0;

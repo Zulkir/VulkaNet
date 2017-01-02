@@ -29,17 +29,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkBufferViewCreateInfo
-    {
-        IVkStructWrapper Next { get; }
-        VkBufferViewCreateFlags Flags { get; }
-        IVkBuffer Buffer { get; }
-        VkFormat Format { get; }
-        ulong Offset { get; }
-        ulong Range { get; }
-    }
-
-    public unsafe class VkBufferViewCreateInfo : IVkBufferViewCreateInfo
+    public unsafe class VkBufferViewCreateInfo
     {
         public IVkStructWrapper Next { get; set; }
         public VkBufferViewCreateFlags Flags { get; set; }
@@ -65,7 +55,7 @@ namespace VulkaNet
 
     public static unsafe class VkBufferViewCreateInfoExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkBufferViewCreateInfo s)
+        public static int SizeOfMarshalDirect(this VkBufferViewCreateInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -74,7 +64,7 @@ namespace VulkaNet
                 s.Next.SizeOfMarshalIndirect();
         }
 
-        public static VkBufferViewCreateInfo.Raw MarshalDirect(this IVkBufferViewCreateInfo s, ref byte* unmanaged)
+        public static VkBufferViewCreateInfo.Raw MarshalDirect(this VkBufferViewCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -92,10 +82,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkBufferViewCreateInfo s) =>
+        public static int SizeOfMarshalIndirect(this VkBufferViewCreateInfo s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkBufferViewCreateInfo.Raw.SizeInBytes;
 
-        public static VkBufferViewCreateInfo.Raw* MarshalIndirect(this IVkBufferViewCreateInfo s, ref byte* unmanaged)
+        public static VkBufferViewCreateInfo.Raw* MarshalIndirect(this VkBufferViewCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkBufferViewCreateInfo.Raw*)0;
@@ -105,12 +95,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkBufferViewCreateInfo> list) => 
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkBufferViewCreateInfo> list) => 
             list == null || list.Count == 0 
                 ? 0
                 : sizeof(VkBufferViewCreateInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkBufferViewCreateInfo.Raw* MarshalDirect(this IReadOnlyList<IVkBufferViewCreateInfo> list, ref byte* unmanaged)
+        public static VkBufferViewCreateInfo.Raw* MarshalDirect(this IReadOnlyList<VkBufferViewCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkBufferViewCreateInfo.Raw*)0;
@@ -121,12 +111,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkBufferViewCreateInfo> list) =>
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkBufferViewCreateInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkBufferViewCreateInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkBufferViewCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkBufferViewCreateInfo> list, ref byte* unmanaged)
+        public static VkBufferViewCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<VkBufferViewCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkBufferViewCreateInfo.Raw**)0;

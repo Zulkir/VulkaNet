@@ -29,14 +29,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkDescriptorBufferInfo
-    {
-        IVkSampler Sampler { get; }
-        IVkImageView ImageView { get; }
-        VkImageLayout ImageLayout { get; }
-    }
-
-    public unsafe class VkDescriptorBufferInfo : IVkDescriptorBufferInfo
+    public unsafe class VkDescriptorBufferInfo
     {
         public IVkSampler Sampler { get; set; }
         public IVkImageView ImageView { get; set; }
@@ -55,7 +48,7 @@ namespace VulkaNet
 
     public static unsafe class VkDescriptorBufferInfoExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkDescriptorBufferInfo s)
+        public static int SizeOfMarshalDirect(this VkDescriptorBufferInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -63,7 +56,7 @@ namespace VulkaNet
             return 0;
         }
 
-        public static VkDescriptorBufferInfo.Raw MarshalDirect(this IVkDescriptorBufferInfo s, ref byte* unmanaged)
+        public static VkDescriptorBufferInfo.Raw MarshalDirect(this VkDescriptorBufferInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -76,10 +69,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkDescriptorBufferInfo s) =>
+        public static int SizeOfMarshalIndirect(this VkDescriptorBufferInfo s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkDescriptorBufferInfo.Raw.SizeInBytes;
 
-        public static VkDescriptorBufferInfo.Raw* MarshalIndirect(this IVkDescriptorBufferInfo s, ref byte* unmanaged)
+        public static VkDescriptorBufferInfo.Raw* MarshalIndirect(this VkDescriptorBufferInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkDescriptorBufferInfo.Raw*)0;
@@ -89,12 +82,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkDescriptorBufferInfo> list) => 
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkDescriptorBufferInfo> list) => 
             list == null || list.Count == 0 
                 ? 0
                 : sizeof(VkDescriptorBufferInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkDescriptorBufferInfo.Raw* MarshalDirect(this IReadOnlyList<IVkDescriptorBufferInfo> list, ref byte* unmanaged)
+        public static VkDescriptorBufferInfo.Raw* MarshalDirect(this IReadOnlyList<VkDescriptorBufferInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkDescriptorBufferInfo.Raw*)0;
@@ -105,12 +98,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkDescriptorBufferInfo> list) =>
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkDescriptorBufferInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkDescriptorBufferInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkDescriptorBufferInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkDescriptorBufferInfo> list, ref byte* unmanaged)
+        public static VkDescriptorBufferInfo.Raw** MarshalIndirect(this IReadOnlyList<VkDescriptorBufferInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkDescriptorBufferInfo.Raw**)0;

@@ -29,15 +29,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkDeviceQueueCreateInfo
-    {
-        IVkStructWrapper Next { get; }
-        VkDeviceQueueCreateFlags Flags { get; }
-        int QueueFamilyIndex { get; }
-        IReadOnlyList<float> QueuePriorities { get; }
-    }
-
-    public unsafe class VkDeviceQueueCreateInfo : IVkDeviceQueueCreateInfo
+    public unsafe class VkDeviceQueueCreateInfo
     {
         public IVkStructWrapper Next { get; set; }
         public VkDeviceQueueCreateFlags Flags { get; set; }
@@ -60,7 +52,7 @@ namespace VulkaNet
 
     public static unsafe class VkDeviceQueueCreateInfoExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkDeviceQueueCreateInfo s)
+        public static int SizeOfMarshalDirect(this VkDeviceQueueCreateInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -70,7 +62,7 @@ namespace VulkaNet
                 s.QueuePriorities.SizeOfMarshalDirect();
         }
 
-        public static VkDeviceQueueCreateInfo.Raw MarshalDirect(this IVkDeviceQueueCreateInfo s, ref byte* unmanaged)
+        public static VkDeviceQueueCreateInfo.Raw MarshalDirect(this VkDeviceQueueCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -88,10 +80,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkDeviceQueueCreateInfo s) =>
+        public static int SizeOfMarshalIndirect(this VkDeviceQueueCreateInfo s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkDeviceQueueCreateInfo.Raw.SizeInBytes;
 
-        public static VkDeviceQueueCreateInfo.Raw* MarshalIndirect(this IVkDeviceQueueCreateInfo s, ref byte* unmanaged)
+        public static VkDeviceQueueCreateInfo.Raw* MarshalIndirect(this VkDeviceQueueCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkDeviceQueueCreateInfo.Raw*)0;
@@ -101,12 +93,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkDeviceQueueCreateInfo> list) => 
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkDeviceQueueCreateInfo> list) => 
             list == null || list.Count == 0 
                 ? 0
                 : sizeof(VkDeviceQueueCreateInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkDeviceQueueCreateInfo.Raw* MarshalDirect(this IReadOnlyList<IVkDeviceQueueCreateInfo> list, ref byte* unmanaged)
+        public static VkDeviceQueueCreateInfo.Raw* MarshalDirect(this IReadOnlyList<VkDeviceQueueCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkDeviceQueueCreateInfo.Raw*)0;
@@ -117,12 +109,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkDeviceQueueCreateInfo> list) =>
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkDeviceQueueCreateInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkDeviceQueueCreateInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkDeviceQueueCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkDeviceQueueCreateInfo> list, ref byte* unmanaged)
+        public static VkDeviceQueueCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<VkDeviceQueueCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkDeviceQueueCreateInfo.Raw**)0;

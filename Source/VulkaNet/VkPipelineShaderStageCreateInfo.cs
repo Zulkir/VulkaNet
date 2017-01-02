@@ -29,24 +29,14 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkPipelineShaderStageCreateInfo
-    {
-        IVkStructWrapper Next { get; }
-        VkPipelineShaderStageCreateFlags Flags { get; }
-        VkShaderStageFlagBits Stage { get; }
-        IVkShaderModule Module { get; }
-        string Name { get; }
-        IVkSpecializationInfo SpecializationInfo { get; }
-    }
-
-    public unsafe class VkPipelineShaderStageCreateInfo : IVkPipelineShaderStageCreateInfo
+    public unsafe class VkPipelineShaderStageCreateInfo
     {
         public IVkStructWrapper Next { get; set; }
         public VkPipelineShaderStageCreateFlags Flags { get; set; }
         public VkShaderStageFlagBits Stage { get; set; }
         public IVkShaderModule Module { get; set; }
         public string Name { get; set; }
-        public IVkSpecializationInfo SpecializationInfo { get; set; }
+        public VkSpecializationInfo SpecializationInfo { get; set; }
 
         [StructLayout(LayoutKind.Sequential)]
         public struct Raw
@@ -65,7 +55,7 @@ namespace VulkaNet
 
     public static unsafe class VkPipelineShaderStageCreateInfoExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkPipelineShaderStageCreateInfo s)
+        public static int SizeOfMarshalDirect(this VkPipelineShaderStageCreateInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -76,7 +66,7 @@ namespace VulkaNet
                 s.SpecializationInfo.SizeOfMarshalIndirect();
         }
 
-        public static VkPipelineShaderStageCreateInfo.Raw MarshalDirect(this IVkPipelineShaderStageCreateInfo s, ref byte* unmanaged)
+        public static VkPipelineShaderStageCreateInfo.Raw MarshalDirect(this VkPipelineShaderStageCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -96,10 +86,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkPipelineShaderStageCreateInfo s) =>
+        public static int SizeOfMarshalIndirect(this VkPipelineShaderStageCreateInfo s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkPipelineShaderStageCreateInfo.Raw.SizeInBytes;
 
-        public static VkPipelineShaderStageCreateInfo.Raw* MarshalIndirect(this IVkPipelineShaderStageCreateInfo s, ref byte* unmanaged)
+        public static VkPipelineShaderStageCreateInfo.Raw* MarshalIndirect(this VkPipelineShaderStageCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkPipelineShaderStageCreateInfo.Raw*)0;
@@ -109,12 +99,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkPipelineShaderStageCreateInfo> list) => 
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkPipelineShaderStageCreateInfo> list) => 
             list == null || list.Count == 0 
                 ? 0
                 : sizeof(VkPipelineShaderStageCreateInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkPipelineShaderStageCreateInfo.Raw* MarshalDirect(this IReadOnlyList<IVkPipelineShaderStageCreateInfo> list, ref byte* unmanaged)
+        public static VkPipelineShaderStageCreateInfo.Raw* MarshalDirect(this IReadOnlyList<VkPipelineShaderStageCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkPipelineShaderStageCreateInfo.Raw*)0;
@@ -125,12 +115,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkPipelineShaderStageCreateInfo> list) =>
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkPipelineShaderStageCreateInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkPipelineShaderStageCreateInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkPipelineShaderStageCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkPipelineShaderStageCreateInfo> list, ref byte* unmanaged)
+        public static VkPipelineShaderStageCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<VkPipelineShaderStageCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkPipelineShaderStageCreateInfo.Raw**)0;

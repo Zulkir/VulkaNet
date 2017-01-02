@@ -29,15 +29,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkPipelineViewportStateCreateInfo
-    {
-        IVkStructWrapper Next { get; }
-        VkPipelineViewportStateCreateFlags Flags { get; }
-        IReadOnlyList<VkViewport> Viewports { get; }
-        IReadOnlyList<VkRect2D> Scissors { get; }
-    }
-
-    public unsafe class VkPipelineViewportStateCreateInfo : IVkPipelineViewportStateCreateInfo
+    public unsafe class VkPipelineViewportStateCreateInfo
     {
         public IVkStructWrapper Next { get; set; }
         public VkPipelineViewportStateCreateFlags Flags { get; set; }
@@ -61,7 +53,7 @@ namespace VulkaNet
 
     public static unsafe class VkPipelineViewportStateCreateInfoExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkPipelineViewportStateCreateInfo s)
+        public static int SizeOfMarshalDirect(this VkPipelineViewportStateCreateInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -72,7 +64,7 @@ namespace VulkaNet
                 s.Scissors.SizeOfMarshalDirect();
         }
 
-        public static VkPipelineViewportStateCreateInfo.Raw MarshalDirect(this IVkPipelineViewportStateCreateInfo s, ref byte* unmanaged)
+        public static VkPipelineViewportStateCreateInfo.Raw MarshalDirect(this VkPipelineViewportStateCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -92,10 +84,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkPipelineViewportStateCreateInfo s) =>
+        public static int SizeOfMarshalIndirect(this VkPipelineViewportStateCreateInfo s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkPipelineViewportStateCreateInfo.Raw.SizeInBytes;
 
-        public static VkPipelineViewportStateCreateInfo.Raw* MarshalIndirect(this IVkPipelineViewportStateCreateInfo s, ref byte* unmanaged)
+        public static VkPipelineViewportStateCreateInfo.Raw* MarshalIndirect(this VkPipelineViewportStateCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkPipelineViewportStateCreateInfo.Raw*)0;
@@ -105,12 +97,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkPipelineViewportStateCreateInfo> list) => 
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkPipelineViewportStateCreateInfo> list) => 
             list == null || list.Count == 0 
                 ? 0
                 : sizeof(VkPipelineViewportStateCreateInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkPipelineViewportStateCreateInfo.Raw* MarshalDirect(this IReadOnlyList<IVkPipelineViewportStateCreateInfo> list, ref byte* unmanaged)
+        public static VkPipelineViewportStateCreateInfo.Raw* MarshalDirect(this IReadOnlyList<VkPipelineViewportStateCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkPipelineViewportStateCreateInfo.Raw*)0;
@@ -121,12 +113,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkPipelineViewportStateCreateInfo> list) =>
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkPipelineViewportStateCreateInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkPipelineViewportStateCreateInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkPipelineViewportStateCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkPipelineViewportStateCreateInfo> list, ref byte* unmanaged)
+        public static VkPipelineViewportStateCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<VkPipelineViewportStateCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkPipelineViewportStateCreateInfo.Raw**)0;

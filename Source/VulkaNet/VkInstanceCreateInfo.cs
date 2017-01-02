@@ -29,20 +29,11 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkInstanceCreateInfo
-    {
-        IVkStructWrapper Next { get; }
-        VkInstanceCreateFlags Flags { get; }
-        IVkApplicationInfo ApplicationInfo { get; }
-        IReadOnlyList<string> EnabledLayerNames { get; }
-        IReadOnlyList<string> EnabledExtensionNames { get; }
-    }
-
-    public unsafe class VkInstanceCreateInfo : IVkInstanceCreateInfo
+    public unsafe class VkInstanceCreateInfo
     {
         public IVkStructWrapper Next { get; set; }
         public VkInstanceCreateFlags Flags { get; set; }
-        public IVkApplicationInfo ApplicationInfo { get; set; }
+        public VkApplicationInfo ApplicationInfo { get; set; }
         public IReadOnlyList<string> EnabledLayerNames { get; set; }
         public IReadOnlyList<string> EnabledExtensionNames { get; set; }
 
@@ -64,7 +55,7 @@ namespace VulkaNet
 
     public static unsafe class VkInstanceCreateInfoExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkInstanceCreateInfo s)
+        public static int SizeOfMarshalDirect(this VkInstanceCreateInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -76,7 +67,7 @@ namespace VulkaNet
                 s.EnabledExtensionNames.SizeOfMarshalIndirect();
         }
 
-        public static VkInstanceCreateInfo.Raw MarshalDirect(this IVkInstanceCreateInfo s, ref byte* unmanaged)
+        public static VkInstanceCreateInfo.Raw MarshalDirect(this VkInstanceCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -98,10 +89,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkInstanceCreateInfo s) =>
+        public static int SizeOfMarshalIndirect(this VkInstanceCreateInfo s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkInstanceCreateInfo.Raw.SizeInBytes;
 
-        public static VkInstanceCreateInfo.Raw* MarshalIndirect(this IVkInstanceCreateInfo s, ref byte* unmanaged)
+        public static VkInstanceCreateInfo.Raw* MarshalIndirect(this VkInstanceCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkInstanceCreateInfo.Raw*)0;
@@ -111,12 +102,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkInstanceCreateInfo> list) => 
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkInstanceCreateInfo> list) => 
             list == null || list.Count == 0 
                 ? 0
                 : sizeof(VkInstanceCreateInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkInstanceCreateInfo.Raw* MarshalDirect(this IReadOnlyList<IVkInstanceCreateInfo> list, ref byte* unmanaged)
+        public static VkInstanceCreateInfo.Raw* MarshalDirect(this IReadOnlyList<VkInstanceCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkInstanceCreateInfo.Raw*)0;
@@ -127,12 +118,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkInstanceCreateInfo> list) =>
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkInstanceCreateInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkInstanceCreateInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkInstanceCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkInstanceCreateInfo> list, ref byte* unmanaged)
+        public static VkInstanceCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<VkInstanceCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkInstanceCreateInfo.Raw**)0;

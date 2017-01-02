@@ -31,14 +31,14 @@ namespace VulkaNet
     {
         VkCommandBuffer.HandleType Handle { get; }
         VkResult Reset(VkCommandBufferResetFlags flags);
-        VkResult Begin(IVkCommandBufferBeginInfo beginInfo);
+        VkResult Begin(VkCommandBufferBeginInfo beginInfo);
         VkResult End();
         void CmdExecuteCommands(IReadOnlyList<IVkCommandBuffer> commandBuffers);
         void CmdSetEvent(IVkEvent eventObj, VkPipelineStageFlags stageMask);
         void CmdResetEvent(IVkEvent eventObj, VkPipelineStageFlags stageMask);
-        void CmdWaitEvents(IReadOnlyList<IVkEvent> events, VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, IReadOnlyList<IVkMemoryBarrier> memoryBarriers, IReadOnlyList<IVkBufferMemoryBarrier> bufferMemoryBarriers, IReadOnlyList<IVkImageMemoryBarrier> imageMemoryBarriers);
-        void CmdPipelineBarrier(VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags, IReadOnlyList<IVkMemoryBarrier> memoryBarriers, IReadOnlyList<IVkBufferMemoryBarrier> bufferMemoryBarriers, IReadOnlyList<IVkImageMemoryBarrier> imageMemoryBarriers);
-        void CmdBeginRenderPass(IVkRenderPassBeginInfo renderPassBegin, VkSubpassContents contents);
+        void CmdWaitEvents(IReadOnlyList<IVkEvent> events, VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, IReadOnlyList<VkMemoryBarrier> memoryBarriers, IReadOnlyList<VkBufferMemoryBarrier> bufferMemoryBarriers, IReadOnlyList<VkImageMemoryBarrier> imageMemoryBarriers);
+        void CmdPipelineBarrier(VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags, IReadOnlyList<VkMemoryBarrier> memoryBarriers, IReadOnlyList<VkBufferMemoryBarrier> bufferMemoryBarriers, IReadOnlyList<VkImageMemoryBarrier> imageMemoryBarriers);
+        void CmdBeginRenderPass(VkRenderPassBeginInfo renderPassBegin, VkSubpassContents contents);
         void CmdNextSubpass(VkSubpassContents contents);
         void CmdBindPipeline(VkPipelineBindPoint pipelineBindPoint, IVkPipeline pipeline);
         void CmdBindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, IVkPipelineLayout layout, int firstSet, IReadOnlyList<IVkDescriptorSet> descriptorSets, IReadOnlyList<int> dynamicOffsets);
@@ -109,7 +109,7 @@ namespace VulkaNet
             return Direct.ResetCommandBuffer(_commandBuffer, _flags);
         }
 
-        public VkResult Begin(IVkCommandBufferBeginInfo beginInfo)
+        public VkResult Begin(VkCommandBufferBeginInfo beginInfo)
         {
             var unmanagedSize =
                 beginInfo.SizeOfMarshalIndirect();
@@ -160,7 +160,7 @@ namespace VulkaNet
             Direct.CmdResetEvent(_commandBuffer, _eventObj, _stageMask);
         }
 
-        public void CmdWaitEvents(IReadOnlyList<IVkEvent> events, VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, IReadOnlyList<IVkMemoryBarrier> memoryBarriers, IReadOnlyList<IVkBufferMemoryBarrier> bufferMemoryBarriers, IReadOnlyList<IVkImageMemoryBarrier> imageMemoryBarriers)
+        public void CmdWaitEvents(IReadOnlyList<IVkEvent> events, VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, IReadOnlyList<VkMemoryBarrier> memoryBarriers, IReadOnlyList<VkBufferMemoryBarrier> bufferMemoryBarriers, IReadOnlyList<VkImageMemoryBarrier> imageMemoryBarriers)
         {
             var unmanagedSize =
                 events.SizeOfMarshalDirect() +
@@ -186,7 +186,7 @@ namespace VulkaNet
             }
         }
 
-        public void CmdPipelineBarrier(VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags, IReadOnlyList<IVkMemoryBarrier> memoryBarriers, IReadOnlyList<IVkBufferMemoryBarrier> bufferMemoryBarriers, IReadOnlyList<IVkImageMemoryBarrier> imageMemoryBarriers)
+        public void CmdPipelineBarrier(VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags, IReadOnlyList<VkMemoryBarrier> memoryBarriers, IReadOnlyList<VkBufferMemoryBarrier> bufferMemoryBarriers, IReadOnlyList<VkImageMemoryBarrier> imageMemoryBarriers)
         {
             var unmanagedSize =
                 memoryBarriers.SizeOfMarshalDirect() +
@@ -210,7 +210,7 @@ namespace VulkaNet
             }
         }
 
-        public void CmdBeginRenderPass(IVkRenderPassBeginInfo renderPassBegin, VkSubpassContents contents)
+        public void CmdBeginRenderPass(VkRenderPassBeginInfo renderPassBegin, VkSubpassContents contents)
         {
             var unmanagedSize =
                 renderPassBegin.SizeOfMarshalIndirect();

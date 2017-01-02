@@ -29,20 +29,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkWriteDescriptorSet
-    {
-        IVkStructWrapper Next { get; }
-        IVkDescriptorSet DstSet { get; }
-        int DstBinding { get; }
-        int DstArrayElement { get; }
-        int DescriptorCount { get; }
-        VkDescriptorType DescriptorType { get; }
-        IReadOnlyList<IVkDescriptorImageInfo> ImageInfo { get; }
-        IReadOnlyList<IVkDescriptorBufferInfo> BufferInfo { get; }
-        IReadOnlyList<IVkBufferView> TexelBufferView { get; }
-    }
-
-    public unsafe class VkWriteDescriptorSet : IVkWriteDescriptorSet
+    public unsafe class VkWriteDescriptorSet
     {
         public IVkStructWrapper Next { get; set; }
         public IVkDescriptorSet DstSet { get; set; }
@@ -50,8 +37,8 @@ namespace VulkaNet
         public int DstArrayElement { get; set; }
         public int DescriptorCount { get; set; }
         public VkDescriptorType DescriptorType { get; set; }
-        public IReadOnlyList<IVkDescriptorImageInfo> ImageInfo { get; set; }
-        public IReadOnlyList<IVkDescriptorBufferInfo> BufferInfo { get; set; }
+        public IReadOnlyList<VkDescriptorImageInfo> ImageInfo { get; set; }
+        public IReadOnlyList<VkDescriptorBufferInfo> BufferInfo { get; set; }
         public IReadOnlyList<IVkBufferView> TexelBufferView { get; set; }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -74,7 +61,7 @@ namespace VulkaNet
 
     public static unsafe class VkWriteDescriptorSetExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkWriteDescriptorSet s)
+        public static int SizeOfMarshalDirect(this VkWriteDescriptorSet s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -86,7 +73,7 @@ namespace VulkaNet
                 s.TexelBufferView.SizeOfMarshalDirect();
         }
 
-        public static VkWriteDescriptorSet.Raw MarshalDirect(this IVkWriteDescriptorSet s, ref byte* unmanaged)
+        public static VkWriteDescriptorSet.Raw MarshalDirect(this VkWriteDescriptorSet s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -110,10 +97,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkWriteDescriptorSet s) =>
+        public static int SizeOfMarshalIndirect(this VkWriteDescriptorSet s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkWriteDescriptorSet.Raw.SizeInBytes;
 
-        public static VkWriteDescriptorSet.Raw* MarshalIndirect(this IVkWriteDescriptorSet s, ref byte* unmanaged)
+        public static VkWriteDescriptorSet.Raw* MarshalIndirect(this VkWriteDescriptorSet s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkWriteDescriptorSet.Raw*)0;
@@ -123,12 +110,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkWriteDescriptorSet> list) => 
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkWriteDescriptorSet> list) => 
             list == null || list.Count == 0 
                 ? 0
                 : sizeof(VkWriteDescriptorSet.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkWriteDescriptorSet.Raw* MarshalDirect(this IReadOnlyList<IVkWriteDescriptorSet> list, ref byte* unmanaged)
+        public static VkWriteDescriptorSet.Raw* MarshalDirect(this IReadOnlyList<VkWriteDescriptorSet> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkWriteDescriptorSet.Raw*)0;
@@ -139,12 +126,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkWriteDescriptorSet> list) =>
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkWriteDescriptorSet> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkWriteDescriptorSet.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkWriteDescriptorSet.Raw** MarshalIndirect(this IReadOnlyList<IVkWriteDescriptorSet> list, ref byte* unmanaged)
+        public static VkWriteDescriptorSet.Raw** MarshalIndirect(this IReadOnlyList<VkWriteDescriptorSet> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkWriteDescriptorSet.Raw**)0;

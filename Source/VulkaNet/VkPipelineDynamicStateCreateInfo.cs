@@ -29,14 +29,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkPipelineDynamicStateCreateInfo
-    {
-        IVkStructWrapper Next { get; }
-        VkPipelineDynamicStateCreateFlags Flags { get; }
-        IReadOnlyList<VkDynamicState> DynamicStates { get; }
-    }
-
-    public unsafe class VkPipelineDynamicStateCreateInfo : IVkPipelineDynamicStateCreateInfo
+    public unsafe class VkPipelineDynamicStateCreateInfo
     {
         public IVkStructWrapper Next { get; set; }
         public VkPipelineDynamicStateCreateFlags Flags { get; set; }
@@ -57,7 +50,7 @@ namespace VulkaNet
 
     public static unsafe class VkPipelineDynamicStateCreateInfoExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkPipelineDynamicStateCreateInfo s)
+        public static int SizeOfMarshalDirect(this VkPipelineDynamicStateCreateInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -67,7 +60,7 @@ namespace VulkaNet
                 s.DynamicStates.SizeOfMarshalDirect();
         }
 
-        public static VkPipelineDynamicStateCreateInfo.Raw MarshalDirect(this IVkPipelineDynamicStateCreateInfo s, ref byte* unmanaged)
+        public static VkPipelineDynamicStateCreateInfo.Raw MarshalDirect(this VkPipelineDynamicStateCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -84,10 +77,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkPipelineDynamicStateCreateInfo s) =>
+        public static int SizeOfMarshalIndirect(this VkPipelineDynamicStateCreateInfo s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkPipelineDynamicStateCreateInfo.Raw.SizeInBytes;
 
-        public static VkPipelineDynamicStateCreateInfo.Raw* MarshalIndirect(this IVkPipelineDynamicStateCreateInfo s, ref byte* unmanaged)
+        public static VkPipelineDynamicStateCreateInfo.Raw* MarshalIndirect(this VkPipelineDynamicStateCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkPipelineDynamicStateCreateInfo.Raw*)0;
@@ -97,12 +90,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkPipelineDynamicStateCreateInfo> list) => 
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkPipelineDynamicStateCreateInfo> list) => 
             list == null || list.Count == 0 
                 ? 0
                 : sizeof(VkPipelineDynamicStateCreateInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkPipelineDynamicStateCreateInfo.Raw* MarshalDirect(this IReadOnlyList<IVkPipelineDynamicStateCreateInfo> list, ref byte* unmanaged)
+        public static VkPipelineDynamicStateCreateInfo.Raw* MarshalDirect(this IReadOnlyList<VkPipelineDynamicStateCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkPipelineDynamicStateCreateInfo.Raw*)0;
@@ -113,12 +106,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkPipelineDynamicStateCreateInfo> list) =>
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkPipelineDynamicStateCreateInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkPipelineDynamicStateCreateInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkPipelineDynamicStateCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkPipelineDynamicStateCreateInfo> list, ref byte* unmanaged)
+        public static VkPipelineDynamicStateCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<VkPipelineDynamicStateCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkPipelineDynamicStateCreateInfo.Raw**)0;

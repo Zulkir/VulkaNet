@@ -29,20 +29,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkAttachmentDescription
-    {
-        VkAttachmentDescriptionFlags Flags { get; }
-        VkFormat Format { get; }
-        VkSampleCountFlagBits Samples { get; }
-        VkAttachmentLoadOp LoadOp { get; }
-        VkAttachmentStoreOp StoreOp { get; }
-        VkAttachmentLoadOp StencilLoadOp { get; }
-        VkAttachmentStoreOp StencilStoreOp { get; }
-        VkImageLayout InitialLayout { get; }
-        VkImageLayout FinalLayout { get; }
-    }
-
-    public unsafe class VkAttachmentDescription : IVkAttachmentDescription
+    public unsafe class VkAttachmentDescription
     {
         public VkAttachmentDescriptionFlags Flags { get; set; }
         public VkFormat Format { get; set; }
@@ -73,7 +60,7 @@ namespace VulkaNet
 
     public static unsafe class VkAttachmentDescriptionExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkAttachmentDescription s)
+        public static int SizeOfMarshalDirect(this VkAttachmentDescription s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -81,7 +68,7 @@ namespace VulkaNet
             return 0;
         }
 
-        public static VkAttachmentDescription.Raw MarshalDirect(this IVkAttachmentDescription s, ref byte* unmanaged)
+        public static VkAttachmentDescription.Raw MarshalDirect(this VkAttachmentDescription s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -100,10 +87,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkAttachmentDescription s) =>
+        public static int SizeOfMarshalIndirect(this VkAttachmentDescription s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkAttachmentDescription.Raw.SizeInBytes;
 
-        public static VkAttachmentDescription.Raw* MarshalIndirect(this IVkAttachmentDescription s, ref byte* unmanaged)
+        public static VkAttachmentDescription.Raw* MarshalIndirect(this VkAttachmentDescription s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkAttachmentDescription.Raw*)0;
@@ -113,12 +100,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkAttachmentDescription> list) => 
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkAttachmentDescription> list) => 
             list == null || list.Count == 0 
                 ? 0
                 : sizeof(VkAttachmentDescription.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkAttachmentDescription.Raw* MarshalDirect(this IReadOnlyList<IVkAttachmentDescription> list, ref byte* unmanaged)
+        public static VkAttachmentDescription.Raw* MarshalDirect(this IReadOnlyList<VkAttachmentDescription> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkAttachmentDescription.Raw*)0;
@@ -129,12 +116,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkAttachmentDescription> list) =>
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkAttachmentDescription> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkAttachmentDescription.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkAttachmentDescription.Raw** MarshalIndirect(this IReadOnlyList<IVkAttachmentDescription> list, ref byte* unmanaged)
+        public static VkAttachmentDescription.Raw** MarshalIndirect(this IReadOnlyList<VkAttachmentDescription> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkAttachmentDescription.Raw**)0;

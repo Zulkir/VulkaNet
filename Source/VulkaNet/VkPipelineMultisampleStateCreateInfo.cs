@@ -29,19 +29,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkPipelineMultisampleStateCreateInfo
-    {
-        IVkStructWrapper Next { get; }
-        VkPipelineMultisampleStateCreateFlags Flags { get; }
-        VkSampleCountFlagBits RasterizationSamples { get; }
-        bool SampleShadingEnable { get; }
-        float MinSampleShading { get; }
-        IReadOnlyList<int> SampleMask { get; }
-        bool AlphaToCoverageEnable { get; }
-        bool AlphaToOneEnable { get; }
-    }
-
-    public unsafe class VkPipelineMultisampleStateCreateInfo : IVkPipelineMultisampleStateCreateInfo
+    public unsafe class VkPipelineMultisampleStateCreateInfo
     {
         public IVkStructWrapper Next { get; set; }
         public VkPipelineMultisampleStateCreateFlags Flags { get; set; }
@@ -71,7 +59,7 @@ namespace VulkaNet
 
     public static unsafe class VkPipelineMultisampleStateCreateInfoExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkPipelineMultisampleStateCreateInfo s)
+        public static int SizeOfMarshalDirect(this VkPipelineMultisampleStateCreateInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -81,7 +69,7 @@ namespace VulkaNet
                 s.SampleMask.SizeOfMarshalDirect();
         }
 
-        public static VkPipelineMultisampleStateCreateInfo.Raw MarshalDirect(this IVkPipelineMultisampleStateCreateInfo s, ref byte* unmanaged)
+        public static VkPipelineMultisampleStateCreateInfo.Raw MarshalDirect(this VkPipelineMultisampleStateCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -102,10 +90,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkPipelineMultisampleStateCreateInfo s) =>
+        public static int SizeOfMarshalIndirect(this VkPipelineMultisampleStateCreateInfo s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkPipelineMultisampleStateCreateInfo.Raw.SizeInBytes;
 
-        public static VkPipelineMultisampleStateCreateInfo.Raw* MarshalIndirect(this IVkPipelineMultisampleStateCreateInfo s, ref byte* unmanaged)
+        public static VkPipelineMultisampleStateCreateInfo.Raw* MarshalIndirect(this VkPipelineMultisampleStateCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkPipelineMultisampleStateCreateInfo.Raw*)0;
@@ -115,12 +103,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkPipelineMultisampleStateCreateInfo> list) => 
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkPipelineMultisampleStateCreateInfo> list) => 
             list == null || list.Count == 0 
                 ? 0
                 : sizeof(VkPipelineMultisampleStateCreateInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkPipelineMultisampleStateCreateInfo.Raw* MarshalDirect(this IReadOnlyList<IVkPipelineMultisampleStateCreateInfo> list, ref byte* unmanaged)
+        public static VkPipelineMultisampleStateCreateInfo.Raw* MarshalDirect(this IReadOnlyList<VkPipelineMultisampleStateCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkPipelineMultisampleStateCreateInfo.Raw*)0;
@@ -131,12 +119,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkPipelineMultisampleStateCreateInfo> list) =>
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkPipelineMultisampleStateCreateInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkPipelineMultisampleStateCreateInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkPipelineMultisampleStateCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkPipelineMultisampleStateCreateInfo> list, ref byte* unmanaged)
+        public static VkPipelineMultisampleStateCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<VkPipelineMultisampleStateCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkPipelineMultisampleStateCreateInfo.Raw**)0;

@@ -46,9 +46,9 @@
         private static string DeriveTypeInternal(string rawTypeStr)
         {
             if (rawTypeStr.EndsWith(".Raw*"))
-                return "I" + rawTypeStr.Substring(0, rawTypeStr.Length - ".Raw*".Length);
+                return rawTypeStr.Substring(0, rawTypeStr.Length - ".Raw*".Length);
             if (rawTypeStr.EndsWith(".Raw"))
-                return "I" + rawTypeStr.Substring(0, rawTypeStr.Length - ".Raw".Length);
+                return rawTypeStr.Substring(0, rawTypeStr.Length - ".Raw".Length);
             //if (rawTypeStr.EndsWith("*"))
             //    return $"IReadOnlyList<{DeriveTypeInternal(rawTypeStr.Substring(0, rawTypeStr.Length - 1))}>";
             if (rawTypeStr.EndsWith(".HandleType*"))

@@ -29,13 +29,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkSemaphoreCreateInfo
-    {
-        IVkStructWrapper Next { get; }
-        VkSemaphoreCreateFlags Flags { get; }
-    }
-
-    public unsafe class VkSemaphoreCreateInfo : IVkSemaphoreCreateInfo
+    public unsafe class VkSemaphoreCreateInfo
     {
         public IVkStructWrapper Next { get; set; }
         public VkSemaphoreCreateFlags Flags { get; set; }
@@ -53,7 +47,7 @@ namespace VulkaNet
 
     public static unsafe class VkSemaphoreCreateInfoExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkSemaphoreCreateInfo s)
+        public static int SizeOfMarshalDirect(this VkSemaphoreCreateInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -62,7 +56,7 @@ namespace VulkaNet
                 s.Next.SizeOfMarshalIndirect();
         }
 
-        public static VkSemaphoreCreateInfo.Raw MarshalDirect(this IVkSemaphoreCreateInfo s, ref byte* unmanaged)
+        public static VkSemaphoreCreateInfo.Raw MarshalDirect(this VkSemaphoreCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -76,10 +70,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkSemaphoreCreateInfo s) =>
+        public static int SizeOfMarshalIndirect(this VkSemaphoreCreateInfo s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkSemaphoreCreateInfo.Raw.SizeInBytes;
 
-        public static VkSemaphoreCreateInfo.Raw* MarshalIndirect(this IVkSemaphoreCreateInfo s, ref byte* unmanaged)
+        public static VkSemaphoreCreateInfo.Raw* MarshalIndirect(this VkSemaphoreCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkSemaphoreCreateInfo.Raw*)0;
@@ -89,12 +83,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkSemaphoreCreateInfo> list) => 
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkSemaphoreCreateInfo> list) => 
             list == null || list.Count == 0 
                 ? 0
                 : sizeof(VkSemaphoreCreateInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkSemaphoreCreateInfo.Raw* MarshalDirect(this IReadOnlyList<IVkSemaphoreCreateInfo> list, ref byte* unmanaged)
+        public static VkSemaphoreCreateInfo.Raw* MarshalDirect(this IReadOnlyList<VkSemaphoreCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkSemaphoreCreateInfo.Raw*)0;
@@ -105,12 +99,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkSemaphoreCreateInfo> list) =>
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkSemaphoreCreateInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkSemaphoreCreateInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkSemaphoreCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkSemaphoreCreateInfo> list, ref byte* unmanaged)
+        public static VkSemaphoreCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<VkSemaphoreCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkSemaphoreCreateInfo.Raw**)0;

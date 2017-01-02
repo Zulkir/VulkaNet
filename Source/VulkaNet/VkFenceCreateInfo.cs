@@ -29,13 +29,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkFenceCreateInfo
-    {
-        IVkStructWrapper Next { get; }
-        VkFenceCreateFlags Flags { get; }
-    }
-
-    public unsafe class VkFenceCreateInfo : IVkFenceCreateInfo
+    public unsafe class VkFenceCreateInfo
     {
         public IVkStructWrapper Next { get; set; }
         public VkFenceCreateFlags Flags { get; set; }
@@ -53,7 +47,7 @@ namespace VulkaNet
 
     public static unsafe class VkFenceCreateInfoExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkFenceCreateInfo s)
+        public static int SizeOfMarshalDirect(this VkFenceCreateInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -62,7 +56,7 @@ namespace VulkaNet
                 s.Next.SizeOfMarshalIndirect();
         }
 
-        public static VkFenceCreateInfo.Raw MarshalDirect(this IVkFenceCreateInfo s, ref byte* unmanaged)
+        public static VkFenceCreateInfo.Raw MarshalDirect(this VkFenceCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -76,10 +70,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkFenceCreateInfo s) =>
+        public static int SizeOfMarshalIndirect(this VkFenceCreateInfo s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkFenceCreateInfo.Raw.SizeInBytes;
 
-        public static VkFenceCreateInfo.Raw* MarshalIndirect(this IVkFenceCreateInfo s, ref byte* unmanaged)
+        public static VkFenceCreateInfo.Raw* MarshalIndirect(this VkFenceCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkFenceCreateInfo.Raw*)0;
@@ -89,12 +83,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkFenceCreateInfo> list) => 
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkFenceCreateInfo> list) => 
             list == null || list.Count == 0 
                 ? 0
                 : sizeof(VkFenceCreateInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkFenceCreateInfo.Raw* MarshalDirect(this IReadOnlyList<IVkFenceCreateInfo> list, ref byte* unmanaged)
+        public static VkFenceCreateInfo.Raw* MarshalDirect(this IReadOnlyList<VkFenceCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkFenceCreateInfo.Raw*)0;
@@ -105,12 +99,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkFenceCreateInfo> list) =>
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkFenceCreateInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkFenceCreateInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkFenceCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkFenceCreateInfo> list, ref byte* unmanaged)
+        public static VkFenceCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<VkFenceCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkFenceCreateInfo.Raw**)0;

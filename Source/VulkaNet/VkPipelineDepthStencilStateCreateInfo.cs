@@ -29,22 +29,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkPipelineDepthStencilStateCreateInfo
-    {
-        IVkStructWrapper Next { get; }
-        VkPipelineDepthStencilStateCreateFlags Flags { get; }
-        bool DepthTestEnable { get; }
-        bool DepthWriteEnable { get; }
-        VkCompareOp DepthCompareOp { get; }
-        bool DepthBoundsTestEnable { get; }
-        bool StencilTestEnable { get; }
-        VkStencilOpState Front { get; }
-        VkStencilOpState Back { get; }
-        float MinDepthBounds { get; }
-        float MaxDepthBounds { get; }
-    }
-
-    public unsafe class VkPipelineDepthStencilStateCreateInfo : IVkPipelineDepthStencilStateCreateInfo
+    public unsafe class VkPipelineDepthStencilStateCreateInfo
     {
         public IVkStructWrapper Next { get; set; }
         public VkPipelineDepthStencilStateCreateFlags Flags { get; set; }
@@ -80,7 +65,7 @@ namespace VulkaNet
 
     public static unsafe class VkPipelineDepthStencilStateCreateInfoExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkPipelineDepthStencilStateCreateInfo s)
+        public static int SizeOfMarshalDirect(this VkPipelineDepthStencilStateCreateInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -89,7 +74,7 @@ namespace VulkaNet
                 s.Next.SizeOfMarshalIndirect();
         }
 
-        public static VkPipelineDepthStencilStateCreateInfo.Raw MarshalDirect(this IVkPipelineDepthStencilStateCreateInfo s, ref byte* unmanaged)
+        public static VkPipelineDepthStencilStateCreateInfo.Raw MarshalDirect(this VkPipelineDepthStencilStateCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -112,10 +97,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkPipelineDepthStencilStateCreateInfo s) =>
+        public static int SizeOfMarshalIndirect(this VkPipelineDepthStencilStateCreateInfo s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkPipelineDepthStencilStateCreateInfo.Raw.SizeInBytes;
 
-        public static VkPipelineDepthStencilStateCreateInfo.Raw* MarshalIndirect(this IVkPipelineDepthStencilStateCreateInfo s, ref byte* unmanaged)
+        public static VkPipelineDepthStencilStateCreateInfo.Raw* MarshalIndirect(this VkPipelineDepthStencilStateCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkPipelineDepthStencilStateCreateInfo.Raw*)0;
@@ -125,12 +110,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkPipelineDepthStencilStateCreateInfo> list) => 
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkPipelineDepthStencilStateCreateInfo> list) => 
             list == null || list.Count == 0 
                 ? 0
                 : sizeof(VkPipelineDepthStencilStateCreateInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkPipelineDepthStencilStateCreateInfo.Raw* MarshalDirect(this IReadOnlyList<IVkPipelineDepthStencilStateCreateInfo> list, ref byte* unmanaged)
+        public static VkPipelineDepthStencilStateCreateInfo.Raw* MarshalDirect(this IReadOnlyList<VkPipelineDepthStencilStateCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkPipelineDepthStencilStateCreateInfo.Raw*)0;
@@ -141,12 +126,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkPipelineDepthStencilStateCreateInfo> list) =>
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkPipelineDepthStencilStateCreateInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkPipelineDepthStencilStateCreateInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkPipelineDepthStencilStateCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkPipelineDepthStencilStateCreateInfo> list, ref byte* unmanaged)
+        public static VkPipelineDepthStencilStateCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<VkPipelineDepthStencilStateCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkPipelineDepthStencilStateCreateInfo.Raw**)0;

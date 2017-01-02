@@ -29,15 +29,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkDescriptorPoolCreateInfo
-    {
-        IVkStructWrapper Next { get; }
-        VkDescriptorPoolCreateFlags Flags { get; }
-        int MaxSets { get; }
-        IReadOnlyList<VkDescriptorPoolSize> PoolSizes { get; }
-    }
-
-    public unsafe class VkDescriptorPoolCreateInfo : IVkDescriptorPoolCreateInfo
+    public unsafe class VkDescriptorPoolCreateInfo
     {
         public IVkStructWrapper Next { get; set; }
         public VkDescriptorPoolCreateFlags Flags { get; set; }
@@ -60,7 +52,7 @@ namespace VulkaNet
 
     public static unsafe class VkDescriptorPoolCreateInfoExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkDescriptorPoolCreateInfo s)
+        public static int SizeOfMarshalDirect(this VkDescriptorPoolCreateInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -70,7 +62,7 @@ namespace VulkaNet
                 s.PoolSizes.SizeOfMarshalDirect();
         }
 
-        public static VkDescriptorPoolCreateInfo.Raw MarshalDirect(this IVkDescriptorPoolCreateInfo s, ref byte* unmanaged)
+        public static VkDescriptorPoolCreateInfo.Raw MarshalDirect(this VkDescriptorPoolCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -88,10 +80,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkDescriptorPoolCreateInfo s) =>
+        public static int SizeOfMarshalIndirect(this VkDescriptorPoolCreateInfo s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkDescriptorPoolCreateInfo.Raw.SizeInBytes;
 
-        public static VkDescriptorPoolCreateInfo.Raw* MarshalIndirect(this IVkDescriptorPoolCreateInfo s, ref byte* unmanaged)
+        public static VkDescriptorPoolCreateInfo.Raw* MarshalIndirect(this VkDescriptorPoolCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkDescriptorPoolCreateInfo.Raw*)0;
@@ -101,12 +93,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkDescriptorPoolCreateInfo> list) => 
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkDescriptorPoolCreateInfo> list) => 
             list == null || list.Count == 0 
                 ? 0
                 : sizeof(VkDescriptorPoolCreateInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkDescriptorPoolCreateInfo.Raw* MarshalDirect(this IReadOnlyList<IVkDescriptorPoolCreateInfo> list, ref byte* unmanaged)
+        public static VkDescriptorPoolCreateInfo.Raw* MarshalDirect(this IReadOnlyList<VkDescriptorPoolCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkDescriptorPoolCreateInfo.Raw*)0;
@@ -117,12 +109,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkDescriptorPoolCreateInfo> list) =>
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkDescriptorPoolCreateInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkDescriptorPoolCreateInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkDescriptorPoolCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkDescriptorPoolCreateInfo> list, ref byte* unmanaged)
+        public static VkDescriptorPoolCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<VkDescriptorPoolCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkDescriptorPoolCreateInfo.Raw**)0;

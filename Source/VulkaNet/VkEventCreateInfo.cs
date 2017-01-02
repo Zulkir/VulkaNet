@@ -29,13 +29,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkEventCreateInfo
-    {
-        IVkStructWrapper Next { get; }
-        VkEventCreateFlags Flags { get; }
-    }
-
-    public unsafe class VkEventCreateInfo : IVkEventCreateInfo
+    public unsafe class VkEventCreateInfo
     {
         public IVkStructWrapper Next { get; set; }
         public VkEventCreateFlags Flags { get; set; }
@@ -53,7 +47,7 @@ namespace VulkaNet
 
     public static unsafe class VkEventCreateInfoExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkEventCreateInfo s)
+        public static int SizeOfMarshalDirect(this VkEventCreateInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -62,7 +56,7 @@ namespace VulkaNet
                 s.Next.SizeOfMarshalIndirect();
         }
 
-        public static VkEventCreateInfo.Raw MarshalDirect(this IVkEventCreateInfo s, ref byte* unmanaged)
+        public static VkEventCreateInfo.Raw MarshalDirect(this VkEventCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -76,10 +70,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkEventCreateInfo s) =>
+        public static int SizeOfMarshalIndirect(this VkEventCreateInfo s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkEventCreateInfo.Raw.SizeInBytes;
 
-        public static VkEventCreateInfo.Raw* MarshalIndirect(this IVkEventCreateInfo s, ref byte* unmanaged)
+        public static VkEventCreateInfo.Raw* MarshalIndirect(this VkEventCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkEventCreateInfo.Raw*)0;
@@ -89,12 +83,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkEventCreateInfo> list) => 
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkEventCreateInfo> list) => 
             list == null || list.Count == 0 
                 ? 0
                 : sizeof(VkEventCreateInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkEventCreateInfo.Raw* MarshalDirect(this IReadOnlyList<IVkEventCreateInfo> list, ref byte* unmanaged)
+        public static VkEventCreateInfo.Raw* MarshalDirect(this IReadOnlyList<VkEventCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkEventCreateInfo.Raw*)0;
@@ -105,12 +99,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkEventCreateInfo> list) =>
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkEventCreateInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkEventCreateInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkEventCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkEventCreateInfo> list, ref byte* unmanaged)
+        public static VkEventCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<VkEventCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkEventCreateInfo.Raw**)0;

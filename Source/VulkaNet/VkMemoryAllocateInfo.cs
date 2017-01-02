@@ -29,14 +29,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkMemoryAllocateInfo
-    {
-        IVkStructWrapper Next { get; }
-        ulong AllocationSize { get; }
-        int MemoryTypeIndex { get; }
-    }
-
-    public unsafe class VkMemoryAllocateInfo : IVkMemoryAllocateInfo
+    public unsafe class VkMemoryAllocateInfo
     {
         public IVkStructWrapper Next { get; set; }
         public ulong AllocationSize { get; set; }
@@ -56,7 +49,7 @@ namespace VulkaNet
 
     public static unsafe class VkMemoryAllocateInfoExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkMemoryAllocateInfo s)
+        public static int SizeOfMarshalDirect(this VkMemoryAllocateInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -65,7 +58,7 @@ namespace VulkaNet
                 s.Next.SizeOfMarshalIndirect();
         }
 
-        public static VkMemoryAllocateInfo.Raw MarshalDirect(this IVkMemoryAllocateInfo s, ref byte* unmanaged)
+        public static VkMemoryAllocateInfo.Raw MarshalDirect(this VkMemoryAllocateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -80,10 +73,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkMemoryAllocateInfo s) =>
+        public static int SizeOfMarshalIndirect(this VkMemoryAllocateInfo s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkMemoryAllocateInfo.Raw.SizeInBytes;
 
-        public static VkMemoryAllocateInfo.Raw* MarshalIndirect(this IVkMemoryAllocateInfo s, ref byte* unmanaged)
+        public static VkMemoryAllocateInfo.Raw* MarshalIndirect(this VkMemoryAllocateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkMemoryAllocateInfo.Raw*)0;
@@ -93,12 +86,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkMemoryAllocateInfo> list) => 
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkMemoryAllocateInfo> list) => 
             list == null || list.Count == 0 
                 ? 0
                 : sizeof(VkMemoryAllocateInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkMemoryAllocateInfo.Raw* MarshalDirect(this IReadOnlyList<IVkMemoryAllocateInfo> list, ref byte* unmanaged)
+        public static VkMemoryAllocateInfo.Raw* MarshalDirect(this IReadOnlyList<VkMemoryAllocateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkMemoryAllocateInfo.Raw*)0;
@@ -109,12 +102,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkMemoryAllocateInfo> list) =>
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkMemoryAllocateInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkMemoryAllocateInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkMemoryAllocateInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkMemoryAllocateInfo> list, ref byte* unmanaged)
+        public static VkMemoryAllocateInfo.Raw** MarshalIndirect(this IReadOnlyList<VkMemoryAllocateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkMemoryAllocateInfo.Raw**)0;

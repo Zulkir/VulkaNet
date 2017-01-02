@@ -29,18 +29,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkFramebufferCreateInfo
-    {
-        IVkStructWrapper Next { get; }
-        VkFramebufferCreateFlags Flags { get; }
-        IVkRenderPass RenderPass { get; }
-        IReadOnlyList<IVkImageView> Attachments { get; }
-        int Width { get; }
-        int Height { get; }
-        int Layers { get; }
-    }
-
-    public unsafe class VkFramebufferCreateInfo : IVkFramebufferCreateInfo
+    public unsafe class VkFramebufferCreateInfo
     {
         public IVkStructWrapper Next { get; set; }
         public VkFramebufferCreateFlags Flags { get; set; }
@@ -69,7 +58,7 @@ namespace VulkaNet
 
     public static unsafe class VkFramebufferCreateInfoExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkFramebufferCreateInfo s)
+        public static int SizeOfMarshalDirect(this VkFramebufferCreateInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -79,7 +68,7 @@ namespace VulkaNet
                 s.Attachments.SizeOfMarshalDirect();
         }
 
-        public static VkFramebufferCreateInfo.Raw MarshalDirect(this IVkFramebufferCreateInfo s, ref byte* unmanaged)
+        public static VkFramebufferCreateInfo.Raw MarshalDirect(this VkFramebufferCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -100,10 +89,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkFramebufferCreateInfo s) =>
+        public static int SizeOfMarshalIndirect(this VkFramebufferCreateInfo s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkFramebufferCreateInfo.Raw.SizeInBytes;
 
-        public static VkFramebufferCreateInfo.Raw* MarshalIndirect(this IVkFramebufferCreateInfo s, ref byte* unmanaged)
+        public static VkFramebufferCreateInfo.Raw* MarshalIndirect(this VkFramebufferCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkFramebufferCreateInfo.Raw*)0;
@@ -113,12 +102,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkFramebufferCreateInfo> list) => 
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkFramebufferCreateInfo> list) => 
             list == null || list.Count == 0 
                 ? 0
                 : sizeof(VkFramebufferCreateInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkFramebufferCreateInfo.Raw* MarshalDirect(this IReadOnlyList<IVkFramebufferCreateInfo> list, ref byte* unmanaged)
+        public static VkFramebufferCreateInfo.Raw* MarshalDirect(this IReadOnlyList<VkFramebufferCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkFramebufferCreateInfo.Raw*)0;
@@ -129,12 +118,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkFramebufferCreateInfo> list) =>
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkFramebufferCreateInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkFramebufferCreateInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkFramebufferCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkFramebufferCreateInfo> list, ref byte* unmanaged)
+        public static VkFramebufferCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<VkFramebufferCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkFramebufferCreateInfo.Raw**)0;

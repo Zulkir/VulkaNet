@@ -29,66 +29,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkPhysicalDeviceFeatures
-    {
-        bool RobustBufferAccess { get; }
-        bool FullDrawIndexUint32 { get; }
-        bool ImageCubeArray { get; }
-        bool IndependentBlend { get; }
-        bool GeometryShader { get; }
-        bool TessellationShader { get; }
-        bool SampleRateShading { get; }
-        bool DualSrcBlend { get; }
-        bool LogicOp { get; }
-        bool MultiDrawIndirect { get; }
-        bool DrawIndirectFirstInstance { get; }
-        bool DepthClamp { get; }
-        bool DepthBiasClamp { get; }
-        bool FillModeNonSolid { get; }
-        bool DepthBounds { get; }
-        bool WideLines { get; }
-        bool LargePoints { get; }
-        bool AlphaToOne { get; }
-        bool MultiViewport { get; }
-        bool SamplerAnisotropy { get; }
-        bool TextureCompressionETC2 { get; }
-        bool TextureCompressionASTC_LDR { get; }
-        bool TextureCompressionBC { get; }
-        bool OcclusionQueryPrecise { get; }
-        bool PipelineStatisticsQuery { get; }
-        bool VertexPipelineStoresAndAtomics { get; }
-        bool FragmentStoresAndAtomics { get; }
-        bool ShaderTessellationAndGeometryPointSize { get; }
-        bool ShaderImageGatherExtended { get; }
-        bool ShaderStorageImageExtendedFormats { get; }
-        bool ShaderStorageImageMultisample { get; }
-        bool ShaderStorageImageReadWithoutFormat { get; }
-        bool ShaderStorageImageWriteWithoutFormat { get; }
-        bool ShaderUniformBufferArrayDynamicIndexing { get; }
-        bool ShaderSampledImageArrayDynamicIndexing { get; }
-        bool ShaderStorageBufferArrayDynamicIndexing { get; }
-        bool ShaderStorageImageArrayDynamicIndexing { get; }
-        bool ShaderClipDistance { get; }
-        bool ShaderCullDistance { get; }
-        bool ShaderFloat64 { get; }
-        bool ShaderInt64 { get; }
-        bool ShaderInt16 { get; }
-        bool ShaderResourceResidency { get; }
-        bool ShaderResourceMinLod { get; }
-        bool SparseBinding { get; }
-        bool SparseResidencyBuffer { get; }
-        bool SparseResidencyImage2D { get; }
-        bool SparseResidencyImage3D { get; }
-        bool SparseResidency2Samples { get; }
-        bool SparseResidency4Samples { get; }
-        bool SparseResidency8Samples { get; }
-        bool SparseResidency16Samples { get; }
-        bool SparseResidencyAliased { get; }
-        bool VariableMultisampleRate { get; }
-        bool InheritedQueries { get; }
-    }
-
-    public unsafe class VkPhysicalDeviceFeatures : IVkPhysicalDeviceFeatures
+    public unsafe class VkPhysicalDeviceFeatures
     {
         public bool RobustBufferAccess { get; set; }
         public bool FullDrawIndexUint32 { get; set; }
@@ -272,7 +213,7 @@ namespace VulkaNet
 
     public static unsafe class VkPhysicalDeviceFeaturesExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkPhysicalDeviceFeatures s)
+        public static int SizeOfMarshalDirect(this VkPhysicalDeviceFeatures s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -280,7 +221,7 @@ namespace VulkaNet
             return 0;
         }
 
-        public static VkPhysicalDeviceFeatures.Raw MarshalDirect(this IVkPhysicalDeviceFeatures s, ref byte* unmanaged)
+        public static VkPhysicalDeviceFeatures.Raw MarshalDirect(this VkPhysicalDeviceFeatures s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -345,10 +286,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkPhysicalDeviceFeatures s) =>
+        public static int SizeOfMarshalIndirect(this VkPhysicalDeviceFeatures s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkPhysicalDeviceFeatures.Raw.SizeInBytes;
 
-        public static VkPhysicalDeviceFeatures.Raw* MarshalIndirect(this IVkPhysicalDeviceFeatures s, ref byte* unmanaged)
+        public static VkPhysicalDeviceFeatures.Raw* MarshalIndirect(this VkPhysicalDeviceFeatures s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkPhysicalDeviceFeatures.Raw*)0;
@@ -358,12 +299,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkPhysicalDeviceFeatures> list) => 
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkPhysicalDeviceFeatures> list) => 
             list == null || list.Count == 0 
                 ? 0
                 : sizeof(VkPhysicalDeviceFeatures.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkPhysicalDeviceFeatures.Raw* MarshalDirect(this IReadOnlyList<IVkPhysicalDeviceFeatures> list, ref byte* unmanaged)
+        public static VkPhysicalDeviceFeatures.Raw* MarshalDirect(this IReadOnlyList<VkPhysicalDeviceFeatures> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkPhysicalDeviceFeatures.Raw*)0;
@@ -374,12 +315,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkPhysicalDeviceFeatures> list) =>
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkPhysicalDeviceFeatures> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkPhysicalDeviceFeatures.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkPhysicalDeviceFeatures.Raw** MarshalIndirect(this IReadOnlyList<IVkPhysicalDeviceFeatures> list, ref byte* unmanaged)
+        public static VkPhysicalDeviceFeatures.Raw** MarshalIndirect(this IReadOnlyList<VkPhysicalDeviceFeatures> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkPhysicalDeviceFeatures.Raw**)0;

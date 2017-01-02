@@ -29,28 +29,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkSamplerCreateInfo
-    {
-        IVkStructWrapper Next { get; }
-        VkSamplerCreateFlags Flags { get; }
-        VkFilter MagFilter { get; }
-        VkFilter MinFilter { get; }
-        VkSamplerMipmapMode MipmapMode { get; }
-        VkSamplerAddressMode AddressModeU { get; }
-        VkSamplerAddressMode AddressModeV { get; }
-        VkSamplerAddressMode AddressModeW { get; }
-        float MipLodBias { get; }
-        bool AnisotropyEnable { get; }
-        float MaxAnisotropy { get; }
-        bool CompareEnable { get; }
-        VkCompareOp CompareOp { get; }
-        float MinLod { get; }
-        float MaxLod { get; }
-        VkBorderColor BorderColor { get; }
-        bool UnnormalizedCoordinates { get; }
-    }
-
-    public unsafe class VkSamplerCreateInfo : IVkSamplerCreateInfo
+    public unsafe class VkSamplerCreateInfo
     {
         public IVkStructWrapper Next { get; set; }
         public VkSamplerCreateFlags Flags { get; set; }
@@ -98,7 +77,7 @@ namespace VulkaNet
 
     public static unsafe class VkSamplerCreateInfoExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkSamplerCreateInfo s)
+        public static int SizeOfMarshalDirect(this VkSamplerCreateInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -107,7 +86,7 @@ namespace VulkaNet
                 s.Next.SizeOfMarshalIndirect();
         }
 
-        public static VkSamplerCreateInfo.Raw MarshalDirect(this IVkSamplerCreateInfo s, ref byte* unmanaged)
+        public static VkSamplerCreateInfo.Raw MarshalDirect(this VkSamplerCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -136,10 +115,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkSamplerCreateInfo s) =>
+        public static int SizeOfMarshalIndirect(this VkSamplerCreateInfo s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkSamplerCreateInfo.Raw.SizeInBytes;
 
-        public static VkSamplerCreateInfo.Raw* MarshalIndirect(this IVkSamplerCreateInfo s, ref byte* unmanaged)
+        public static VkSamplerCreateInfo.Raw* MarshalIndirect(this VkSamplerCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkSamplerCreateInfo.Raw*)0;
@@ -149,12 +128,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkSamplerCreateInfo> list) => 
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkSamplerCreateInfo> list) => 
             list == null || list.Count == 0 
                 ? 0
                 : sizeof(VkSamplerCreateInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkSamplerCreateInfo.Raw* MarshalDirect(this IReadOnlyList<IVkSamplerCreateInfo> list, ref byte* unmanaged)
+        public static VkSamplerCreateInfo.Raw* MarshalDirect(this IReadOnlyList<VkSamplerCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkSamplerCreateInfo.Raw*)0;
@@ -165,12 +144,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkSamplerCreateInfo> list) =>
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkSamplerCreateInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkSamplerCreateInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkSamplerCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkSamplerCreateInfo> list, ref byte* unmanaged)
+        public static VkSamplerCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<VkSamplerCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkSamplerCreateInfo.Raw**)0;

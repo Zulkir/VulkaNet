@@ -29,15 +29,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkPipelineCacheCreateInfo
-    {
-        IVkStructWrapper Next { get; }
-        VkPipelineCacheCreateFlags Flags { get; }
-        IntPtr InitialDataSize { get; }
-        IntPtr InitialData { get; }
-    }
-
-    public unsafe class VkPipelineCacheCreateInfo : IVkPipelineCacheCreateInfo
+    public unsafe class VkPipelineCacheCreateInfo
     {
         public IVkStructWrapper Next { get; set; }
         public VkPipelineCacheCreateFlags Flags { get; set; }
@@ -59,7 +51,7 @@ namespace VulkaNet
 
     public static unsafe class VkPipelineCacheCreateInfoExtensions
     {
-        public static int SizeOfMarshalDirect(this IVkPipelineCacheCreateInfo s)
+        public static int SizeOfMarshalDirect(this VkPipelineCacheCreateInfo s)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -68,7 +60,7 @@ namespace VulkaNet
                 s.Next.SizeOfMarshalIndirect();
         }
 
-        public static VkPipelineCacheCreateInfo.Raw MarshalDirect(this IVkPipelineCacheCreateInfo s, ref byte* unmanaged)
+        public static VkPipelineCacheCreateInfo.Raw MarshalDirect(this VkPipelineCacheCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 throw new InvalidOperationException("Trying to directly marshal a null.");
@@ -84,10 +76,10 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IVkPipelineCacheCreateInfo s) =>
+        public static int SizeOfMarshalIndirect(this VkPipelineCacheCreateInfo s) =>
             s == null ? 0 : s.SizeOfMarshalDirect() + VkPipelineCacheCreateInfo.Raw.SizeInBytes;
 
-        public static VkPipelineCacheCreateInfo.Raw* MarshalIndirect(this IVkPipelineCacheCreateInfo s, ref byte* unmanaged)
+        public static VkPipelineCacheCreateInfo.Raw* MarshalIndirect(this VkPipelineCacheCreateInfo s, ref byte* unmanaged)
         {
             if (s == null)
                 return (VkPipelineCacheCreateInfo.Raw*)0;
@@ -97,12 +89,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkPipelineCacheCreateInfo> list) => 
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkPipelineCacheCreateInfo> list) => 
             list == null || list.Count == 0 
                 ? 0
                 : sizeof(VkPipelineCacheCreateInfo.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
 
-        public static VkPipelineCacheCreateInfo.Raw* MarshalDirect(this IReadOnlyList<IVkPipelineCacheCreateInfo> list, ref byte* unmanaged)
+        public static VkPipelineCacheCreateInfo.Raw* MarshalDirect(this IReadOnlyList<VkPipelineCacheCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkPipelineCacheCreateInfo.Raw*)0;
@@ -113,12 +105,12 @@ namespace VulkaNet
             return result;
         }
 
-        public static int SizeOfMarshalIndirect(this IReadOnlyList<IVkPipelineCacheCreateInfo> list) =>
+        public static int SizeOfMarshalIndirect(this IReadOnlyList<VkPipelineCacheCreateInfo> list) =>
             list == null || list.Count == 0
                 ? 0
                 : sizeof(VkPipelineCacheCreateInfo.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());
 
-        public static VkPipelineCacheCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<IVkPipelineCacheCreateInfo> list, ref byte* unmanaged)
+        public static VkPipelineCacheCreateInfo.Raw** MarshalIndirect(this IReadOnlyList<VkPipelineCacheCreateInfo> list, ref byte* unmanaged)
         {
             if (list == null || list.Count == 0)
                 return (VkPipelineCacheCreateInfo.Raw**)0;

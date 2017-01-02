@@ -26,20 +26,7 @@ using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
-    public interface IVkPhysicalDeviceProperties
-    {
-        uint ApiVersion { get; }
-        uint DriverVersion { get; }
-        uint VendorID { get; }
-        uint DeviceID { get; }
-        VkPhysicalDeviceType DeviceType { get; }
-        string DeviceName { get; }
-        VkUuid PipelineCacheUUID { get; }
-        IVkPhysicalDeviceLimits Limits { get; }
-        IVkPhysicalDeviceSparseProperties SparseProperties { get; }
-    }
-
-    public unsafe class VkPhysicalDeviceProperties : IVkPhysicalDeviceProperties
+    public unsafe class VkPhysicalDeviceProperties
     {
         public uint ApiVersion { get; set; }
         public uint DriverVersion { get; set; }
@@ -48,8 +35,8 @@ namespace VulkaNet
         public VkPhysicalDeviceType DeviceType { get; set; }
         public string DeviceName { get; set; }
         public VkUuid PipelineCacheUUID { get; set; }
-        public IVkPhysicalDeviceLimits Limits { get; set; }
-        public IVkPhysicalDeviceSparseProperties SparseProperties { get; set; }
+        public VkPhysicalDeviceLimits Limits { get; set; }
+        public VkPhysicalDeviceSparseProperties SparseProperties { get; set; }
 
         [StructLayout(LayoutKind.Sequential)]
         public struct Raw

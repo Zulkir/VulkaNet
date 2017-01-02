@@ -44,11 +44,11 @@ namespace VulkaNet
             public void* pNext;
             public VkRenderPassCreateFlags flags;
             public int attachmentCount;
-            public VkAttachmentDescription.Raw* pAttachments;
+            public VkAttachmentDescription* pAttachments;
             public int subpassCount;
             public VkSubpassDescription.Raw* pSubpasses;
             public int dependencyCount;
-            public VkSubpassDependency.Raw* pDependencies;
+            public VkSubpassDependency* pDependencies;
 
             public static int SizeInBytes { get; } = Marshal.SizeOf<Raw>();
         }
@@ -119,6 +119,5 @@ namespace VulkaNet
                 result[i] = list[i].MarshalDirect(ref unmanaged);
             return result;
         }
-
     }
 }

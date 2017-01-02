@@ -111,6 +111,5 @@ namespace VulkaNet
                 result[i] = list[i].MarshalDirect(ref unmanaged);
             return result;
         }
-
     }
 }

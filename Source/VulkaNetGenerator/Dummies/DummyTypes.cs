@@ -60,6 +60,8 @@ namespace VulkaNetGenerator.Dummies
     public struct VkImageResolve { }
     public struct VkSparseImageMemoryRequirements { }
     public struct VkOffset3D { }
+    public struct VkAttachmentDescription { }
+    public struct VkSubpassDependency { }
     
     public enum VkResult { }
     public enum VkStructureType { }

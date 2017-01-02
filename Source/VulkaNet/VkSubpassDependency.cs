@@ -23,8 +23,6 @@ THE SOFTWARE.
 #endregion
 
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
 
 namespace VulkaNet
 {
@@ -37,69 +35,14 @@ namespace VulkaNet
         public VkAccessFlags SrcAccessMask { get; set; }
         public VkAccessFlags DstAccessMask { get; set; }
         public VkDependencyFlags DependencyFlags { get; set; }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct Raw
-        {
-            public int srcSubpass;
-            public int dstSubpass;
-            public VkPipelineStageFlags srcStageMask;
-            public VkPipelineStageFlags dstStageMask;
-            public VkAccessFlags srcAccessMask;
-            public VkAccessFlags dstAccessMask;
-            public VkDependencyFlags dependencyFlags;
-
-            public static int SizeInBytes { get; } = Marshal.SizeOf<Raw>();
-        }
     }
 
     public static unsafe class VkSubpassDependencyExtensions
     {
-        public static int SizeOfMarshalDirect(this VkSubpassDependency s)
-        {
-            return 0;
-        }
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkSubpassDependency> list) =>
+            list.SizeOfMarshalDirect(sizeof(VkSubpassDependency), x => 0);
 
-        public static VkSubpassDependency.Raw MarshalDirect(this VkSubpassDependency s, ref byte* unmanaged)
-        {
-
-            VkSubpassDependency.Raw result;
-            result.srcSubpass = s.SrcSubpass;
-            result.dstSubpass = s.DstSubpass;
-            result.srcStageMask = s.SrcStageMask;
-            result.dstStageMask = s.DstStageMask;
-            result.srcAccessMask = s.SrcAccessMask;
-            result.dstAccessMask = s.DstAccessMask;
-            result.dependencyFlags = s.DependencyFlags;
-            return result;
-        }
-
-        public static int SizeOfMarshalIndirect(this VkSubpassDependency s) =>
-            s.SizeOfMarshalDirect() + VkSubpassDependency.Raw.SizeInBytes;
-
-        public static VkSubpassDependency.Raw* MarshalIndirect(this VkSubpassDependency s, ref byte* unmanaged)
-        {
-            var result = (VkSubpassDependency.Raw*)unmanaged;
-            unmanaged += VkSubpassDependency.Raw.SizeInBytes;
-            *result = s.MarshalDirect(ref unmanaged);
-            return result;
-        }
-
-        public static int SizeOfMarshalDirect(this IReadOnlyList<VkSubpassDependency> list) => 
-            list == null || list.Count == 0 
-                ? 0
-                : sizeof(VkSubpassDependency.Raw) * list.Count + list.Sum(x => x.SizeOfMarshalDirect());
-
-        public static VkSubpassDependency.Raw* MarshalDirect(this IReadOnlyList<VkSubpassDependency> list, ref byte* unmanaged)
-        {
-            if (list == null || list.Count == 0)
-                return (VkSubpassDependency.Raw*)0;
-            var result = (VkSubpassDependency.Raw*)unmanaged;
-            unmanaged += sizeof(VkSubpassDependency.Raw) * list.Count;
-            for (int i = 0; i < list.Count; i++)
-                result[i] = list[i].MarshalDirect(ref unmanaged);
-            return result;
-        }
-
+        public static VkSubpassDependency* MarshalDirect(this IReadOnlyList<VkSubpassDependency> list, ref byte* unmanaged) =>
+            (VkSubpassDependency*)list.MarshalDirect(ref unmanaged, (elem, dst) => { *(VkSubpassDependency*)dst = elem; }, sizeof(VkSubpassDependency));
     }
 }

@@ -9,10 +9,10 @@ namespace VulkaNetGenerator.GenStructs
         public void* pNext;
         public VkRenderPassCreateFlags flags;
         [CountFor("Attachments")] public int attachmentCount;
-        [IsArray] public GenAttachmentDescription* pAttachments;
+        [IsArray] public VkAttachmentDescription* pAttachments;
         [CountFor("Subpasses")] public int subpassCount;
         [IsArray] public GenSubpassDescription* pSubpasses;
         [CountFor("Dependencies")] public int dependencyCount;
-        [IsArray] public GenSubpassDependency* pDependencies;
+        [IsArray] public VkSubpassDependency* pDependencies;
     }
 }

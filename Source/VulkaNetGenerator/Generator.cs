@@ -53,6 +53,11 @@ namespace VulkaNetGenerator
                 var rawFields = BuildRawFields(type);
                 var wrapperProperties = BuildWrapperProps(rawFields);
                 var isActuallyStruct = !rawFields.Any(x => x.TypeStr == "VkStructureType");
+                var isAlreadyRaw = isActuallyStruct && rawFields.Length == wrapperProperties.Length &&
+                                   rawFields.Zip(wrapperProperties, (a, b) => new {a, b}).All(x => x.a.TypeStr == x.b.TypeStr);
+
+                if (isAlreadyRaw)
+                    writer.WriteLine("IS ALREADY RAW");
 
                 if (!isActuallyStruct || rawFields.Any(x => x.TypeStr == "IntPtr") || wrapperProperties.Any(x => x.TypeStr == "IntPtr"))
                     writer.WriteLine("using System;");
@@ -238,33 +243,6 @@ namespace VulkaNetGenerator
                                 writer.UnTab();
                                 writer.WriteLine("return result;");
                             }
-                            writer.WriteLine();
-                            /*
-                            writer.WriteLine($"public static int SizeOfMarshalIndirect(this IReadOnlyList<Vk{name}> list) =>");
-                            writer.Tab();
-                            writer.WriteLine("list == null || list.Count == 0");
-                            writer.Tab();
-                            writer.WriteLine("? 0");
-                            writer.WriteLine($": sizeof(Vk{name}.Raw*) * list.Count + list.Sum(x => x.SizeOfMarshalIndirect());");
-                            writer.UnTab();
-                            writer.UnTab();
-                            writer.WriteLine();
-
-                            writer.WriteLine($"public static Vk{name}.Raw** MarshalIndirect(this IReadOnlyList<Vk{name}> list, ref byte* unmanaged)");
-                            using (writer.Curly())
-                            {
-                                writer.WriteLine("if (list == null || list.Count == 0)");
-                                writer.Tab();
-                                writer.WriteLine($"return (Vk{name}.Raw**)0;");
-                                writer.UnTab();
-                                writer.WriteLine($"var result = (Vk{name}.Raw**)unmanaged;");
-                                writer.WriteLine($"unmanaged += sizeof(Vk{name}.Raw*) * list.Count;");
-                                writer.WriteLine("for (int i = 0; i < list.Count; i++)");
-                                writer.Tab();
-                                writer.WriteLine("result[i] = list[i].MarshalIndirect(ref unmanaged);");
-                                writer.UnTab();
-                                writer.WriteLine("return result;");
-                            }*/
                         }
                     }
                 }

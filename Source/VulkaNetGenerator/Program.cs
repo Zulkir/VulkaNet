@@ -95,6 +95,12 @@ namespace VulkaNetGenerator
             generator.GenerateStruct<GenSparseImageOpaqueMemoryBindInfo>(true, false);
             generator.GenerateStruct<GenBindSparseInfo>(true, false);
             generator.GenerateStruct<GenSparseImageMemoryBind>(true, false);
+            generator.GenerateStruct<GenAndroidSurfaceCreateInfoKHR>(true, false);
+            generator.GenerateStruct<GenMirSurfaceCreateInfoKHR>(true, false);
+            generator.GenerateStruct<GenWaylandSurfaceCreateInfoKHR>(true, false);
+            generator.GenerateStruct<GenWin32SurfaceCreateInfoKHR>(true, false);
+            generator.GenerateStruct<GenXcbSurfaceCreateInfoKHR>(true, false);
+            generator.GenerateStruct<GenXlibSurfaceCreateInfoKHR>(true, false);
 
             generator.GenerateClass<GenQueue>();
             generator.GenerateClass<GenCommandPool>();
@@ -118,6 +124,7 @@ namespace VulkaNetGenerator
             generator.GenerateClass<GenDescriptorPool>();
             generator.GenerateClass<GenDescriptorSet>();
             generator.GenerateClass<GenQueryPool>();
+            generator.GenerateClass<GenSurfaceKHR>();
 
             generator.GenerateClass<GenDevice>();
         }

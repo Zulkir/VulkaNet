@@ -31,9 +31,10 @@ namespace VulkaNet
     public static class VkHelpers
     {
         public static TDelegate GetInstanceDelegate<TDelegate>(IVkInstance instance, string name)
+            where TDelegate : class
         {
             var funPtr = VkGlobal.GetInstanceProcAddr(instance, name);
-            return Marshal.GetDelegateForFunctionPointer<TDelegate>(funPtr);
+            return funPtr != IntPtr.Zero ? Marshal.GetDelegateForFunctionPointer<TDelegate>(funPtr) : null;
         }
 
         public static unsafe string ToString(byte* cstr) => Marshal.PtrToStringAnsi((IntPtr)cstr);

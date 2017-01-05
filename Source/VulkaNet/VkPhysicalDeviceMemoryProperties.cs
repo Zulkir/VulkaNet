@@ -57,9 +57,9 @@ namespace VulkaNet
         public VkPhysicalDeviceMemoryProperties(Raw* raw)
         {
             MemoryTypeCount = raw->memoryTypeCount;
-            MemoryTypes = Enumerable.Range(0, MemoryTypeCount).Select(i => ((VkMemoryType*)raw->memoryTypeCount)[i]).ToArray();
+            MemoryTypes = Enumerable.Range(0, MemoryTypeCount).Select(i => ((VkMemoryType*)raw->memoryTypes)[i]).ToArray();
             MemoryHeapCount = raw->memoryHeapCount;
-            MemoryHeaps = Enumerable.Range(0, MemoryHeapCount).Select(i => ((VkMemoryHeap*)raw->memoryHeapCount)[i]).ToArray();
+            MemoryHeaps = Enumerable.Range(0, MemoryHeapCount).Select(i => ((VkMemoryHeap*)raw->memoryHeaps)[i]).ToArray();
         }
     }
 }

@@ -74,7 +74,7 @@ namespace VulkaNet
             public delegate VkResult CreateInstanceDelegate(
                 VkInstanceCreateInfo.Raw* pCreateInfo,
                 VkAllocationCallbacks.Raw* pAllocator,
-                IntPtr* pInstance);
+                VkInstance.HandleType* pInstance);
 
             public DirectFunctions()
             {
@@ -138,7 +138,7 @@ namespace VulkaNet
             var unmanaged = (byte*)data;
             var pCreateInfo = createInfo.MarshalIndirect(ref unmanaged);
             var pAllocator = allocator.MarshalIndirect(ref unmanaged);
-            IntPtr handle;
+            VkInstance.HandleType handle;
             var result = Direct.CreateInstance(pCreateInfo, pAllocator, &handle);
             var instance = result == VkResult.Success ? new VkInstance(handle, allocator) : null;
             return new VkObjectResult<IVkInstance>(result, instance);

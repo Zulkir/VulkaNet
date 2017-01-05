@@ -49,7 +49,7 @@ namespace VulkaNetGenerator
             {
                 WriteLicense(writer);
                 writer.WriteLine();
-
+                
                 var rawFields = BuildRawFields(type);
                 var wrapperProperties = BuildWrapperProps(rawFields);
                 var isActuallyStruct = !rawFields.Any(x => x.TypeStr == "VkStructureType");
@@ -262,6 +262,7 @@ namespace VulkaNetGenerator
             var wrapperMethods = BuildWrapperMethods(rawFunctions);
 
             var isDisposable = wrapperMethods.Any(x => x.Name == "Dispose");
+            var isInstanceChild = typeof(IGenInstanceChild).IsAssignableFrom(type);
 
             if (!Directory.Exists("GeneratedSource"))
                 Directory.CreateDirectory("GeneratedSource");
@@ -296,7 +297,10 @@ namespace VulkaNetGenerator
                     if (isNonDispatchable)
                         interfaces.Add("IVkNonDispatchableHandledObject");
                     if (!isDevice)
-                        interfaces.Add("IVkDeviceChild");
+                        if (isInstanceChild)
+                            interfaces.Add("IVkInstanceChild");
+                        else
+                            interfaces.Add("IVkDeviceChild");
                     if (isDisposable)
                         interfaces.Add("IDisposable");
                     if (isDevice)
@@ -360,13 +364,17 @@ namespace VulkaNetGenerator
                         }
                         else
                         {
-                            writer.WriteLine("public IVkDevice Device { get; }");
+                            var parentStr = isInstanceChild
+                                ? "Instance"
+                                : "Device";
+
+                            writer.WriteLine($"public IVk{parentStr} {parentStr} {{ get; }}");
                             writer.WriteLine("public HandleType Handle { get; }");
                             if (isAllocatable)
                                 writer.WriteLine("public IVkAllocationCallbacks Allocator { get; }");
                             writer.WriteLine();
 
-                            writer.WriteLine("private VkDevice.DirectFunctions Direct => Device.Direct;");
+                            writer.WriteLine($"private Vk{parentStr}.DirectFunctions Direct => {parentStr}.Direct;");
                             writer.WriteLine();
 
                             writer.WriteLine($"public {rawHandleTypeStr} RawHandle => Handle.InternalHandle;");
@@ -374,10 +382,10 @@ namespace VulkaNetGenerator
                             
                             if (isAllocatable)
                             {
-                                writer.WriteLine($"public Vk{name}(IVkDevice device, HandleType handle, IVkAllocationCallbacks allocator)");
+                                writer.WriteLine($"public Vk{name}(IVk{parentStr} {parentStr.ToLower()}, HandleType handle, IVkAllocationCallbacks allocator)");
                                 using (writer.Curly())
                                 {
-                                    writer.WriteLine("Device = device;");
+                                    writer.WriteLine($"{parentStr} = {parentStr.ToLower()};");
                                     writer.WriteLine("Handle = handle;");
                                     writer.WriteLine("Allocator = allocator;");
                                 }
@@ -385,10 +393,10 @@ namespace VulkaNetGenerator
                             }
                             else
                             {
-                                writer.WriteLine($"public Vk{name}(IVkDevice device, HandleType handle)");
+                                writer.WriteLine($"public Vk{name}(IVk{parentStr} {parentStr.ToLower()}, HandleType handle)");
                                 using (writer.Curly())
                                 {
-                                    writer.WriteLine("Device = device;");
+                                    writer.WriteLine($"{parentStr} = {parentStr.ToLower()};");
                                     writer.WriteLine("Handle = handle;");
                                 }
                                 writer.WriteLine();

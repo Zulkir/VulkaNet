@@ -62,6 +62,7 @@ namespace VulkaNetGenerator.Dummies
     public struct VkOffset3D { }
     public struct VkAttachmentDescription { }
     public struct VkSubpassDependency { }
+    public struct VkInstance { }
     
     public enum VkResult { }
     public enum VkStructureType { }
@@ -145,6 +146,12 @@ namespace VulkaNetGenerator.Dummies
     public enum VkIndexType { }
     public enum VkStencilFaceFlags { }
     public enum VkSparseMemoryBindFlags { }
+    public enum VkAndroidSurfaceCreateFlagsKHR { }
+    public enum VkMirSurfaceCreateFlagsKHR { }
+    public enum VkWaylandSurfaceCreateFlagsKHR { }
+    public enum VkWin32SurfaceCreateFlagsKHR { }
+    public enum VkXcbSurfaceCreateFlagsKHR { }
+    public enum VkXlibSurfaceCreateFlagsKHR { }
 
     //public struct HndCommandPool { }
     //public struct HndRenderPass { }

@@ -43,6 +43,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="VkAccessFlags.cs" />
+    <Compile Include="VkAndroidSurfaceCreateFlagsKHR.cs" />
+    <Compile Include="VkAndroidSurfaceCreateInfoKHR.cs" />
     <Compile Include="VkAttachmentDescription.cs" />
     <Compile Include="VkAttachmentDescriptionFlags.cs" />
     <Compile Include="VkAttachmentLoadOp.cs" />
@@ -158,6 +160,8 @@
     <Compile Include="VkMemoryPropertyFlags.cs" />
     <Compile Include="VkMemoryRequirements.cs" />
     <Compile Include="VkMemoryType.cs" />
+    <Compile Include="VkMirSurfaceCreateFlagsKHR.cs" />
+    <Compile Include="VkMirSurfaceCreateInfoKHR.cs" />
     <Compile Include="VkPhysicalDeviceMemoryProperties.cs" />
     <Compile Include="VkPipeline.cs" />
     <Compile Include="VkPipelineBindPoint .cs" />
@@ -284,6 +288,7 @@
     <Compile Include="VkSubpassDescription.cs" />
     <Compile Include="VkSubpassDescriptionFlags.cs" />
     <Compile Include="VkSubresourceLayout.cs" />
+    <Compile Include="VkSurfaceKHR.cs" />
     <Compile Include="VkSystemAllocationScope.cs" />
     <Compile Include="VkUintColor4.cs" />
     <Compile Include="VkUintVector2.cs" />
@@ -294,7 +299,15 @@
     <Compile Include="VkVertexInputBindingDescription.cs" />
     <Compile Include="VkVertexInputRate.cs" />
     <Compile Include="VkViewport.cs" />
+    <Compile Include="VkWaylandSurfaceCreateFlagsKHR.cs" />
+    <Compile Include="VkWaylandSurfaceCreateInfoKHR.cs" />
+    <Compile Include="VkWin32SurfaceCreateFlagsKHR.cs" />
+    <Compile Include="VkWin32SurfaceCreateInfoKHR.cs" />
     <Compile Include="VkWriteDescriptorSet.cs" />
+    <Compile Include="VkXcbSurfaceCreateFlagsKHR.cs" />
+    <Compile Include="VkXcbSurfaceCreateInfoKHR.cs" />
+    <Compile Include="VkXlibSurfaceCreateFlagsKHR.cs" />
+    <Compile Include="VkXlibSurfaceCreateInfoKHR.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Todo.txt" />

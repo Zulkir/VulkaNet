@@ -55,9 +55,11 @@
     <Compile Include="Attributes\CountForAttribute.cs" />
     <Compile Include="Dummies\DummyTypes.cs" />
     <Compile Include="Attributes\FixedArrayAttribute.cs" />
+    <Compile Include="Dummies\IGenInstanceChild.cs" />
     <Compile Include="Dummies\Sizet.cs" />
     <Compile Include="Dummies\DeviceSize.cs" />
     <Compile Include="GenStructs\GenAllocationCallbacks.cs" />
+    <Compile Include="GenStructs\GenAndroidSurfaceCreateInfoKHR.cs" />
     <Compile Include="GenStructs\GenApplicationInfo.cs" />
     <Compile Include="GenStructs\GenBindSparseInfo.cs" />
     <Compile Include="GenStructs\GenBuffer.cs" />
@@ -102,6 +104,7 @@
     <Compile Include="GenStructs\GenMappedMemoryRange.cs" />
     <Compile Include="GenStructs\GenMemoryAllocateInfo.cs" />
     <Compile Include="GenStructs\GenMemoryBarrier.cs" />
+    <Compile Include="GenStructs\GenMirSurfaceCreateInfoKHR.cs" />
     <Compile Include="GenStructs\GenPhysicalDeviceFeatures.cs" />
     <Compile Include="GenStructs\GenPhysicalDeviceLimits.cs" />
     <Compile Include="GenStructs\GenPhysicalDeviceMemoryProperties.cs" />
@@ -146,7 +149,12 @@
     <Compile Include="GenStructs\GenSubpassDescription.cs" />
     <Compile Include="GenStructs\GenShaderModule.cs" />
     <Compile Include="GenStructs\GenPipelineLayout.cs" />
+    <Compile Include="GenStructs\GenSurfaceKHR.cs" />
+    <Compile Include="GenStructs\GenWaylandSurfaceCreateInfoKHR.cs" />
+    <Compile Include="GenStructs\GenWin32SurfaceCreateInfoKHR.cs" />
     <Compile Include="GenStructs\GenWriteDescriptorSet.cs" />
+    <Compile Include="GenStructs\GenXcbSurfaceCreateInfoKHR.cs" />
+    <Compile Include="GenStructs\GenXlibSurfaceCreateInfoKHR.cs" />
     <Compile Include="Reflection\RawField.cs" />
     <Compile Include="Reflection\RawFunction.cs" />
     <Compile Include="Reflection\RawParameter.cs" />

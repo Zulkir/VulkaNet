@@ -30,44 +30,109 @@ namespace VulkaNet
 {
     public interface IVkInstance : IVkHandledObject, IDisposable
     {
+        VkInstance.HandleType Handle { get; }
         VkInstance.DirectFunctions Direct { get; }
         IReadOnlyList<IVkPhysicalDevice> PhysicalDevices { get; }
     }
 
     public class VkInstance : IVkInstance
     {
-        public IntPtr RawHandle { get; }
+        public HandleType Handle { get; }
         private VkAllocationCallbacks Allocator { get; }
         public DirectFunctions Direct { get; }
         public IReadOnlyList<IVkPhysicalDevice> PhysicalDevices { get; }
 
-        public VkInstance(IntPtr handle, VkAllocationCallbacks allocator)
+        public IntPtr RawHandle => Handle.InternalHandle;
+
+        public VkInstance(HandleType handle, VkAllocationCallbacks allocator)
         {
-            RawHandle = handle;
+            Handle = handle;
             Allocator = allocator;
             Direct = new DirectFunctions(this);
             PhysicalDevices = EnumeratePhysicalDevices();
+        }
+
+        public struct HandleType
+        {
+            public readonly IntPtr InternalHandle;
+            public HandleType(IntPtr internalHandle) { InternalHandle = internalHandle; }
+            public override string ToString() => InternalHandle.ToString();
+            public static int SizeInBytes { get; } = IntPtr.Size;
+            public static HandleType Null => new HandleType(default(IntPtr));
         }
 
         public unsafe class DirectFunctions
         {
             public DestroyInstanceDelegate DestroyInstance { get; }
             public delegate void DestroyInstanceDelegate(
-                IntPtr instance, 
+                HandleType instance, 
                 VkAllocationCallbacks.Raw* pAllocator);
 
             public EnumeratePhysicalDevicesDelegate EnumeratePhysicalDevices { get; }
             public delegate VkResult EnumeratePhysicalDevicesDelegate(
-                IntPtr instance,
+                HandleType instance,
                 int* pPhysicalDeviceCount,
                 IntPtr* pPhysicalDevices);
 
+            public CreateAndroidSurfaceKHRDelegate CreateAndroidSurfaceKHR { get; }
+            public delegate VkResult CreateAndroidSurfaceKHRDelegate(
+                HandleType instance,
+                VkAndroidSurfaceCreateInfoKHR.Raw* pCreateInfo,
+                VkAllocationCallbacks.Raw* pAllocator,
+                VkSurfaceKHR.HandleType* pSurface);
+
+            public CreateMirSurfaceKHRDelegate CreateMirSurfaceKHR { get; }
+            public delegate VkResult CreateMirSurfaceKHRDelegate(
+                HandleType instance,
+                VkMirSurfaceCreateInfoKHR.Raw* pCreateInfo,
+                VkAllocationCallbacks.Raw* pAllocator,
+                VkSurfaceKHR.HandleType* pSurface);
+
+            public CreateWaylandSurfaceKHRDelegate CreateWaylandSurfaceKHR { get; }
+            public delegate VkResult CreateWaylandSurfaceKHRDelegate(
+                HandleType instance,
+                VkWaylandSurfaceCreateInfoKHR.Raw* pCreateInfo,
+                VkAllocationCallbacks.Raw* pAllocator,
+                VkSurfaceKHR.HandleType* pSurface);
+
+            public CreateWin32SurfaceKHRDelegate CreateWin32SurfaceKHR { get; }
+            public delegate VkResult CreateWin32SurfaceKHRDelegate(
+                HandleType instance,
+                VkWin32SurfaceCreateInfoKHR.Raw* pCreateInfo,
+                VkAllocationCallbacks.Raw* pAllocator,
+                VkSurfaceKHR.HandleType* pSurface);
+
+            public CreateXcbSurfaceKHRDelegate CreateXcbSurfaceKHR { get; }
+            public delegate VkResult CreateXcbSurfaceKHRDelegate(
+                HandleType instance,
+                VkXcbSurfaceCreateInfoKHR.Raw* pCreateInfo,
+                VkAllocationCallbacks.Raw* pAllocator,
+                VkSurfaceKHR.HandleType* pSurface);
+
+            public CreateXlibSurfaceKHRDelegate CreateXlibSurfaceKHR { get; }
+            public delegate VkResult CreateXlibSurfaceKHRDelegate(
+                HandleType instance,
+                VkXlibSurfaceCreateInfoKHR.Raw* pCreateInfo,
+                VkAllocationCallbacks.Raw* pAllocator,
+                VkSurfaceKHR.HandleType* pSurface);
+
+            public DestroySurfaceKHRDelegate DestroySurfaceKHR { get; }
+            public delegate VkResult DestroySurfaceKHRDelegate(
+                HandleType instance,
+                VkSurfaceKHR.HandleType surface,
+                VkAllocationCallbacks.Raw* pAllocator);
+
             public DirectFunctions(IVkInstance instance)
             {
-                DestroyInstance =
-                    VkHelpers.GetInstanceDelegate<DestroyInstanceDelegate>(instance, "vkDestroyInstance");
-                EnumeratePhysicalDevices =
-                    VkHelpers.GetInstanceDelegate<EnumeratePhysicalDevicesDelegate>(instance, "vkEnumeratePhysicalDevices");
+                DestroyInstance = VkHelpers.GetInstanceDelegate<DestroyInstanceDelegate>(instance, "vkDestroyInstance");
+                EnumeratePhysicalDevices = VkHelpers.GetInstanceDelegate<EnumeratePhysicalDevicesDelegate>(instance, "vkEnumeratePhysicalDevices");
+                CreateAndroidSurfaceKHR = VkHelpers.GetInstanceDelegate<CreateAndroidSurfaceKHRDelegate>(instance, "vkCreateAndroidSurfaceKHR");
+                CreateMirSurfaceKHR = VkHelpers.GetInstanceDelegate<CreateMirSurfaceKHRDelegate>(instance, "vkCreateMirSurfaceKHR");
+                CreateWaylandSurfaceKHR = VkHelpers.GetInstanceDelegate<CreateWaylandSurfaceKHRDelegate>(instance, "vkCreateWaylandSurfaceKHR");
+                CreateWin32SurfaceKHR = VkHelpers.GetInstanceDelegate<CreateWin32SurfaceKHRDelegate>(instance, "vkCreateWin32SurfaceKHR");
+                CreateXcbSurfaceKHR = VkHelpers.GetInstanceDelegate<CreateXcbSurfaceKHRDelegate>(instance, "vkCreateXcbSurfaceKHR");
+                CreateXlibSurfaceKHR = VkHelpers.GetInstanceDelegate<CreateXlibSurfaceKHRDelegate>(instance, "vkCreateXlibSurfaceKHR");
+                DestroySurfaceKHR = VkHelpers.GetInstanceDelegate<DestroySurfaceKHRDelegate>(instance, "vkDestroySurfaceKHR");
             }
         }
 
@@ -81,17 +146,17 @@ namespace VulkaNet
         {
             var unmanaged = (byte*)data;
             var pAllocator = Allocator.MarshalIndirect(ref unmanaged);
-            Direct.DestroyInstance(RawHandle, pAllocator);
+            Direct.DestroyInstance(Handle, pAllocator);
         }
 
         private unsafe IReadOnlyList<IVkPhysicalDevice> EnumeratePhysicalDevices()
         {
             int count;
-            Direct.EnumeratePhysicalDevices(RawHandle, &count, (IntPtr*)0).CheckSuccess();
+            Direct.EnumeratePhysicalDevices(Handle, &count, (IntPtr*)0).CheckSuccess();
             var rawArray = new IntPtr[count];
             fixed (IntPtr* pRawArray = rawArray)
             {
-                Direct.EnumeratePhysicalDevices(RawHandle, &count, pRawArray).CheckSuccess();
+                Direct.EnumeratePhysicalDevices(Handle, &count, pRawArray).CheckSuccess();
             }
             return rawArray.Select(x => new VkPhysicalDevice(this, x)).ToArray();
         }

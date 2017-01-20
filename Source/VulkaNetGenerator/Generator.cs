@@ -103,16 +103,22 @@ namespace VulkaNetGenerator
                                 writer.WriteLine($"public Vk{name}() {{ }}");
                                 writer.WriteLine();
                             }
-                            
-                            writer.WriteLine($"public Vk{name}(Raw* raw)");
+
+                            var instanceChildParamStr = rawFields.Any(x => typeof(IGenInstanceChild).IsAssignableFrom(x.GenType)) 
+                                ? ", IVkInstance instance" : "";
+
+                            writer.WriteLine($"public Vk{name}(Raw* raw{instanceChildParamStr})");
                             using (writer.Curly())
                             {
                                 foreach (var prop in wrapperProperties)
                                 {
+                                    var additionalParamStr = typeof(IGenInstanceChild).IsAssignableFrom(prop.Raw.GenType)
+                                        ? "instance, " : "";
+
                                     var fieldVal = $"raw->{prop.Raw.Name}";
                                     var prefix = prop.CreatorFuncTakesPtr ? "&" : "";
                                     if (prop.CreatorFunc != null)
-                                        writer.WriteLine($"{prop.Name} = {prop.CreatorFunc}({prefix}{fieldVal});");
+                                        writer.WriteLine($"{prop.Name} = {prop.CreatorFunc}({additionalParamStr}{prefix}{fieldVal});");
                                     else if (prop.NeedsCast)
                                         writer.WriteLine($"{prop.Name} = ({prop.TypeStr}){fieldVal};");
                                     else

@@ -32,6 +32,7 @@ namespace VulkaNetGenerator.Reflection
 {
     public class RawBase
     {
+        public Type GenType { get; }
         public string TypeStr { get; protected set; }
         public string Name { get; }
         public bool IgnoreInWrapper { get; protected set; }
@@ -52,7 +53,8 @@ namespace VulkaNetGenerator.Reflection
         {
             this.genType = genType;
             this.attributes = attributes;
-            
+
+            GenType = genType;
             Name = name;
             IsHandle = DeriveIsHandle(genType);
             FixedArraySize = GetAttrValue<FixedArrayAttribute>(attributes);

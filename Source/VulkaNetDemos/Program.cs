@@ -51,7 +51,11 @@ namespace VulkaNetDemos
                 {
                     ApplicationName = "VulkaNetDemos",
                     EngineName = "VulkaNetDemosEngine",
-                }
+                },
+                //EnabledExtensionNames = new[]
+                //{
+                //    "VK_KHR_display"
+                //}
             };
             using (var instance = global.CreateInstance(instanceCreateInfo, null).Object)
             {

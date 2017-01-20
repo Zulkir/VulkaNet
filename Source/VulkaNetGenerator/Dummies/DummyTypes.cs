@@ -63,6 +63,8 @@ namespace VulkaNetGenerator.Dummies
     public struct VkAttachmentDescription { }
     public struct VkSubpassDependency { }
     public struct VkInstance { }
+    public struct VkDisplayModeParametersKHR { }
+    public struct GenDisplayModePropertiesKHR { }
     
     public enum VkResult { }
     public enum VkStructureType { }
@@ -152,6 +154,11 @@ namespace VulkaNetGenerator.Dummies
     public enum VkWin32SurfaceCreateFlagsKHR { }
     public enum VkXcbSurfaceCreateFlagsKHR { }
     public enum VkXlibSurfaceCreateFlagsKHR { }
+    public enum VkSurfaceTransformFlagsKHR { }
+    public enum VkDisplayModeCreateFlagsKHR { }
+    public enum VkDisplaySurfaceCreateFlagsKHR { }
+    public enum VkSurfaceTransformFlagBitsKHR { }
+    public enum VkDisplayPlaneAlphaFlagBitsKHR { }
 
     //public struct HndCommandPool { }
     //public struct HndRenderPass { }

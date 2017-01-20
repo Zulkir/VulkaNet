@@ -33,15 +33,16 @@ namespace VulkaNet
         VkInstance.HandleType Handle { get; }
         VkInstance.DirectFunctions Direct { get; }
         IReadOnlyList<IVkPhysicalDevice> PhysicalDevices { get; }
+        VkObjectResult<IVkSurfaceKHR> CreateDisplayPlaneSurfaceKHR(VkDisplaySurfaceCreateInfoKHR createInfo, IVkAllocationCallbacks allocator);
     }
 
-    public class VkInstance : IVkInstance
+    public unsafe class VkInstance : IVkInstance
     {
         public HandleType Handle { get; }
         private VkAllocationCallbacks Allocator { get; }
         public DirectFunctions Direct { get; }
         public IReadOnlyList<IVkPhysicalDevice> PhysicalDevices { get; }
-
+        
         public IntPtr RawHandle => Handle.InternalHandle;
 
         public VkInstance(HandleType handle, VkAllocationCallbacks allocator)
@@ -61,7 +62,7 @@ namespace VulkaNet
             public static HandleType Null => new HandleType(default(IntPtr));
         }
 
-        public unsafe class DirectFunctions
+        public class DirectFunctions
         {
             public DestroyInstanceDelegate DestroyInstance { get; }
             public delegate void DestroyInstanceDelegate(
@@ -122,6 +123,13 @@ namespace VulkaNet
                 VkSurfaceKHR.HandleType surface,
                 VkAllocationCallbacks.Raw* pAllocator);
 
+            public CreateDisplayPlaneSurfaceKHRDelegate CreateDisplayPlaneSurfaceKHR { get; }
+            public delegate VkResult CreateDisplayPlaneSurfaceKHRDelegate(
+                HandleType instance,
+                VkDisplaySurfaceCreateInfoKHR.Raw* pCreateInfo,
+                VkAllocationCallbacks.Raw* pAllocator,
+                VkSurfaceKHR.HandleType* pSurface);
+
             public DirectFunctions(IVkInstance instance)
             {
                 DestroyInstance = VkHelpers.GetInstanceDelegate<DestroyInstanceDelegate>(instance, "vkDestroyInstance");
@@ -133,6 +141,7 @@ namespace VulkaNet
                 CreateXcbSurfaceKHR = VkHelpers.GetInstanceDelegate<CreateXcbSurfaceKHRDelegate>(instance, "vkCreateXcbSurfaceKHR");
                 CreateXlibSurfaceKHR = VkHelpers.GetInstanceDelegate<CreateXlibSurfaceKHRDelegate>(instance, "vkCreateXlibSurfaceKHR");
                 DestroySurfaceKHR = VkHelpers.GetInstanceDelegate<DestroySurfaceKHRDelegate>(instance, "vkDestroySurfaceKHR");
+                CreateDisplayPlaneSurfaceKHR = VkHelpers.GetInstanceDelegate<CreateDisplayPlaneSurfaceKHRDelegate>(instance, "vkCreateDisplayPlaneSurfaceKHR");
             }
         }
 
@@ -142,14 +151,14 @@ namespace VulkaNet
             VkHelpers.RunWithUnamangedData(size, DisposeInternal);
         }
 
-        private unsafe void DisposeInternal(IntPtr data)
+        private void DisposeInternal(IntPtr data)
         {
             var unmanaged = (byte*)data;
             var pAllocator = Allocator.MarshalIndirect(ref unmanaged);
             Direct.DestroyInstance(Handle, pAllocator);
         }
 
-        private unsafe IReadOnlyList<IVkPhysicalDevice> EnumeratePhysicalDevices()
+        private IReadOnlyList<IVkPhysicalDevice> EnumeratePhysicalDevices()
         {
             int count;
             Direct.EnumeratePhysicalDevices(Handle, &count, (IntPtr*)0).CheckSuccess();
@@ -159,6 +168,24 @@ namespace VulkaNet
                 Direct.EnumeratePhysicalDevices(Handle, &count, pRawArray).CheckSuccess();
             }
             return rawArray.Select(x => new VkPhysicalDevice(this, x)).ToArray();
+        }
+
+        public VkObjectResult<IVkSurfaceKHR> CreateDisplayPlaneSurfaceKHR(VkDisplaySurfaceCreateInfoKHR createInfo, IVkAllocationCallbacks allocator)
+        {
+            var unmanagedSize =
+                createInfo.SizeOfMarshalIndirect() +
+                allocator.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var pCreateInfo = createInfo.MarshalIndirect(ref unmanaged);
+                var pAllocator = allocator.MarshalIndirect(ref unmanaged);
+                VkSurfaceKHR.HandleType surfaceHandle;
+                var result = Direct.CreateDisplayPlaneSurfaceKHR(Handle, pCreateInfo, pAllocator, &surfaceHandle);
+                var instance = result == VkResult.Success ? new VkSurfaceKHR(this, surfaceHandle, allocator) : null;
+                return new VkObjectResult<IVkSurfaceKHR>(result, instance);
+            }
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace VulkaNetGenerator.Reflection
+﻿using VulkaNetGenerator.Dummies;
+
+namespace VulkaNetGenerator.Reflection
 {
     public class WrapperBase<TRaw>
         where TRaw : RawBase
@@ -86,7 +88,7 @@
         }
 
         private static bool DeriveCreatorFuncTakesPtr(TRaw rawField) => 
-            !rawField.TypeStr.EndsWith("*") && rawField.FixedArraySize == null;
+            !rawField.TypeStr.EndsWith("*") && rawField.FixedArraySize == null && !typeof(IGenInstanceChild).IsAssignableFrom(rawField.GenType);
 
         private static bool DeriveNeedsCast(string rawTypeStr, string thisTypeStr)
         {

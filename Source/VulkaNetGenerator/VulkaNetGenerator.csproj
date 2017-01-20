@@ -88,6 +88,13 @@
     <Compile Include="GenStructs\GenDeviceCreateInfo.cs" />
     <Compile Include="GenStructs\GenDeviceMemory.cs" />
     <Compile Include="GenStructs\GenDeviceQueueCreateInfo.cs" />
+    <Compile Include="GenStructs\GenDisplayKHR.cs" />
+    <Compile Include="GenStructs\GenDisplayModeCreateInfoKHR.cs" />
+    <Compile Include="GenStructs\GenDisplayModeKHR.cs" />
+    <Compile Include="GenStructs\GenDisplayModePropertiesKHR.cs" />
+    <Compile Include="GenStructs\GenDisplayPlanePropertiesKHR.cs" />
+    <Compile Include="GenStructs\GenDisplayPropertiesKHR.cs" />
+    <Compile Include="GenStructs\GenDisplaySurfaceCreateInfoKHR.cs" />
     <Compile Include="GenStructs\GenEvent.cs" />
     <Compile Include="GenStructs\GenEventCreateInfo.cs" />
     <Compile Include="GenStructs\GenFence.cs" />

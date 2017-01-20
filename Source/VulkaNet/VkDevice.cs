@@ -721,6 +721,12 @@ namespace VulkaNet
                 ulong stride,
                 VkQueryResultFlags flags);
 
+            public DestroySurfaceKHRDelegate DestroySurfaceKHR { get; }
+            public delegate void DestroySurfaceKHRDelegate(
+                VkInstance instance,
+                VkSurfaceKHR.HandleType surface,
+                VkAllocationCallbacks.Raw* pAllocator);
+
             public DestroyDeviceDelegate DestroyDevice { get; }
             public delegate void DestroyDeviceDelegate(
                 HandleType device,
@@ -1027,6 +1033,7 @@ namespace VulkaNet
                 ResetDescriptorPool = GetDeviceDelegate<ResetDescriptorPoolDelegate>("vkResetDescriptorPool");
                 DestroyQueryPool = GetDeviceDelegate<DestroyQueryPoolDelegate>("vkDestroyQueryPool");
                 GetQueryPoolResults = GetDeviceDelegate<GetQueryPoolResultsDelegate>("vkGetQueryPoolResults");
+                DestroySurfaceKHR = GetDeviceDelegate<DestroySurfaceKHRDelegate>("vkDestroySurfaceKHR");
                 DestroyDevice = GetDeviceDelegate<DestroyDeviceDelegate>("vkDestroyDevice");
                 DeviceWaitIdle = GetDeviceDelegate<DeviceWaitIdleDelegate>("vkDeviceWaitIdle");
                 CreateCommandPool = GetDeviceDelegate<CreateCommandPoolDelegate>("vkCreateCommandPool");

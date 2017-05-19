@@ -93,6 +93,7 @@
     <Compile Include="GenStructs\GenDisplayModeKHR.cs" />
     <Compile Include="GenStructs\GenDisplayModePropertiesKHR.cs" />
     <Compile Include="GenStructs\GenDisplayPlanePropertiesKHR.cs" />
+    <Compile Include="GenStructs\GenDisplayPresentInfoKHR.cs" />
     <Compile Include="GenStructs\GenDisplayPropertiesKHR.cs" />
     <Compile Include="GenStructs\GenDisplaySurfaceCreateInfoKHR.cs" />
     <Compile Include="GenStructs\GenEvent.cs" />
@@ -131,6 +132,7 @@
     <Compile Include="GenStructs\GenPipelineTessellationStateCreateInfo.cs" />
     <Compile Include="GenStructs\GenPipelineVertexInputStateCreateInfo.cs" />
     <Compile Include="GenStructs\GenPipelineViewportStateCreateInfo.cs" />
+    <Compile Include="GenStructs\GenPresentInfoKHR.cs" />
     <Compile Include="GenStructs\GenQueryPool.cs" />
     <Compile Include="GenStructs\GenQueryPoolCreateInfo.cs" />
     <Compile Include="GenStructs\GenQueue.cs" />
@@ -157,6 +159,8 @@
     <Compile Include="GenStructs\GenShaderModule.cs" />
     <Compile Include="GenStructs\GenPipelineLayout.cs" />
     <Compile Include="GenStructs\GenSurfaceKHR.cs" />
+    <Compile Include="GenStructs\GenSwapchainCreateInfoKHR.cs" />
+    <Compile Include="GenStructs\GenSwapchainKHR.cs" />
     <Compile Include="GenStructs\GenWaylandSurfaceCreateInfoKHR.cs" />
     <Compile Include="GenStructs\GenWin32SurfaceCreateInfoKHR.cs" />
     <Compile Include="GenStructs\GenWriteDescriptorSet.cs" />

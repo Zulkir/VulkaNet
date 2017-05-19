@@ -22,6 +22,8 @@ THE SOFTWARE.
 */
 #endregion
 
+using System.Collections.Generic;
+
 namespace VulkaNet
 {
     public enum VkResult
@@ -43,5 +45,20 @@ namespace VulkaNet
         ErrorIncompatibleDriver = -9,
         ErrorTooManyObjects = -10,
         ErrorFormatNotSupported = -11
+    }
+
+    public static unsafe class VkResultExtensions
+    {
+        public static void CheckSuccess(this VkResult result)
+        {
+            if (result != VkResult.Success)
+                throw new VkNotSuccessException(result);
+        }
+
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkResult> list) =>
+            list.SizeOfMarshalDirect(sizeof(VkResult), x => 0);
+
+        public static VkResult* MarshalDirect(this IReadOnlyList<VkResult> list, ref byte* unmanaged) =>
+            (VkResult*)list.MarshalDirect(ref unmanaged, (e, d) => { *(VkResult*)d = e; }, sizeof(VkResult));
     }
 }

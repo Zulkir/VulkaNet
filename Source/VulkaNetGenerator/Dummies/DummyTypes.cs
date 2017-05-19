@@ -159,6 +159,10 @@ namespace VulkaNetGenerator.Dummies
     public enum VkDisplaySurfaceCreateFlagsKHR { }
     public enum VkSurfaceTransformFlagBitsKHR { }
     public enum VkDisplayPlaneAlphaFlagBitsKHR { }
+    public enum VkSwapchainCreateFlagsKHR { }
+    public enum VkColorSpaceKHR { }
+    public enum VkCompositeAlphaFlagsKHR { }
+    public enum VkPresentModeKHR { }
 
     //public struct HndCommandPool { }
     //public struct HndRenderPass { }

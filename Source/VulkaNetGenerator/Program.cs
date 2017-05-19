@@ -106,6 +106,9 @@ namespace VulkaNetGenerator
             generator.GenerateStruct<GenDisplayModePropertiesKHR>(false, true);
             generator.GenerateStruct<GenDisplayModeCreateInfoKHR>(true, false);
             generator.GenerateStruct<GenDisplaySurfaceCreateInfoKHR>(true, false);
+            generator.GenerateStruct<GenSwapchainCreateInfoKHR>(true, false);
+            generator.GenerateStruct<GenPresentInfoKHR>(true, false);
+            generator.GenerateStruct<GenDisplayPresentInfoKHR>(true, false);
 
             generator.GenerateClass<GenQueue>();
             generator.GenerateClass<GenCommandPool>();
@@ -132,6 +135,7 @@ namespace VulkaNetGenerator
             generator.GenerateClass<GenSurfaceKHR>();
             generator.GenerateClass<GenDisplayKHR>();
             generator.GenerateClass<GenDisplayModeKHR>();
+            generator.GenerateClass<GenSwapchainKHR>();
 
             generator.GenerateClass<GenDevice>();
         }

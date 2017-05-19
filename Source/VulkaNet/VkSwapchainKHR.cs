@@ -24,19 +24,19 @@ THE SOFTWARE.
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace VulkaNet
 {
-    public interface IVkImage : IVkNonDispatchableHandledObject, IVkDeviceChild, IDisposable
+    public interface IVkSwapchainKHR : IVkNonDispatchableHandledObject, IVkDeviceChild, IDisposable
     {
-        VkImage.HandleType Handle { get; }
+        VkSwapchainKHR.HandleType Handle { get; }
         IVkAllocationCallbacks Allocator { get; }
-        VkSubresourceLayout GetImageSubresourceLayout(VkImageSubresource subresource);
-        VkMemoryRequirements GetMemoryRequirements();
-        VkResult BindMemory(IVkDeviceMemory memory, ulong memoryOffset);
+        VkObjectResult<IReadOnlyList<IVkImage>> GetImagesKHR();
+        VkObjectResult<int> AcquireNextImageKHR(ulong timeout, IVkSemaphore semaphore, IVkFence fence);
     }
 
-    public unsafe class VkImage : IVkImage
+    public unsafe class VkSwapchainKHR : IVkSwapchainKHR
     {
         public IVkDevice Device { get; }
         public HandleType Handle { get; }
@@ -46,7 +46,7 @@ namespace VulkaNet
 
         public ulong RawHandle => Handle.InternalHandle;
 
-        public VkImage(IVkDevice device, HandleType handle, IVkAllocationCallbacks allocator)
+        public VkSwapchainKHR(IVkDevice device, HandleType handle, IVkAllocationCallbacks allocator)
         {
             Device = device;
             Handle = handle;
@@ -71,47 +71,47 @@ namespace VulkaNet
             {
                 var unmanaged = unmanagedStart;
                 var _device = Device.Handle;
-                var _image = Handle;
+                var _swapchain = Handle;
                 var _pAllocator = Allocator.MarshalIndirect(ref unmanaged);
-                Direct.DestroyImage(_device, _image, _pAllocator);
+                Direct.DestroySwapchainKHR(_device, _swapchain, _pAllocator);
             }
         }
 
-        public VkSubresourceLayout GetImageSubresourceLayout(VkImageSubresource subresource)
+        public VkObjectResult<IReadOnlyList<IVkImage>> GetImagesKHR()
         {
             var _device = Device.Handle;
-            var _image = Handle;
-            var _pSubresource = &subresource;
-            VkSubresourceLayout _pLayout;
-            Direct.GetImageSubresourceLayout(_device, _image, _pSubresource, &_pLayout);
-            return _pLayout;
+            var _swapchain = Handle;
+            var _pSwapchainImageCount = 0;
+            Direct.GetSwapchainImagesKHR(_device, _swapchain, &_pSwapchainImageCount, (VkImage.HandleType*)0);
+            var resultArray = new VkImage.HandleType[_pSwapchainImageCount];
+            fixed (VkImage.HandleType* pResultArray = resultArray)
+            {
+                var pResultArrayLoc = pResultArray;
+                var result = Direct.GetSwapchainImagesKHR(_device, _swapchain, &_pSwapchainImageCount, pResultArray);
+                var resultObjArray = Enumerable.Range(0, _pSwapchainImageCount).Select((x, i) => new VkImage(Device, pResultArrayLoc[i], null)).ToArray();
+                return new VkObjectResult<IReadOnlyList<IVkImage>>(result, resultObjArray);
+            }
         }
 
-        public VkMemoryRequirements GetMemoryRequirements()
+        public VkObjectResult<int> AcquireNextImageKHR(ulong timeout, IVkSemaphore semaphore, IVkFence fence)
         {
             var _device = Device.Handle;
-            var _image = Handle;
-            VkMemoryRequirements _pMemoryRequirements;
-            Direct.GetImageMemoryRequirements(_device, _image, &_pMemoryRequirements);
-            return _pMemoryRequirements;
-        }
-
-        public VkResult BindMemory(IVkDeviceMemory memory, ulong memoryOffset)
-        {
-            var _device = Device.Handle;
-            var _image = Handle;
-            var _memory = memory?.Handle ?? VkDeviceMemory.HandleType.Null;
-            var _memoryOffset = memoryOffset;
-            return Direct.BindImageMemory(_device, _image, _memory, _memoryOffset);
+            var _swapchain = Handle;
+            var _timeout = timeout;
+            var _semaphore = semaphore?.Handle ?? VkSemaphore.HandleType.Null;
+            var _fence = fence?.Handle ?? VkFence.HandleType.Null;
+            int _pImageIndex;
+            var result = Direct.AcquireNextImageKHR(_device, _swapchain, _timeout, _semaphore, _fence, &_pImageIndex);
+            return new VkObjectResult<int>(result, _pImageIndex);
         }
     }
 
-    public static unsafe class VkImageExtensions
+    public static unsafe class VkSwapchainKHRExtensions
     {
-        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkImage> list) =>
+        public static int SizeOfMarshalDirect(this IReadOnlyList<IVkSwapchainKHR> list) =>
             list.SizeOfMarshalDirectNonDispatchable();
 
-        public static VkImage.HandleType* MarshalDirect(this IReadOnlyList<IVkImage> list, ref byte* unmanaged) =>
-            (VkImage.HandleType*)list.MarshalDirectNonDispatchable(ref unmanaged);
+        public static VkSwapchainKHR.HandleType* MarshalDirect(this IReadOnlyList<IVkSwapchainKHR> list, ref byte* unmanaged) =>
+            (VkSwapchainKHR.HandleType*)list.MarshalDirectNonDispatchable(ref unmanaged);
     }
 }

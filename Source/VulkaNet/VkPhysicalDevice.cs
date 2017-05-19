@@ -39,6 +39,7 @@ namespace VulkaNet
         VkObjectResult<IVkDevice> CreateDevice(VkDeviceCreateInfo createInfo, IVkAllocationCallbacks allocator);
         IReadOnlyList<VkSparseImageFormatProperties> GetSparseImageFormatProperties(VkFormat format, VkImageType type, VkSampleCountFlagBits samples, VkImageUsageFlags usage, VkImageTiling tiling);
         IVkDisplayKHR GetDisplay(VkDisplayKHR.HandleType handle);
+        IVkDisplayModeKHR GetDisplayMode(VkDisplayModeKHR.HandleType handle);
         VkObjectResult<IVkDisplayModeKHR> CreateDisplayMode(IVkDisplayKHR display, VkDisplayModeCreateInfoKHR createInfo, IVkAllocationCallbacks allocator);
     }
 
@@ -54,6 +55,7 @@ namespace VulkaNet
         public IReadOnlyList<IVkDisplayKHRAggregate> DisplayAggregatesKHR { get; }
 
         private ConcurrentDictionary<VkDisplayKHR.HandleType, IVkDisplayKHR> displays = new ConcurrentDictionary<VkDisplayKHR.HandleType, IVkDisplayKHR>();
+        private ConcurrentDictionary<VkDisplayModeKHR.HandleType, IVkDisplayModeKHR> displayModes = new ConcurrentDictionary<VkDisplayModeKHR.HandleType, IVkDisplayModeKHR>();
 
         public VkPhysicalDevice(IVkInstance instance, IntPtr handle)
         {
@@ -237,6 +239,9 @@ namespace VulkaNet
         public IVkDisplayKHR GetDisplay(VkDisplayKHR.HandleType handle) => 
             displays.GetOrAdd(handle, h => new VkDisplayKHR(Instance, h));
 
+        public IVkDisplayModeKHR GetDisplayMode(VkDisplayModeKHR.HandleType handle) => 
+            displayModes.GetOrAdd(handle, h => new VkDisplayModeKHR(Instance, h));
+
         private VkPhysicalDeviceProperties GetPhysicalDeviceProperties()
         {
             VkPhysicalDeviceProperties.Raw raw;
@@ -407,7 +412,5 @@ namespace VulkaNet
             var result = Direct.GetPhysicalDeviceSurfaceSupportKHR(Handle, queueFamiltyIndex, surfaceHandle, &supported);
             return new VkObjectResult<bool>(result, supported.Value);
         }
-
-        
     }
 }

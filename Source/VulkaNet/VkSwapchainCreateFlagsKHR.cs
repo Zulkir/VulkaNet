@@ -22,14 +22,13 @@ THE SOFTWARE.
 */
 #endregion
 
+using System;
+
 namespace VulkaNet
 {
-    public static class VkResultExtensions
+    [Flags]
+    public enum VkSwapchainCreateFlagsKHR
     {
-        public static void CheckSuccess(this VkResult result)
-        {
-            if (result != VkResult.Success)
-                throw new VkNotSuccessException(result);
-        }
+        None = 0
     }
 }

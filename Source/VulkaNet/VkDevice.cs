@@ -68,6 +68,8 @@ namespace VulkaNet
         void UpdateDescriptorSets(IReadOnlyList<VkWriteDescriptorSet> descriptorWrites, IReadOnlyList<VkCopyDescriptorSet> descriptorCopies);
         VkObjectResult<IVkQueryPool> CreateQueryPool(VkQueryPoolCreateInfo createInfo, VkAllocationCallbacks allocator);
         IReadOnlyList<VkSparseImageMemoryRequirements> GetImageSparseMemoryRequirements(IVkImage image);
+        VkObjectResult<IVkSwapchainKHR> CreateSwapchainKHR(VkSwapchainCreateInfoKHR createInfo, VkAllocationCallbacks allocator);
+        VkObjectResult<IReadOnlyList<IVkSwapchainKHR>> CreateSharedSwapchainsKHR(IReadOnlyList<VkSwapchainCreateInfoKHR> createInfos, VkAllocationCallbacks allocator);
     }
 
     public unsafe class VkDevice : IVkDevice
@@ -134,6 +136,11 @@ namespace VulkaNet
                 int bindInfoCount,
                 VkBindSparseInfo.Raw* pBindInfo,
                 VkFence.HandleType fence);
+
+            public QueuePresentKHRDelegate QueuePresentKHR { get; }
+            public delegate VkResult QueuePresentKHRDelegate(
+                VkQueue.HandleType queue,
+                VkPresentInfoKHR.Raw* pPresentInfo);
 
             public DestroyCommandPoolDelegate DestroyCommandPool { get; }
             public delegate void DestroyCommandPoolDelegate(
@@ -727,6 +734,28 @@ namespace VulkaNet
                 VkSurfaceKHR.HandleType surface,
                 VkAllocationCallbacks.Raw* pAllocator);
 
+            public DestroySwapchainKHRDelegate DestroySwapchainKHR { get; }
+            public delegate void DestroySwapchainKHRDelegate(
+                HandleType device,
+                VkSwapchainKHR.HandleType swapchain,
+                VkAllocationCallbacks.Raw* pAllocator);
+
+            public GetSwapchainImagesKHRDelegate GetSwapchainImagesKHR { get; }
+            public delegate VkResult GetSwapchainImagesKHRDelegate(
+                HandleType device,
+                VkSwapchainKHR.HandleType swapchain,
+                int* pSwapchainImageCount,
+                VkImage.HandleType* pSwapchainImages);
+
+            public AcquireNextImageKHRDelegate AcquireNextImageKHR { get; }
+            public delegate VkResult AcquireNextImageKHRDelegate(
+                HandleType device,
+                VkSwapchainKHR.HandleType swapchain,
+                ulong timeout,
+                VkSemaphore.HandleType semaphore,
+                VkFence.HandleType fence,
+                int* pImageIndex);
+
             public DestroyDeviceDelegate DestroyDevice { get; }
             public delegate void DestroyDeviceDelegate(
                 HandleType device,
@@ -940,6 +969,21 @@ namespace VulkaNet
                 int* pSparseMemoryRequirementCount,
                 VkSparseImageMemoryRequirements* pSparseMemoryRequirements);
 
+            public CreateSwapchainKHRDelegate CreateSwapchainKHR { get; }
+            public delegate VkResult CreateSwapchainKHRDelegate(
+                HandleType device,
+                VkSwapchainCreateInfoKHR.Raw* pCreateInfo,
+                VkAllocationCallbacks.Raw* pAllocator,
+                VkSwapchainKHR.HandleType* pSwapchain);
+
+            public CreateSharedSwapchainsKHRDelegate CreateSharedSwapchainsKHR { get; }
+            public delegate VkResult CreateSharedSwapchainsKHRDelegate(
+                HandleType device,
+                int swapchainCount,
+                VkSwapchainCreateInfoKHR.Raw* pCreateInfos,
+                VkAllocationCallbacks.Raw* pAllocator,
+                VkSwapchainKHR.HandleType* pSwapchains);
+
             public DirectFunctions(IVkDevice device)
             {
                 this.device = device;
@@ -949,6 +993,7 @@ namespace VulkaNet
                 QueueSubmit = GetDeviceDelegate<QueueSubmitDelegate>("vkQueueSubmit");
                 QueueWaitIdle = GetDeviceDelegate<QueueWaitIdleDelegate>("vkQueueWaitIdle");
                 QueueBindSparse = GetDeviceDelegate<QueueBindSparseDelegate>("vkQueueBindSparse");
+                QueuePresentKHR = GetDeviceDelegate<QueuePresentKHRDelegate>("vkQueuePresentKHR");
                 DestroyCommandPool = GetDeviceDelegate<DestroyCommandPoolDelegate>("vkDestroyCommandPool");
                 ResetCommandPool = GetDeviceDelegate<ResetCommandPoolDelegate>("vkResetCommandPool");
                 FreeCommandBuffers = GetDeviceDelegate<FreeCommandBuffersDelegate>("vkFreeCommandBuffers");
@@ -1034,6 +1079,9 @@ namespace VulkaNet
                 DestroyQueryPool = GetDeviceDelegate<DestroyQueryPoolDelegate>("vkDestroyQueryPool");
                 GetQueryPoolResults = GetDeviceDelegate<GetQueryPoolResultsDelegate>("vkGetQueryPoolResults");
                 DestroySurfaceKHR = GetDeviceDelegate<DestroySurfaceKHRDelegate>("vkDestroySurfaceKHR");
+                DestroySwapchainKHR = GetDeviceDelegate<DestroySwapchainKHRDelegate>("vkDestroySwapchainKHR");
+                GetSwapchainImagesKHR = GetDeviceDelegate<GetSwapchainImagesKHRDelegate>("vkGetSwapchainImagesKHR");
+                AcquireNextImageKHR = GetDeviceDelegate<AcquireNextImageKHRDelegate>("vkAcquireNextImageKHR");
                 DestroyDevice = GetDeviceDelegate<DestroyDeviceDelegate>("vkDestroyDevice");
                 DeviceWaitIdle = GetDeviceDelegate<DeviceWaitIdleDelegate>("vkDeviceWaitIdle");
                 CreateCommandPool = GetDeviceDelegate<CreateCommandPoolDelegate>("vkCreateCommandPool");
@@ -1065,6 +1113,8 @@ namespace VulkaNet
                 UpdateDescriptorSets = GetDeviceDelegate<UpdateDescriptorSetsDelegate>("vkUpdateDescriptorSets");
                 CreateQueryPool = GetDeviceDelegate<CreateQueryPoolDelegate>("vkCreateQueryPool");
                 GetImageSparseMemoryRequirements = GetDeviceDelegate<GetImageSparseMemoryRequirementsDelegate>("vkGetImageSparseMemoryRequirements");
+                CreateSwapchainKHR = GetDeviceDelegate<CreateSwapchainKHRDelegate>("vkCreateSwapchainKHR");
+                CreateSharedSwapchainsKHR = GetDeviceDelegate<CreateSharedSwapchainsKHRDelegate>("vkCreateSharedSwapchainsKHR");
             }
 
             public TDelegate GetDeviceDelegate<TDelegate>(string name)
@@ -1637,6 +1687,48 @@ namespace VulkaNet
             {
                 Direct.GetImageSparseMemoryRequirements(_device, _image, &_pSparseMemoryRequirementCount, (VkSparseImageMemoryRequirements*)pResultArray);
                 return resultArray;
+            }
+        }
+
+        public VkObjectResult<IVkSwapchainKHR> CreateSwapchainKHR(VkSwapchainCreateInfoKHR createInfo, VkAllocationCallbacks allocator)
+        {
+            var unmanagedSize =
+                createInfo.SizeOfMarshalIndirect() +
+                allocator.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _device = Handle;
+                var _pCreateInfo = createInfo.MarshalIndirect(ref unmanaged);
+                var _pAllocator = allocator.MarshalIndirect(ref unmanaged);
+                VkSwapchainKHR.HandleType _pSwapchain;
+                var result = Direct.CreateSwapchainKHR(_device, _pCreateInfo, _pAllocator, &_pSwapchain);
+                var instance = result == VkResult.Success ? new VkSwapchainKHR(this, _pSwapchain, allocator) : null;
+                return new VkObjectResult<IVkSwapchainKHR>(result, instance);
+            }
+        }
+
+        public VkObjectResult<IReadOnlyList<IVkSwapchainKHR>> CreateSharedSwapchainsKHR(IReadOnlyList<VkSwapchainCreateInfoKHR> createInfos, VkAllocationCallbacks allocator)
+        {
+            var unmanagedSize =
+                createInfos.SizeOfMarshalDirect() +
+                allocator.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _device = Handle;
+                var _swapchainCount = createInfos?.Count ?? 0;
+                var _pCreateInfos = createInfos.MarshalDirect(ref unmanaged);
+                var _pAllocator = allocator.MarshalIndirect(ref unmanaged);
+                var handleArray = new VkSwapchainKHR.HandleType[createInfos?.Count ?? 0];
+                fixed (VkSwapchainKHR.HandleType* _pSwapchains = handleArray)
+                {
+                    var result = Direct.CreateSharedSwapchainsKHR(_device, _swapchainCount, _pCreateInfos, _pAllocator, _pSwapchains);
+                    var instance = result == VkResult.Success ? Enumerable.Range(0, handleArray.Length).Select(i => (IVkSwapchainKHR)new VkSwapchainKHR(this, handleArray[i], allocator)).ToArray() : null;
+                    return new VkObjectResult<IReadOnlyList<IVkSwapchainKHR>>(result, instance);
+                }
             }
         }
 

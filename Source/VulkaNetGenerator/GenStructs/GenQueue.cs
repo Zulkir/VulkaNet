@@ -25,5 +25,10 @@ namespace VulkaNetGenerator.GenStructs
             [IsArray] GenBindSparseInfo* pBindInfo,
             GenFence fence)
             => default(VkResult);
+
+        public VkResult QueuePresentKHR(
+            [FromProperty("this")] GenQueue queue,
+            GenPresentInfoKHR* pPresentInfo)
+            => default(VkResult);
     }
 }

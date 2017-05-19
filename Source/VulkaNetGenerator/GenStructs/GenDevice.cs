@@ -221,5 +221,20 @@ namespace VulkaNetGenerator.GenStructs
             [ReturnSize] int* pSparseMemoryRequirementCount,
             [Return, IsArray] VkSparseImageMemoryRequirements* pSparseMemoryRequirements)
         { }
+
+        public VkResult CreateSwapchainKHR(
+            [FromProperty("this")] GenDevice device,
+            GenSwapchainCreateInfoKHR* pCreateInfo,
+            GenAllocationCallbacks* pAllocator,
+            [Return] GenSwapchainKHR* pSwapchain)
+            => default(VkResult);
+
+        public VkResult CreateSharedSwapchainsKHR(
+            [FromProperty("this")] GenDevice device,
+            [CountFor("createInfos")] int swapchainCount,
+            [IsArray] GenSwapchainCreateInfoKHR* pCreateInfos,
+            GenAllocationCallbacks* pAllocator,
+            [Return, ReturnCount("createInfos?.Count ?? 0"), IsArray] GenSwapchainKHR* pSwapchains)
+            => default(VkResult);
     }
 }

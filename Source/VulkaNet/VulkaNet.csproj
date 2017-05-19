@@ -214,6 +214,7 @@
     <Compile Include="VkPipelineViewportStateCreateFlags.cs" />
     <Compile Include="VkPipelineViewportStateCreateInfo.cs" />
     <Compile Include="VkPolygonMode.cs" />
+    <Compile Include="VkPresentInfoKHR.cs" />
     <Compile Include="VkPresentModeKHR.cs" />
     <Compile Include="VkPrimitiveTopology.cs" />
     <Compile Include="VkPushConstantRange.cs" />
@@ -269,7 +270,6 @@
     <Compile Include="VkRenderPassCreateFlags.cs" />
     <Compile Include="VkRenderPassCreateInfo.cs" />
     <Compile Include="VkResult.cs" />
-    <Compile Include="VkResultExtensions.cs" />
     <Compile Include="VkSampleCountFlagBits.cs" />
     <Compile Include="VkSampleCountFlags.cs" />
     <Compile Include="VkSampler.cs" />
@@ -311,6 +311,9 @@
     <Compile Include="VkSurfaceKHR.cs" />
     <Compile Include="VkSurfaceTransformFlagBitsKHR.cs" />
     <Compile Include="VkSurfaceTransformFlagsKHR.cs" />
+    <Compile Include="VkSwapchainCreateFlagsKHR.cs" />
+    <Compile Include="VkSwapchainCreateInfoKHR.cs" />
+    <Compile Include="VkSwapchainKHR.cs" />
     <Compile Include="VkSystemAllocationScope.cs" />
     <Compile Include="VkUintColor4.cs" />
     <Compile Include="VkUintVector2.cs" />

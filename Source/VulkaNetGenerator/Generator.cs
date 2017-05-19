@@ -28,6 +28,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using VulkaNetGenerator.Dummies;
+using VulkaNetGenerator.GenStructs;
 using VulkaNetGenerator.Reflection;
 
 namespace VulkaNetGenerator
@@ -104,10 +105,13 @@ namespace VulkaNetGenerator
                                 writer.WriteLine();
                             }
 
-                            var instanceChildParamStr = rawFields.Any(x => typeof(IGenInstanceChild).IsAssignableFrom(x.GenType)) 
-                                ? ", IVkInstance instance" : "";
+                            var displayParamStr = rawFields.Any(x => x.GenType == typeof(GenDisplayKHR))
+                                ? ", IVkPhysicalDevice physicalDevice" : "";
 
-                            writer.WriteLine($"public Vk{name}(Raw* raw{instanceChildParamStr})");
+                            //var instanceChildParamStr = rawFields.Any(x => typeof(IGenInstanceChild).IsAssignableFrom(x.GenType)) 
+                            //    ? ", IVkInstance instance" : "";
+
+                            writer.WriteLine($"public Vk{name}(Raw* raw{displayParamStr})");
                             using (writer.Curly())
                             {
                                 foreach (var prop in wrapperProperties)
@@ -117,7 +121,9 @@ namespace VulkaNetGenerator
 
                                     var fieldVal = $"raw->{prop.Raw.Name}";
                                     var prefix = prop.CreatorFuncTakesPtr ? "&" : "";
-                                    if (prop.CreatorFunc != null)
+                                    if (prop.Raw.GenType == typeof(GenDisplayKHR))
+                                        writer.WriteLine($"{prop.Name} = physicalDevice.GetDisplay({fieldVal});");
+                                    else if (prop.CreatorFunc != null)
                                         writer.WriteLine($"{prop.Name} = {prop.CreatorFunc}({additionalParamStr}{prefix}{fieldVal});");
                                     else if (prop.NeedsCast)
                                         writer.WriteLine($"{prop.Name} = ({prop.TypeStr}){fieldVal};");

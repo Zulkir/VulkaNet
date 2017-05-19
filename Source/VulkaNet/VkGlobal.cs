@@ -44,7 +44,9 @@ namespace VulkaNet
         private Dictionary<string, IReadOnlyList<IVkExtensionProperties>> InstanceExtensionProperties { get; }
 
         public IReadOnlyList<IVkExtensionProperties> InstanceExtensionPropertiesFor(string layerName)
-            => InstanceExtensionProperties[layerName];
+        {
+            return InstanceExtensionProperties[layerName ?? "NULL_VKNET"];
+        }
 
         public VkGlobal()
         {
@@ -52,6 +54,7 @@ namespace VulkaNet
             InstanceLayerProperties = EnumerateInstanceLayerProperties();
             InstanceExtensionProperties = InstanceLayerProperties.Select(x => x.LayerName).ToDictionary(
                 x => x, EnumerateInstanceExtensionProperties);
+            InstanceExtensionProperties.Add("NULL_VKNET", EnumerateInstanceExtensionProperties(null));
         }
 
         public class DirectFunctions

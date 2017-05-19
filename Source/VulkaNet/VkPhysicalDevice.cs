@@ -41,6 +41,7 @@ namespace VulkaNet
         IVkDisplayKHR GetDisplay(VkDisplayKHR.HandleType handle);
         IVkDisplayModeKHR GetDisplayMode(VkDisplayModeKHR.HandleType handle);
         VkObjectResult<IVkDisplayModeKHR> CreateDisplayMode(IVkDisplayKHR display, VkDisplayModeCreateInfoKHR createInfo, IVkAllocationCallbacks allocator);
+        VkObjectResult<IReadOnlyList<IVkExtensionProperties>> EnumerateDeviceExtensionProperties(string layerName);
     }
 
     public unsafe class VkPhysicalDevice : IVkPhysicalDevice
@@ -210,6 +211,13 @@ namespace VulkaNet
                 int* pPresentModeCount,
                 VkPresentModeKHR* pPresentModes);
 
+            public EnumerateDeviceExtensionPropertiesDelegate EnumerateDeviceExtensionProperties { get; }
+            public delegate VkResult EnumerateDeviceExtensionPropertiesDelegate(
+                IntPtr physicalDevice,
+                byte* pLayerName,
+                int* pPropertyCount,
+                VkExtensionProperties.Raw* pProperties);
+
             public DirectFunctions(IVkInstance instance)
             {
                 GetPhysicalDeviceProperties = VkHelpers.GetInstanceDelegate<GetPhysicalDevicePropertiesDelegate>(instance, "vkGetPhysicalDeviceProperties");
@@ -233,6 +241,7 @@ namespace VulkaNet
                 GetPhysicalDeviceSurfaceCapabilitiesKHR = VkHelpers.GetInstanceDelegate<GetPhysicalDeviceSurfaceCapabilitiesKHRDelegate>(instance, "vkGetPhysicalDeviceSurfaceCapabilitiesKHR");
                 GetPhysicalDeviceSurfaceFormatsKHR = VkHelpers.GetInstanceDelegate<GetPhysicalDeviceSurfaceFormatsKHRDelegate>(instance, "vkGetPhysicalDeviceSurfaceFormatsKHR");
                 GetPhysicalDeviceSurfacePresentModesKHR = VkHelpers.GetInstanceDelegate<GetPhysicalDeviceSurfacePresentModesKHRDelegate>(instance, "vkGetPhysicalDeviceSurfacePresentModesKHR");
+                EnumerateDeviceExtensionProperties = VkHelpers.GetInstanceDelegate<EnumerateDeviceExtensionPropertiesDelegate>(instance, "vkEnumerateDeviceExtensionProperties");
             }
         }
 
@@ -411,6 +420,31 @@ namespace VulkaNet
             VkBool32 supported;
             var result = Direct.GetPhysicalDeviceSurfaceSupportKHR(Handle, queueFamiltyIndex, surfaceHandle, &supported);
             return new VkObjectResult<bool>(result, supported.Value);
+        }
+
+        public VkObjectResult<IReadOnlyList<IVkExtensionProperties>> EnumerateDeviceExtensionProperties(string layerName)
+        {
+            var unmanagedSize =
+                layerName.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var pLayerName = layerName.MarshalIndirect(ref unmanaged);
+
+                int propertyCount;
+                var result = Direct.EnumerateDeviceExtensionProperties(Handle, pLayerName, &propertyCount, null);
+                if (result != VkResult.Success)
+                    return new VkObjectResult<IReadOnlyList<IVkExtensionProperties>>(result, null);
+                var rawArray = new VkExtensionProperties.Raw[propertyCount];
+                fixed (VkExtensionProperties.Raw* pRawArray = rawArray)
+                    result = Direct.EnumerateDeviceExtensionProperties(Handle, pLayerName, &propertyCount, pRawArray);
+                if (result != VkResult.Success)
+                    return new VkObjectResult<IReadOnlyList<IVkExtensionProperties>>(result, null);
+                var properties = rawArray.Select(x => new VkExtensionProperties(&x)).ToArray();
+                return new VkObjectResult<IReadOnlyList<IVkExtensionProperties>>(result, properties);
+            }
+            
         }
     }
 }

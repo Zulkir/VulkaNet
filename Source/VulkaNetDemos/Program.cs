@@ -23,7 +23,6 @@ THE SOFTWARE.
 #endregion
 
 using System;
-using System.Linq;
 using System.Windows.Forms;
 using VulkaNet;
 
@@ -45,6 +44,14 @@ namespace VulkaNetDemos
         public static void Run()
         {
             var global = new VkGlobal();
+            using (var demo = new HelloTriangle(global))
+            {
+                demo.Init();
+                Application.Run(new Form1());
+            }
+
+
+            /*
             var instanceCreateInfo = new VkInstanceCreateInfo
             {
                 ApplicationInfo = new VkApplicationInfo
@@ -54,7 +61,9 @@ namespace VulkaNetDemos
                 },
                 EnabledExtensionNames = new[]
                 {
-                    "VK_KHR_display"
+                    "VK_KHR_surface",
+                    "VK_KHR_win32_surface",
+                    "VK_EXT_debug_report"
                 }
             };
             using (var instance = global.CreateInstance(instanceCreateInfo, null).Object)
@@ -91,8 +100,9 @@ namespace VulkaNetDemos
                     commandPool.Dispose();
                 }
             }
-
+            
             Application.Run(new Form1());
+             */
         }
     }
 }

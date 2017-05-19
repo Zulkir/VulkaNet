@@ -79,6 +79,10 @@
     <Compile Include="VkComputePipelineCreateInfo.cs" />
     <Compile Include="VkCopyDescriptorSet.cs" />
     <Compile Include="VkCullModeFlagBits.cs" />
+    <Compile Include="VkDebugReportFlagBitsEXT.cs" />
+    <Compile Include="VkDebugReportFlagsEXT.cs" />
+    <Compile Include="VkDebugReportObjectTypeEXT.cs" />
+    <Compile Include="VkDefines.cs" />
     <Compile Include="VkDependencyFlags.cs" />
     <Compile Include="VkDescriptorBufferInfo.cs" />
     <Compile Include="VkDescriptorImageInfo.cs" />

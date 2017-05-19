@@ -163,6 +163,7 @@ namespace VulkaNetGenerator.Dummies
     public enum VkColorSpaceKHR { }
     public enum VkCompositeAlphaFlagsKHR { }
     public enum VkPresentModeKHR { }
+    public enum VkRectLayerKHR { }
 
     //public struct HndCommandPool { }
     //public struct HndRenderPass { }

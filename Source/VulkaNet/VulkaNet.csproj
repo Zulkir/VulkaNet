@@ -107,6 +107,7 @@
     <Compile Include="VkDisplayPlaneAlphaFlagsKHR.cs" />
     <Compile Include="VkDisplayPlaneCapabilitiesKHR.cs" />
     <Compile Include="VkDisplayPlanePropertiesKHR.cs" />
+    <Compile Include="VkDisplayPresentInfoKHR.cs" />
     <Compile Include="VkDisplayPropertiesKHR.cs" />
     <Compile Include="VkDisplaySurfaceCreateFlagsKHR.cs" />
     <Compile Include="VkDisplaySurfaceCreateInfoKHR.cs" />
@@ -216,6 +217,8 @@
     <Compile Include="VkPolygonMode.cs" />
     <Compile Include="VkPresentInfoKHR.cs" />
     <Compile Include="VkPresentModeKHR.cs" />
+    <Compile Include="VkPresentRegionKHR.cs" />
+    <Compile Include="VkPresentRegionsKHR.cs" />
     <Compile Include="VkPrimitiveTopology.cs" />
     <Compile Include="VkPushConstantRange.cs" />
     <Compile Include="VkQueryControlFlags.cs" />
@@ -265,6 +268,7 @@
     <Compile Include="VkQueueFamilyProperties.cs" />
     <Compile Include="VkQueueFlags.cs" />
     <Compile Include="VkRect2D.cs" />
+    <Compile Include="VkRectLayerKHR.cs" />
     <Compile Include="VkRenderPass.cs" />
     <Compile Include="VkRenderPassBeginInfo.cs" />
     <Compile Include="VkRenderPassCreateFlags.cs" />

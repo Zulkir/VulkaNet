@@ -109,6 +109,8 @@ namespace VulkaNetGenerator
             generator.GenerateStruct<GenSwapchainCreateInfoKHR>(true, false);
             generator.GenerateStruct<GenPresentInfoKHR>(true, false);
             generator.GenerateStruct<GenDisplayPresentInfoKHR>(true, false);
+            generator.GenerateStruct<GenPresentRegionsKHR>(true, false);
+            generator.GenerateStruct<GenPresentRegionKHR>(true, false);
 
             generator.GenerateClass<GenQueue>();
             generator.GenerateClass<GenCommandPool>();

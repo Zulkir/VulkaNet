@@ -133,6 +133,8 @@
     <Compile Include="GenStructs\GenPipelineVertexInputStateCreateInfo.cs" />
     <Compile Include="GenStructs\GenPipelineViewportStateCreateInfo.cs" />
     <Compile Include="GenStructs\GenPresentInfoKHR.cs" />
+    <Compile Include="GenStructs\GenPresentRegionKHR.cs" />
+    <Compile Include="GenStructs\GenPresentRegionsKHR.cs" />
     <Compile Include="GenStructs\GenQueryPool.cs" />
     <Compile Include="GenStructs\GenQueryPoolCreateInfo.cs" />
     <Compile Include="GenStructs\GenQueue.cs" />

@@ -37,6 +37,8 @@ namespace VulkaNetGenerator.Reflection
                 return raw.ExplicitWrapperType;
             if (raw.Name == "pNext")
                 return "IVkStructWrapper";
+            if (raw.IsByteArray)
+                return "byte[]";
             if (raw.IsArray)
             {
                 var elemTypeStr = DeriveTypeInternal(raw.TypeStr.Substring(0, raw.TypeStr.Length - 1), false);

@@ -48,6 +48,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\AsTypeAttribute.cs" />
+    <Compile Include="Attributes\ByteArrayAttribute.cs" />
+    <Compile Include="Attributes\ByteArraySizeAttribute.cs" />
     <Compile Include="Attributes\ReturnCountAttribute.cs" />
     <Compile Include="Attributes\FromPropertyAttribute.cs" />
     <Compile Include="Attributes\ReturnSizeAttribute.cs" />
@@ -75,6 +77,11 @@
     <Compile Include="GenStructs\GenCommandPoolCreateInfo.cs" />
     <Compile Include="GenStructs\GenComputePipelineCreateInfo.cs" />
     <Compile Include="GenStructs\GenCopyDescriptorSet.cs" />
+    <Compile Include="GenStructs\GenDebugMarkerMarkerInfoEXT.cs" />
+    <Compile Include="GenStructs\GenDebugMarkerObjectNameInfoEXT.cs" />
+    <Compile Include="GenStructs\GenDebugMarkerObjectTagInfoEXT.cs" />
+    <Compile Include="GenStructs\GenDebugReportCallbackCreateInfoEXT.cs" />
+    <Compile Include="GenStructs\GenDebugReportCallbackEXT.cs" />
     <Compile Include="GenStructs\GenDescriptorBufferInfo.cs" />
     <Compile Include="GenStructs\GenDescriptorImageInfo.cs" />
     <Compile Include="GenStructs\GenDescriptorPool.cs" />

@@ -79,6 +79,11 @@
     <Compile Include="VkComputePipelineCreateInfo.cs" />
     <Compile Include="VkCopyDescriptorSet.cs" />
     <Compile Include="VkCullModeFlagBits.cs" />
+    <Compile Include="VkDebugMarkerMarkerInfoEXT.cs" />
+    <Compile Include="VkDebugMarkerObjectNameInfoEXT.cs" />
+    <Compile Include="VkDebugMarkerObjectTagInfoEXT.cs" />
+    <Compile Include="VkDebugReportCallbackCreateInfoEXT.cs" />
+    <Compile Include="VkDebugReportCallbackEXT.cs" />
     <Compile Include="VkDebugReportFlagBitsEXT.cs" />
     <Compile Include="VkDebugReportFlagsEXT.cs" />
     <Compile Include="VkDebugReportObjectTypeEXT.cs" />
@@ -184,6 +189,7 @@
     <Compile Include="VkMirSurfaceCreateFlagsKHR.cs" />
     <Compile Include="VkMirSurfaceCreateInfoKHR.cs" />
     <Compile Include="VkDisplayKHRAggregate.cs" />
+    <Compile Include="VkObjectType.cs" />
     <Compile Include="VkPhysicalDeviceMemoryProperties.cs" />
     <Compile Include="VkPipeline.cs" />
     <Compile Include="VkPipelineBindPoint .cs" />

@@ -111,6 +111,10 @@ namespace VulkaNetGenerator
             generator.GenerateStruct<GenDisplayPresentInfoKHR>(true, false);
             generator.GenerateStruct<GenPresentRegionsKHR>(true, false);
             generator.GenerateStruct<GenPresentRegionKHR>(true, false);
+            generator.GenerateStruct<GenDebugMarkerObjectNameInfoEXT>(true, false);
+            generator.GenerateStruct<GenDebugMarkerObjectTagInfoEXT>(true, false);
+            generator.GenerateStruct<GenDebugMarkerMarkerInfoEXT>(true, false);
+            generator.GenerateStruct<GenDebugReportCallbackCreateInfoEXT>(true, false);
 
             generator.GenerateClass<GenQueue>();
             generator.GenerateClass<GenCommandPool>();
@@ -138,6 +142,7 @@ namespace VulkaNetGenerator
             generator.GenerateClass<GenDisplayKHR>();
             generator.GenerateClass<GenDisplayModeKHR>();
             generator.GenerateClass<GenSwapchainKHR>();
+            generator.GenerateClass<GenDebugReportCallbackEXT>();
 
             generator.GenerateClass<GenDevice>();
         }

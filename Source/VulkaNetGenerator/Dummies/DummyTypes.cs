@@ -164,6 +164,8 @@ namespace VulkaNetGenerator.Dummies
     public enum VkCompositeAlphaFlagsKHR { }
     public enum VkPresentModeKHR { }
     public enum VkRectLayerKHR { }
+    public enum VkDebugReportObjectTypeEXT { }
+    public enum VkDebugReportFlagsEXT { }
 
     //public struct HndCommandPool { }
     //public struct HndRenderPass { }

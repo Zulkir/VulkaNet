@@ -236,5 +236,15 @@ namespace VulkaNetGenerator.GenStructs
             GenAllocationCallbacks* pAllocator,
             [Return, ReturnCount("createInfos?.Count ?? 0"), IsArray] GenSwapchainKHR* pSwapchains)
             => default(VkResult);
+
+        public VkResult DebugMarkerSetObjectNameEXT(
+            [FromProperty("this")] GenDevice device,
+            GenDebugMarkerObjectNameInfoEXT* pNameInfo)
+            => default(VkResult);
+
+        public VkResult DebugMarkerSetObjectTagEXT(
+            [FromProperty("this")] GenDevice device,
+            GenDebugMarkerObjectTagInfoEXT* pTagInfo)
+            => default(VkResult);
     }
 }

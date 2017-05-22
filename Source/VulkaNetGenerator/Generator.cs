@@ -186,21 +186,33 @@ namespace VulkaNetGenerator
                                     writer.WriteLine($"var {prop.Raw.Name} = s.{prop.Name}.{prop.MarshalMethod}(ref unmanaged);");
                                 writer.WriteLine();
 
+                                //var byteArrayFields = rawFields.Where(x => x.IsByteArray).ToArray();
+                                //foreach (var byteArrayField in byteArrayFields)
+                                //{
+                                //    var prop = wrapperProperties.SingleOrDefault(x => x.Raw == byteArrayField);
+                                //    if (prop != null)
+                                //        writer.WriteLine($"fixed (byte* p{prop.Name} = {prop.Name})");
+                                //}
+                                //var byteArraysCurly = byteArrayFields.Any() ? writer.Curly() : null;
+
                                 writer.WriteLine($"Vk{name}.Raw result;");
                                 foreach (var field in rawFields)
                                 {
                                     var prop = wrapperProperties.SingleOrDefault(x => x.Raw == field);
                                     var rval = field.Name == "sType" ? $"VkStructureType.{name}" :
-                                               field.ShouldMarshal ? $"{field.Name}" :
-                                               field.IsHandle ? $"s.{prop?.Name}?.Handle ?? {field.TypeStr}.Null" :
-                                               field.IsCountFor != null ? $"s.{field.IsCountFor}?.Count ?? 0" :
-                                               field.TypeStr == "VkBool32" ? $"new VkBool32(s.{prop?.Name})" :
-                                               (prop?.NeedsCast ?? false) ? $"({field.TypeStr})s.{prop.Name}" :
-                                               field.IsUnmanagedPtr ? $"&s.{prop?.Name}" :
-                                               $"s.{prop?.Name}";
+                                            field.ShouldMarshal ? $"{field.Name}" :
+                                            field.IsHandle ? $"s.{prop?.Name}?.Handle ?? {field.TypeStr}.Null" :
+                                            field.IsCountFor != null ? $"s.{field.IsCountFor}?.Count ?? 0" :
+                                            field.IsByteArray ? $"p{prop?.Name}" :
+                                            field.IsByteArraySizeFor != null ? $"{field.IsByteArraySizeFor}.Length" :
+                                            field.TypeStr == "VkBool32" ? $"new VkBool32(s.{prop?.Name})" :
+                                            (prop?.NeedsCast ?? false) ? $"({field.TypeStr})s.{prop.Name}" :
+                                            field.IsUnmanagedPtr ? $"&s.{prop?.Name}" :
+                                            $"s.{prop?.Name}";
                                     writer.WriteLine($"result.{field.Name} = {rval};");
                                 }
                                 writer.WriteLine("return result;");
+                                //byteArraysCurly?.Dispose();
                             }
                             writer.WriteLine();
 

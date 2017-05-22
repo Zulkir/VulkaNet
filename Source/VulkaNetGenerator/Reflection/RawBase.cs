@@ -45,6 +45,8 @@ namespace VulkaNetGenerator.Reflection
         public bool IsHandle { get; }
         public string FromProperty { get; }
         public bool IsActuallyStruct { get; }
+        public bool IsByteArray { get; }
+        public string IsByteArraySizeFor { get; }
 
         protected readonly Type genType;
         protected readonly CustomAttributeData[] attributes;
@@ -61,12 +63,14 @@ namespace VulkaNetGenerator.Reflection
             TypeStr = DeriveTypeStr(genType, FixedArraySize, IsHandle);
             IsUnmanagedPtr = genType.IsPointer;
             IsCountFor = GetAttrValue<CountForAttribute>(attributes);
-            IgnoreInWrapper = Name == "sType" || IsCountFor != null || HasAttribute<ReturnSizeAttribute>(attributes);
             ExplicitWrapperType = DeriveExplicitWrapperType(genType, attributes);
             IsArray = DeriveIsArray(attributes);
             ShouldMarshal = DeriveSholdMarshal(genType, IsUnmanagedPtr, IsArray);
             FromProperty = GetAttrValue<FromPropertyAttribute>(attributes);
             IsActuallyStruct = DeriveIsActuallyStruct(genType);
+            IsByteArray = HasAttribute<ByteArrayAttribute>(attributes);
+            IsByteArraySizeFor = GetAttrValue<ByteArraySizeAttribute>(attributes);
+            IgnoreInWrapper = Name == "sType" || IsCountFor != null || IsByteArraySizeFor != null || HasAttribute<ReturnSizeAttribute>(attributes);
         }
         
         private static string DeriveTypeStr(Type type, string fixedBufferSize, bool isHandle)

@@ -357,5 +357,19 @@ namespace VulkaNetGenerator.GenStructs
             GenBuffer buffer,
             DeviceSize offset)
         { }
+
+        public void CmdDebugMarkerBeginEXT(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            GenDebugMarkerMarkerInfoEXT* pMarkerInfo)
+        { }
+
+        public void CmdDebugMarkerEndEXT(
+            [FromProperty("this")] GenCommandBuffer commandBuffer)
+        { }
+
+        public void CmdDebugMarkerInsertEXT(
+            [FromProperty("this")] GenCommandBuffer commandBuffer,
+            GenDebugMarkerMarkerInfoEXT* pMarkerInfo)
+        { }
     }
 }

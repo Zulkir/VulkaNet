@@ -33,6 +33,12 @@ namespace VulkaNet
         VkInstance.HandleType Handle { get; }
         VkInstance.DirectFunctions Direct { get; }
         IReadOnlyList<IVkPhysicalDevice> PhysicalDevices { get; }
+        VkObjectResult<IVkSurfaceKHR> CreateMirSurfaceKHR(VkMirSurfaceCreateInfoKHR createInfo, IVkAllocationCallbacks allocator);
+        VkObjectResult<IVkSurfaceKHR> CreateWaylandSurfaceKHR(VkWaylandSurfaceCreateInfoKHR createInfo, IVkAllocationCallbacks allocator);
+        VkObjectResult<IVkSurfaceKHR> CreateWin32SurfaceKHR(VkWin32SurfaceCreateInfoKHR createInfo, IVkAllocationCallbacks allocator);
+        VkObjectResult<IVkSurfaceKHR> CreateXcbSurfaceKHR(VkXcbSurfaceCreateInfoKHR createInfo, IVkAllocationCallbacks allocator);
+        VkObjectResult<IVkSurfaceKHR> CreateXlibSurfaceKHR(VkXlibSurfaceCreateInfoKHR createInfo, IVkAllocationCallbacks allocator);
+        VkObjectResult<IVkSurfaceKHR> CreateAndroidSurfaceKHR(VkAndroidSurfaceCreateInfoKHR createInfo, IVkAllocationCallbacks allocator);
         VkObjectResult<IVkSurfaceKHR> CreateDisplayPlaneSurfaceKHR(VkDisplaySurfaceCreateInfoKHR createInfo, IVkAllocationCallbacks allocator);
         VkObjectResult<IVkDebugReportCallbackEXT> CreateDebugReportCallbackEXT(VkDebugReportCallbackCreateInfoEXT createInfo, IVkAllocationCallbacks allocator);
         void DebugReportMessageEXT(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objectType, ulong obj, IntPtr location, int messageCode, string layerPrefix, string message);
@@ -197,6 +203,114 @@ namespace VulkaNet
                 Direct.EnumeratePhysicalDevices(Handle, &count, pRawArray).CheckSuccess();
             }
             return rawArray.Select(x => new VkPhysicalDevice(this, x)).ToArray();
+        }
+
+        public VkObjectResult<IVkSurfaceKHR> CreateMirSurfaceKHR(VkMirSurfaceCreateInfoKHR createInfo, IVkAllocationCallbacks allocator)
+        {
+            var unmanagedSize =
+                createInfo.SizeOfMarshalIndirect() +
+                allocator.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var pCreateInfo = createInfo.MarshalIndirect(ref unmanaged);
+                var pAllocator = allocator.MarshalIndirect(ref unmanaged);
+                VkSurfaceKHR.HandleType surfaceHandle;
+                var result = Direct.CreateMirSurfaceKHR(Handle, pCreateInfo, pAllocator, &surfaceHandle);
+                var instance = result == VkResult.Success ? new VkSurfaceKHR(this, surfaceHandle, allocator) : null;
+                return new VkObjectResult<IVkSurfaceKHR>(result, instance);
+            }
+        }
+
+        public VkObjectResult<IVkSurfaceKHR> CreateWaylandSurfaceKHR(VkWaylandSurfaceCreateInfoKHR createInfo, IVkAllocationCallbacks allocator)
+        {
+            var unmanagedSize =
+                createInfo.SizeOfMarshalIndirect() +
+                allocator.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var pCreateInfo = createInfo.MarshalIndirect(ref unmanaged);
+                var pAllocator = allocator.MarshalIndirect(ref unmanaged);
+                VkSurfaceKHR.HandleType surfaceHandle;
+                var result = Direct.CreateWaylandSurfaceKHR(Handle, pCreateInfo, pAllocator, &surfaceHandle);
+                var instance = result == VkResult.Success ? new VkSurfaceKHR(this, surfaceHandle, allocator) : null;
+                return new VkObjectResult<IVkSurfaceKHR>(result, instance);
+            }
+        }
+
+        public VkObjectResult<IVkSurfaceKHR> CreateWin32SurfaceKHR(VkWin32SurfaceCreateInfoKHR createInfo, IVkAllocationCallbacks allocator)
+        {
+            var unmanagedSize =
+                createInfo.SizeOfMarshalIndirect() +
+                allocator.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var pCreateInfo = createInfo.MarshalIndirect(ref unmanaged);
+                var pAllocator = allocator.MarshalIndirect(ref unmanaged);
+                VkSurfaceKHR.HandleType surfaceHandle;
+                var result = Direct.CreateWin32SurfaceKHR(Handle, pCreateInfo, pAllocator, &surfaceHandle);
+                var instance = result == VkResult.Success ? new VkSurfaceKHR(this, surfaceHandle, allocator) : null;
+                return new VkObjectResult<IVkSurfaceKHR>(result, instance);
+            }
+        }
+
+        public VkObjectResult<IVkSurfaceKHR> CreateXcbSurfaceKHR(VkXcbSurfaceCreateInfoKHR createInfo, IVkAllocationCallbacks allocator)
+        {
+            var unmanagedSize =
+                createInfo.SizeOfMarshalIndirect() +
+                allocator.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var pCreateInfo = createInfo.MarshalIndirect(ref unmanaged);
+                var pAllocator = allocator.MarshalIndirect(ref unmanaged);
+                VkSurfaceKHR.HandleType surfaceHandle;
+                var result = Direct.CreateXcbSurfaceKHR(Handle, pCreateInfo, pAllocator, &surfaceHandle);
+                var instance = result == VkResult.Success ? new VkSurfaceKHR(this, surfaceHandle, allocator) : null;
+                return new VkObjectResult<IVkSurfaceKHR>(result, instance);
+            }
+        }
+
+        public VkObjectResult<IVkSurfaceKHR> CreateXlibSurfaceKHR(VkXlibSurfaceCreateInfoKHR createInfo, IVkAllocationCallbacks allocator)
+        {
+            var unmanagedSize =
+                createInfo.SizeOfMarshalIndirect() +
+                allocator.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var pCreateInfo = createInfo.MarshalIndirect(ref unmanaged);
+                var pAllocator = allocator.MarshalIndirect(ref unmanaged);
+                VkSurfaceKHR.HandleType surfaceHandle;
+                var result = Direct.CreateXlibSurfaceKHR(Handle, pCreateInfo, pAllocator, &surfaceHandle);
+                var instance = result == VkResult.Success ? new VkSurfaceKHR(this, surfaceHandle, allocator) : null;
+                return new VkObjectResult<IVkSurfaceKHR>(result, instance);
+            }
+        }
+
+        public VkObjectResult<IVkSurfaceKHR> CreateAndroidSurfaceKHR(VkAndroidSurfaceCreateInfoKHR createInfo, IVkAllocationCallbacks allocator)
+        {
+            var unmanagedSize =
+                createInfo.SizeOfMarshalIndirect() +
+                allocator.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var pCreateInfo = createInfo.MarshalIndirect(ref unmanaged);
+                var pAllocator = allocator.MarshalIndirect(ref unmanaged);
+                VkSurfaceKHR.HandleType surfaceHandle;
+                var result = Direct.CreateAndroidSurfaceKHR(Handle, pCreateInfo, pAllocator, &surfaceHandle);
+                var instance = result == VkResult.Success ? new VkSurfaceKHR(this, surfaceHandle, allocator) : null;
+                return new VkObjectResult<IVkSurfaceKHR>(result, instance);
+            }
         }
 
         public VkObjectResult<IVkSurfaceKHR> CreateDisplayPlaneSurfaceKHR(VkDisplaySurfaceCreateInfoKHR createInfo, IVkAllocationCallbacks allocator)

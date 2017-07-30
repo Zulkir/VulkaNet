@@ -113,7 +113,7 @@ namespace VulkaNet
                 byte* pName);
 
             public GetDeviceQueueDelegate GetDeviceQueue { get; }
-            public delegate VkResult GetDeviceQueueDelegate(
+            public delegate void GetDeviceQueueDelegate(
                 HandleType device,
                 uint queueFamilyIndex,
                 uint queueIndex,
@@ -1132,7 +1132,7 @@ namespace VulkaNet
         private IVkQueue DoGetDeviceQueue(ValuePair<int, int> key)
         {
             VkQueue.HandleType handle;
-            Direct.GetDeviceQueue(Handle, (uint)key.First, (uint)key.Second, &handle).CheckSuccess();
+            Direct.GetDeviceQueue(Handle, (uint)key.First, (uint)key.Second, &handle);
             return new VkQueue(this, handle);
         }
 

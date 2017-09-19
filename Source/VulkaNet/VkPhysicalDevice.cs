@@ -35,6 +35,7 @@ namespace VulkaNet
         IReadOnlyList<IVkQueueFamilyProperties> QueueFamilyProperties { get; }
         VkPhysicalDeviceFeatures Features { get; }
         IVkPhysicalDeviceMemoryProperties MemoryProperties { get; }
+        IReadOnlyList<IVkExtensionProperties> ExtensionProperties { get; }
         IReadOnlyList<IVkDisplayKHRAggregate> DisplayAggregatesKHR { get; }
         VkObjectResult<IVkDevice> CreateDevice(VkDeviceCreateInfo createInfo, IVkAllocationCallbacks allocator);
         IReadOnlyList<VkSparseImageFormatProperties> GetSparseImageFormatProperties(VkFormat format, VkImageType type, VkSampleCountFlagBits samples, VkImageUsageFlags usage, VkImageTiling tiling);
@@ -63,6 +64,7 @@ namespace VulkaNet
         public IReadOnlyList<IVkQueueFamilyProperties> QueueFamilyProperties { get; }
         public VkPhysicalDeviceFeatures Features { get; }
         public IVkPhysicalDeviceMemoryProperties MemoryProperties { get; }
+        public IReadOnlyList<IVkExtensionProperties> ExtensionProperties { get; }
         public IReadOnlyList<IVkDisplayKHRAggregate> DisplayAggregatesKHR { get; }
 
         private ConcurrentDictionary<VkDisplayKHR.HandleType, IVkDisplayKHR> displays = new ConcurrentDictionary<VkDisplayKHR.HandleType, IVkDisplayKHR>();
@@ -77,6 +79,7 @@ namespace VulkaNet
             QueueFamilyProperties = GetPhysicalDeviceQueueFamilyProperties();
             Features = GetPhysicalDeviceFeatures();
             MemoryProperties = GetPhysicalDeviceMemoryProperties();
+            ExtensionProperties = EnumerateDeviceExtensionProperties(null).Object.ToArray();
             DisplayAggregatesKHR = GetDisplayAggregatesKHR();
         }
 

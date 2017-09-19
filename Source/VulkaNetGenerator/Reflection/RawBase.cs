@@ -23,6 +23,7 @@ THE SOFTWARE.
 #endregion
 
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using VulkaNetGenerator.Attributes;
@@ -154,6 +155,7 @@ namespace VulkaNetGenerator.Reflection
         private static bool DeriveIsStructRaw(Type genType)
         {
             var internalType = genType.IsPointer ? genType.GetElementType() : genType;
+            Debug.Assert(internalType != null, "internalType != null");
             return
                 internalType.Name.StartsWith("Gen") &&
                 !typeof(IGenHandledObject).IsAssignableFrom(internalType) &&

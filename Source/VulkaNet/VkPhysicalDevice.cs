@@ -41,7 +41,17 @@ namespace VulkaNet
         IVkDisplayKHR GetDisplay(VkDisplayKHR.HandleType handle);
         IVkDisplayModeKHR GetDisplayMode(VkDisplayModeKHR.HandleType handle);
         VkObjectResult<IVkDisplayModeKHR> CreateDisplayMode(IVkDisplayKHR display, VkDisplayModeCreateInfoKHR createInfo, IVkAllocationCallbacks allocator);
+        // todo: cache this like in VkGlobal
         VkObjectResult<IReadOnlyList<IVkExtensionProperties>> EnumerateDeviceExtensionProperties(string layerName);
+        VkObjectResult<bool> GetSurfaceSupportKHR(int queueFamiltyIndex, IVkSurfaceKHR surface);
+        bool GetMirPresentationSupportKHR(int queueFamilyIndex, IntPtr connection);
+        bool GetWaylandPresentationSupportKHR(int queueFamilyIndex, IntPtr display);
+        bool GetWin32PresentationSupportKHR(int queueFamilyIndex);
+        bool GetXcbPresentationSupportKHR(int queueFamilyIndex, IntPtr connection, int visual_id);
+        bool GetXlibPresentationSupportKHR(int queueFamilyIndex, IntPtr dpy, IntPtr visualID);
+        VkObjectResult<VkSurfaceCapabilitiesKHR> GetSurfaceCapabilitiesKHR(IVkSurfaceKHR surface);
+        VkObjectResult<IReadOnlyList<VkSurfaceFormatKHR>> GetSurfaceFormatsKHR(IVkSurfaceKHR surface);
+        VkObjectResult<IReadOnlyList<VkPresentModeKHR>> GetSurfacePresentModesKHR(IVkSurfaceKHR surface);
     }
 
     public unsafe class VkPhysicalDevice : IVkPhysicalDevice
@@ -71,6 +81,7 @@ namespace VulkaNet
         }
 
         // todo: move to Instance
+        // todo: use VkPhysicalDevice.HandleType
         public class DirectFunctions
         {
             public GetPhysicalDevicePropertiesDelegate GetPhysicalDeviceProperties { get; }
@@ -194,7 +205,7 @@ namespace VulkaNet
             public GetPhysicalDeviceSurfaceCapabilitiesKHRDelegate GetPhysicalDeviceSurfaceCapabilitiesKHR { get; }
             public delegate VkResult GetPhysicalDeviceSurfaceCapabilitiesKHRDelegate(
                 IntPtr physicalDevice,
-                VkSurfaceKHR surface,
+                VkSurfaceKHR.HandleType surface,
                 VkSurfaceCapabilitiesKHR* pSurfaceCapabilities);
 
             public GetPhysicalDeviceSurfaceFormatsKHRDelegate GetPhysicalDeviceSurfaceFormatsKHR { get; }
@@ -414,12 +425,68 @@ namespace VulkaNet
             return result;
         }
 
-        private VkObjectResult<bool> GetPhysicalDeviceSurfaceSupportKHR(int queueFamiltyIndex, IVkSurfaceKHR surface)
+        public VkObjectResult<bool> GetSurfaceSupportKHR(int queueFamiltyIndex, IVkSurfaceKHR surface)
         {
             var surfaceHandle = surface?.Handle ?? VkSurfaceKHR.HandleType.Null;
             VkBool32 supported;
             var result = Direct.GetPhysicalDeviceSurfaceSupportKHR(Handle, queueFamiltyIndex, surfaceHandle, &supported);
             return new VkObjectResult<bool>(result, supported.Value);
+        }
+
+        public bool GetMirPresentationSupportKHR(int queueFamilyIndex, IntPtr connection)
+        {
+            return Direct.GetPhysicalDeviceMirPresentationSupportKHR(Handle, queueFamilyIndex, connection).Value;
+        }
+
+        public bool GetWaylandPresentationSupportKHR(int queueFamilyIndex, IntPtr display)
+        {
+            return Direct.GetPhysicalDeviceWaylandPresentationSupportKHR(Handle, queueFamilyIndex, display).Value;
+        }
+
+        public bool GetWin32PresentationSupportKHR(int queueFamilyIndex)
+        {
+            return Direct.GetPhysicalDeviceWin32PresentationSupportKHR(Handle, queueFamilyIndex).Value;
+        }
+
+        public bool GetXcbPresentationSupportKHR(int queueFamilyIndex, IntPtr connection, int visual_id)
+        {
+            return Direct.GetPhysicalDeviceXcbPresentationSupportKHR(Handle, queueFamilyIndex, connection, visual_id).Value;
+        }
+
+        public bool GetXlibPresentationSupportKHR(int queueFamilyIndex, IntPtr dpy, IntPtr visualID)
+        {
+            return Direct.GetPhysicalDeviceXlibPresentationSupportKHR(Handle, queueFamilyIndex, dpy, visualID).Value;
+        }
+
+        public VkObjectResult<VkSurfaceCapabilitiesKHR> GetSurfaceCapabilitiesKHR(IVkSurfaceKHR surface)
+        {
+            VkSurfaceCapabilitiesKHR capabilities;
+            var result = Direct.GetPhysicalDeviceSurfaceCapabilitiesKHR(Handle, surface.Handle, &capabilities);
+            return new VkObjectResult<VkSurfaceCapabilitiesKHR>(result, capabilities);
+        }
+
+        public VkObjectResult<IReadOnlyList<VkSurfaceFormatKHR>> GetSurfaceFormatsKHR(IVkSurfaceKHR surface)
+        {
+            int count;
+            Direct.GetPhysicalDeviceSurfaceFormatsKHR(Handle, surface.Handle, &count, null).CheckSuccess();
+            var resultArray = new VkSurfaceFormatKHR[count];
+            fixed (VkSurfaceFormatKHR* pResults = resultArray)
+            {
+                var result = Direct.GetPhysicalDeviceSurfaceFormatsKHR(Handle, surface.Handle, &count, pResults);
+                return new VkObjectResult<IReadOnlyList<VkSurfaceFormatKHR>>(result, resultArray);
+            }
+        }
+
+        public VkObjectResult<IReadOnlyList<VkPresentModeKHR>> GetSurfacePresentModesKHR(IVkSurfaceKHR surface)
+        {
+            int count;
+            Direct.GetPhysicalDeviceSurfacePresentModesKHR(Handle, surface.Handle, &count, null).CheckSuccess();
+            var resultArray = new VkPresentModeKHR[count];
+            fixed (VkPresentModeKHR* pResults = resultArray)
+            {
+                var result = Direct.GetPhysicalDeviceSurfacePresentModesKHR(Handle, surface.Handle, &count, pResults);
+                return new VkObjectResult<IReadOnlyList<VkPresentModeKHR>>(result, resultArray);
+            }
         }
 
         public VkObjectResult<IReadOnlyList<IVkExtensionProperties>> EnumerateDeviceExtensionProperties(string layerName)

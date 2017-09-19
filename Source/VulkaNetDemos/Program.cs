@@ -44,10 +44,11 @@ namespace VulkaNetDemos
         public static void Run()
         {
             var global = new VkGlobal();
-            using (var demo = new HelloTriangle(global))
+            using (var form = new Form1())
+            using (var demo = new HelloTriangle(global, form))
             {
                 demo.Init();
-                Application.Run(new Form1());
+                Application.Run(form);
             }
 
 

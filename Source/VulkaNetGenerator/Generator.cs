@@ -456,7 +456,7 @@ namespace VulkaNetGenerator
                                 writer.WriteLine();
                                 
                                 writer.WriteLine("public GetDeviceQueueDelegate GetDeviceQueue { get; }");
-                                writer.WriteLine("public delegate VkResult GetDeviceQueueDelegate(");
+                                writer.WriteLine("public delegate void GetDeviceQueueDelegate(");
                                 writer.Tab();
                                 writer.WriteLine("HandleType device,");
                                 writer.WriteLine("uint queueFamilyIndex,");
@@ -524,7 +524,7 @@ namespace VulkaNetGenerator
                             using (writer.Curly())
                             {
                                 writer.WriteLine("VkQueue.HandleType handle;");
-                                writer.WriteLine("Direct.GetDeviceQueue(Handle, (uint)key.First, (uint)key.Second, &handle).CheckSuccess();");
+                                writer.WriteLine("Direct.GetDeviceQueue(Handle, (uint)key.First, (uint)key.Second, &handle);");
                                 writer.WriteLine("return new VkQueue(this, handle);");
                             }
                             writer.WriteLine();

@@ -30,7 +30,7 @@ namespace VulkaNet
     [StructLayout(LayoutKind.Sequential)]
     public struct VkPushConstantRange
     {
-        VkShaderStageFlagBits stageFlags;
+        VkShaderStage stageFlags;
         int offset;
         int size;
     }

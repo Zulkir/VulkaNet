@@ -27,7 +27,7 @@ using System;
 namespace VulkaNet
 {
     [Flags]
-    public enum VkCullModeFlagBits
+    public enum VkCullMode
     {
         None = 0,
         Front = 0x00000001,

@@ -37,5 +37,6 @@ namespace VulkaNet
         public VkBool32(bool value) { raw = value ? 1 : 0; }
 
         public static explicit operator bool(VkBool32 b32) => b32.Value;
+        public static explicit operator VkBool32(bool b1) => new VkBool32(b1);
     }
 }

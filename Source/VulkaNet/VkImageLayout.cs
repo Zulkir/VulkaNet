@@ -11,5 +11,7 @@
         TransferSrcOptimal = 6,
         TransferDstOptimal = 7,
         Preinitialized = 8,
+        PresentSrcKHR = 1000001002,
+        SharedPresentKHR = 1000111000,
     }
 }

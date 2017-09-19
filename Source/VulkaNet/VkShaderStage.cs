@@ -27,7 +27,7 @@ using System;
 namespace VulkaNet
 {
     [Flags]
-    public enum VkShaderStageFlagBits
+    public enum VkShaderStage
     {
         None = 0,
         Vertex = 0x00000001,

@@ -38,7 +38,7 @@ namespace VulkaNet
         public VkExtent3D Extent { get; set; }
         public int MipLevels { get; set; }
         public int ArrayLayers { get; set; }
-        public VkSampleCountFlagBits Samples { get; set; }
+        public VkSampleCount Samples { get; set; }
         public VkImageTiling Tiling { get; set; }
         public VkImageUsageFlags Usage { get; set; }
         public VkSharingMode SharingMode { get; set; }
@@ -56,7 +56,7 @@ namespace VulkaNet
             public VkExtent3D extent;
             public int mipLevels;
             public int arrayLayers;
-            public VkSampleCountFlagBits samples;
+            public VkSampleCount samples;
             public VkImageTiling tiling;
             public VkImageUsageFlags usage;
             public VkSharingMode sharingMode;

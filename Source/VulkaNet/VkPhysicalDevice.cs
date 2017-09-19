@@ -38,7 +38,7 @@ namespace VulkaNet
         IReadOnlyList<IVkExtensionProperties> ExtensionProperties { get; }
         IReadOnlyList<IVkDisplayKHRAggregate> DisplayAggregatesKHR { get; }
         VkObjectResult<IVkDevice> CreateDevice(VkDeviceCreateInfo createInfo, IVkAllocationCallbacks allocator);
-        IReadOnlyList<VkSparseImageFormatProperties> GetSparseImageFormatProperties(VkFormat format, VkImageType type, VkSampleCountFlagBits samples, VkImageUsageFlags usage, VkImageTiling tiling);
+        IReadOnlyList<VkSparseImageFormatProperties> GetSparseImageFormatProperties(VkFormat format, VkImageType type, VkSampleCount samples, VkImageUsageFlags usage, VkImageTiling tiling);
         IVkDisplayKHR GetDisplay(VkDisplayKHR.HandleType handle);
         IVkDisplayModeKHR GetDisplayMode(VkDisplayModeKHR.HandleType handle);
         VkObjectResult<IVkDisplayModeKHR> CreateDisplayMode(IVkDisplayKHR display, VkDisplayModeCreateInfoKHR createInfo, IVkAllocationCallbacks allocator);
@@ -120,7 +120,7 @@ namespace VulkaNet
                 IntPtr physicalDevice,
                 VkFormat format,
                 VkImageType type,
-                VkSampleCountFlagBits samples,
+                VkSampleCount samples,
                 VkImageUsageFlags usage,
                 VkImageTiling tiling,
                 int* pPropertyCount,
@@ -317,7 +317,7 @@ namespace VulkaNet
             return new VkPhysicalDeviceMemoryProperties(&raw);
         }
 
-        public IReadOnlyList<VkSparseImageFormatProperties> GetSparseImageFormatProperties(VkFormat format, VkImageType type, VkSampleCountFlagBits samples, VkImageUsageFlags usage,
+        public IReadOnlyList<VkSparseImageFormatProperties> GetSparseImageFormatProperties(VkFormat format, VkImageType type, VkSampleCount samples, VkImageUsageFlags usage,
             VkImageTiling tiling)
         {
             int count;

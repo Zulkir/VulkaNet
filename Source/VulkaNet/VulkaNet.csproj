@@ -70,7 +70,7 @@
     <Compile Include="VkClearRect.cs" />
     <Compile Include="VkClearValue.cs" />
     <Compile Include="VkColor4.cs" />
-    <Compile Include="VkColorComponentFlagBits.cs" />
+    <Compile Include="VkColorComponent.cs" />
     <Compile Include="VkColorSpaceKHR.cs" />
     <Compile Include="VkCompareOp.cs" />
     <Compile Include="VkComponentMapping.cs" />
@@ -78,7 +78,7 @@
     <Compile Include="VkCompositeAlphaFlagsKHR.cs" />
     <Compile Include="VkComputePipelineCreateInfo.cs" />
     <Compile Include="VkCopyDescriptorSet.cs" />
-    <Compile Include="VkCullModeFlagBits.cs" />
+    <Compile Include="VkCullMode.cs" />
     <Compile Include="VkDebugMarkerMarkerInfoEXT.cs" />
     <Compile Include="VkDebugMarkerObjectNameInfoEXT.cs" />
     <Compile Include="VkDebugMarkerObjectTagInfoEXT.cs" />
@@ -284,7 +284,7 @@
     <Compile Include="VkRenderPassCreateFlags.cs" />
     <Compile Include="VkRenderPassCreateInfo.cs" />
     <Compile Include="VkResult.cs" />
-    <Compile Include="VkSampleCountFlagBits.cs" />
+    <Compile Include="VkSampleCount.cs" />
     <Compile Include="VkSampleCountFlags.cs" />
     <Compile Include="VkSampler.cs" />
     <Compile Include="VkSamplerAddressMode.cs" />
@@ -297,7 +297,7 @@
     <Compile Include="VkShaderModule.cs" />
     <Compile Include="VkShaderModuleCreateFlags.cs" />
     <Compile Include="VkShaderModuleCreateInfo.cs" />
-    <Compile Include="VkShaderStageFlagBits.cs" />
+    <Compile Include="VkShaderStage.cs" />
     <Compile Include="VkSharingMode.cs" />
     <Compile Include="VkSparseBufferMemoryBindInfo.cs" />
     <Compile Include="VkSparseImageFormatFlags.cs" />

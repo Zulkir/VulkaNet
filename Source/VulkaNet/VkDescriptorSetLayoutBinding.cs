@@ -33,7 +33,7 @@ namespace VulkaNet
         public int Binding { get; set; }
         public VkDescriptorType DescriptorType { get; set; }
         public int DescriptorCount { get; set; }
-        public VkShaderStageFlagBits StageFlags { get; set; }
+        public VkShaderStage StageFlags { get; set; }
         public IReadOnlyList<IVkSampler> ImmutableSamplers { get; set; }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -42,7 +42,7 @@ namespace VulkaNet
             public int binding;
             public VkDescriptorType descriptorType;
             public int descriptorCount;
-            public VkShaderStageFlagBits stageFlags;
+            public VkShaderStage stageFlags;
             public VkSampler.HandleType* pImmutableSamplers;
 
             public static int SizeInBytes { get; } = Marshal.SizeOf<Raw>();

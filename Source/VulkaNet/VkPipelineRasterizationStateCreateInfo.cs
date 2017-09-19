@@ -36,7 +36,7 @@ namespace VulkaNet
         public bool DepthClampEnable { get; set; }
         public bool RasterizerDiscardEnable { get; set; }
         public VkPolygonMode PolygonMode { get; set; }
-        public VkCullModeFlagBits CullMode { get; set; }
+        public VkCullMode CullMode { get; set; }
         public VkFrontFace FrontFace { get; set; }
         public bool DepthBiasEnable { get; set; }
         public float DepthBiasConstantFactor { get; set; }
@@ -53,7 +53,7 @@ namespace VulkaNet
             public VkBool32 depthClampEnable;
             public VkBool32 rasterizerDiscardEnable;
             public VkPolygonMode polygonMode;
-            public VkCullModeFlagBits cullMode;
+            public VkCullMode cullMode;
             public VkFrontFace frontFace;
             public VkBool32 depthBiasEnable;
             public float depthBiasConstantFactor;

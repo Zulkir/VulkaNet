@@ -35,7 +35,7 @@ namespace VulkaNet
         public VkBlendFactor SrcAlphaBlendFactor;
         public VkBlendFactor DstAlphaBlendFactor;
         public VkBlendOp AlphaBlendOp;
-        public VkColorComponentFlagBits ColorWriteMask;
+        public VkColorComponent ColorWriteMask;
     }
 
     public static unsafe class VkPipelineColorBlendAttachmentStateExtensions

@@ -91,7 +91,7 @@ namespace VulkaNetGenerator.GenStructs
             [CountFor("createInfos")] int createInfoCount,
             [IsArray] GenComputePipelineCreateInfo* pCreateInfos,
             GenAllocationCallbacks* pAllocator,
-            [Return] GenPipeline* pPipelines)
+            [Return, IsArray, ReturnCount("_createInfoCount")] GenPipeline* pPipelines)
             => default(VkResult);
 
         public VkResult CreateGraphicsPipelines(
@@ -100,7 +100,7 @@ namespace VulkaNetGenerator.GenStructs
             [CountFor("createInfos")] int createInfoCount,
             [IsArray] GenGraphicsPipelineCreateInfo* pCreateInfos,
             GenAllocationCallbacks* pAllocator,
-            [Return] GenPipeline* pPipelines)
+            [Return, IsArray, ReturnCount("_createInfoCount")] GenPipeline* pPipelines)
             => default(VkResult);
 
         public VkResult CreatePipelineCache(

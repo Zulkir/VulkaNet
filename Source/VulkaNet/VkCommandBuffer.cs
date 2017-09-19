@@ -42,7 +42,7 @@ namespace VulkaNet
         void CmdNextSubpass(VkSubpassContents contents);
         void CmdBindPipeline(VkPipelineBindPoint pipelineBindPoint, IVkPipeline pipeline);
         void CmdBindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, IVkPipelineLayout layout, int firstSet, IReadOnlyList<IVkDescriptorSet> descriptorSets, IReadOnlyList<int> dynamicOffsets);
-        void CmdPushConstants(IVkPipelineLayout layout, VkShaderStageFlagBits stageFlags, int offset, int size, IntPtr values);
+        void CmdPushConstants(IVkPipelineLayout layout, VkShaderStage stageFlags, int offset, int size, IntPtr values);
         void CmdResetQueryPool(IVkQueryPool queryPool, int firstQuery, int queryCount);
         void CmdBeginQuery(IVkQueryPool queryPool, int query, VkQueryControlFlags flags);
         void CmdEndQuery(IVkQueryPool queryPool, int query);
@@ -261,7 +261,7 @@ namespace VulkaNet
             }
         }
 
-        public void CmdPushConstants(IVkPipelineLayout layout, VkShaderStageFlagBits stageFlags, int offset, int size, IntPtr values)
+        public void CmdPushConstants(IVkPipelineLayout layout, VkShaderStage stageFlags, int offset, int size, IntPtr values)
         {
             var _commandBuffer = Handle;
             var _layout = layout?.Handle ?? VkPipelineLayout.HandleType.Null;

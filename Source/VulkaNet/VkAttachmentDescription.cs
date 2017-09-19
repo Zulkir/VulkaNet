@@ -30,7 +30,7 @@ namespace VulkaNet
     {
         public VkAttachmentDescriptionFlags Flags { get; set; }
         public VkFormat Format { get; set; }
-        public VkSampleCountFlagBits Samples { get; set; }
+        public VkSampleCount Samples { get; set; }
         public VkAttachmentLoadOp LoadOp { get; set; }
         public VkAttachmentStoreOp StoreOp { get; set; }
         public VkAttachmentLoadOp StencilLoadOp { get; set; }

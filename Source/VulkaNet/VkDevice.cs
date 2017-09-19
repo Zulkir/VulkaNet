@@ -49,8 +49,8 @@ namespace VulkaNet
         VkObjectResult<IVkRenderPass> CreateRenderPass(VkRenderPassCreateInfo createInfo, VkAllocationCallbacks allocator);
         VkObjectResult<IVkFramebuffer> CreateFramebuffer(VkFramebufferCreateInfo createInfo, VkAllocationCallbacks allocator);
         VkObjectResult<IVkShaderModule> CreateShaderModule(VkShaderModuleCreateInfo createInfo, VkAllocationCallbacks allocator);
-        VkObjectResult<IVkPipeline> CreateComputePipelines(IVkPipelineCache pipelineCache, IReadOnlyList<VkComputePipelineCreateInfo> createInfos, VkAllocationCallbacks allocator);
-        VkObjectResult<IVkPipeline> CreateGraphicsPipelines(IVkPipelineCache pipelineCache, IReadOnlyList<VkGraphicsPipelineCreateInfo> createInfos, VkAllocationCallbacks allocator);
+        VkObjectResult<IReadOnlyList<IVkPipeline>> CreateComputePipelines(IVkPipelineCache pipelineCache, IReadOnlyList<VkComputePipelineCreateInfo> createInfos, VkAllocationCallbacks allocator);
+        VkObjectResult<IReadOnlyList<IVkPipeline>> CreateGraphicsPipelines(IVkPipelineCache pipelineCache, IReadOnlyList<VkGraphicsPipelineCreateInfo> createInfos, VkAllocationCallbacks allocator);
         VkObjectResult<IVkPipelineCache> CreatePipelineCache(VkPipelineCacheCreateInfo createInfo, VkAllocationCallbacks allocator);
         VkObjectResult<IVkDeviceMemory> AllocateMemory(VkMemoryAllocateInfo allocateInfo, VkAllocationCallbacks allocator);
         VkResult FlushMappedMemoryRanges(IReadOnlyList<VkMappedMemoryRange> memoryRanges);
@@ -70,6 +70,8 @@ namespace VulkaNet
         IReadOnlyList<VkSparseImageMemoryRequirements> GetImageSparseMemoryRequirements(IVkImage image);
         VkObjectResult<IVkSwapchainKHR> CreateSwapchainKHR(VkSwapchainCreateInfoKHR createInfo, VkAllocationCallbacks allocator);
         VkObjectResult<IReadOnlyList<IVkSwapchainKHR>> CreateSharedSwapchainsKHR(IReadOnlyList<VkSwapchainCreateInfoKHR> createInfos, VkAllocationCallbacks allocator);
+        VkResult DebugMarkerSetObjectNameEXT(VkDebugMarkerObjectNameInfoEXT nameInfo);
+        VkResult DebugMarkerSetObjectTagEXT(VkDebugMarkerObjectTagInfoEXT tagInfo);
     }
 
     public unsafe class VkDevice : IVkDevice
@@ -252,7 +254,7 @@ namespace VulkaNet
             public delegate void CmdPushConstantsDelegate(
                 VkCommandBuffer.HandleType commandBuffer,
                 VkPipelineLayout.HandleType layout,
-                VkShaderStageFlagBits stageFlags,
+                VkShaderStage stageFlags,
                 int offset,
                 int size,
                 IntPtr pValues);
@@ -510,6 +512,20 @@ namespace VulkaNet
                 VkBuffer.HandleType buffer,
                 ulong offset);
 
+            public CmdDebugMarkerBeginEXTDelegate CmdDebugMarkerBeginEXT { get; }
+            public delegate void CmdDebugMarkerBeginEXTDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                VkDebugMarkerMarkerInfoEXT.Raw* pMarkerInfo);
+
+            public CmdDebugMarkerEndEXTDelegate CmdDebugMarkerEndEXT { get; }
+            public delegate void CmdDebugMarkerEndEXTDelegate(
+                VkCommandBuffer.HandleType commandBuffer);
+
+            public CmdDebugMarkerInsertEXTDelegate CmdDebugMarkerInsertEXT { get; }
+            public delegate void CmdDebugMarkerInsertEXTDelegate(
+                VkCommandBuffer.HandleType commandBuffer,
+                VkDebugMarkerMarkerInfoEXT.Raw* pMarkerInfo);
+
             public DestroyFenceDelegate DestroyFence { get; }
             public delegate void DestroyFenceDelegate(
                 HandleType device,
@@ -756,6 +772,12 @@ namespace VulkaNet
                 VkFence.HandleType fence,
                 int* pImageIndex);
 
+            public DestroyDebugReportCallbackEXTDelegate DestroyDebugReportCallbackEXT { get; }
+            public delegate void DestroyDebugReportCallbackEXTDelegate(
+                VkInstance instance,
+                VkAllocationCallbacks.Raw* pAllocator,
+                VkDebugReportCallbackEXT.HandleType callback);
+
             public DestroyDeviceDelegate DestroyDevice { get; }
             public delegate void DestroyDeviceDelegate(
                 HandleType device,
@@ -984,6 +1006,16 @@ namespace VulkaNet
                 VkAllocationCallbacks.Raw* pAllocator,
                 VkSwapchainKHR.HandleType* pSwapchains);
 
+            public DebugMarkerSetObjectNameEXTDelegate DebugMarkerSetObjectNameEXT { get; }
+            public delegate VkResult DebugMarkerSetObjectNameEXTDelegate(
+                HandleType device,
+                VkDebugMarkerObjectNameInfoEXT.Raw* pNameInfo);
+
+            public DebugMarkerSetObjectTagEXTDelegate DebugMarkerSetObjectTagEXT { get; }
+            public delegate VkResult DebugMarkerSetObjectTagEXTDelegate(
+                HandleType device,
+                VkDebugMarkerObjectTagInfoEXT.Raw* pTagInfo);
+
             public DirectFunctions(IVkDevice device)
             {
                 this.device = device;
@@ -1043,6 +1075,9 @@ namespace VulkaNet
                 CmdSetBlendConstants = GetDeviceDelegate<CmdSetBlendConstantsDelegate>("vkCmdSetBlendConstants");
                 CmdDispatch = GetDeviceDelegate<CmdDispatchDelegate>("vkCmdDispatch");
                 CmdDispatchIndirect = GetDeviceDelegate<CmdDispatchIndirectDelegate>("vkCmdDispatchIndirect");
+                CmdDebugMarkerBeginEXT = GetDeviceDelegate<CmdDebugMarkerBeginEXTDelegate>("vkCmdDebugMarkerBeginEXT");
+                CmdDebugMarkerEndEXT = GetDeviceDelegate<CmdDebugMarkerEndEXTDelegate>("vkCmdDebugMarkerEndEXT");
+                CmdDebugMarkerInsertEXT = GetDeviceDelegate<CmdDebugMarkerInsertEXTDelegate>("vkCmdDebugMarkerInsertEXT");
                 DestroyFence = GetDeviceDelegate<DestroyFenceDelegate>("vkDestroyFence");
                 GetFenceStatus = GetDeviceDelegate<GetFenceStatusDelegate>("vkGetFenceStatus");
                 DestroySemaphore = GetDeviceDelegate<DestroySemaphoreDelegate>("vkDestroySemaphore");
@@ -1082,6 +1117,7 @@ namespace VulkaNet
                 DestroySwapchainKHR = GetDeviceDelegate<DestroySwapchainKHRDelegate>("vkDestroySwapchainKHR");
                 GetSwapchainImagesKHR = GetDeviceDelegate<GetSwapchainImagesKHRDelegate>("vkGetSwapchainImagesKHR");
                 AcquireNextImageKHR = GetDeviceDelegate<AcquireNextImageKHRDelegate>("vkAcquireNextImageKHR");
+                DestroyDebugReportCallbackEXT = GetDeviceDelegate<DestroyDebugReportCallbackEXTDelegate>("vkDestroyDebugReportCallbackEXT");
                 DestroyDevice = GetDeviceDelegate<DestroyDeviceDelegate>("vkDestroyDevice");
                 DeviceWaitIdle = GetDeviceDelegate<DeviceWaitIdleDelegate>("vkDeviceWaitIdle");
                 CreateCommandPool = GetDeviceDelegate<CreateCommandPoolDelegate>("vkCreateCommandPool");
@@ -1115,6 +1151,8 @@ namespace VulkaNet
                 GetImageSparseMemoryRequirements = GetDeviceDelegate<GetImageSparseMemoryRequirementsDelegate>("vkGetImageSparseMemoryRequirements");
                 CreateSwapchainKHR = GetDeviceDelegate<CreateSwapchainKHRDelegate>("vkCreateSwapchainKHR");
                 CreateSharedSwapchainsKHR = GetDeviceDelegate<CreateSharedSwapchainsKHRDelegate>("vkCreateSharedSwapchainsKHR");
+                DebugMarkerSetObjectNameEXT = GetDeviceDelegate<DebugMarkerSetObjectNameEXTDelegate>("vkDebugMarkerSetObjectNameEXT");
+                DebugMarkerSetObjectTagEXT = GetDeviceDelegate<DebugMarkerSetObjectTagEXTDelegate>("vkDebugMarkerSetObjectTagEXT");
             }
 
             public TDelegate GetDeviceDelegate<TDelegate>(string name)
@@ -1341,7 +1379,7 @@ namespace VulkaNet
             }
         }
 
-        public VkObjectResult<IVkPipeline> CreateComputePipelines(IVkPipelineCache pipelineCache, IReadOnlyList<VkComputePipelineCreateInfo> createInfos, VkAllocationCallbacks allocator)
+        public VkObjectResult<IReadOnlyList<IVkPipeline>> CreateComputePipelines(IVkPipelineCache pipelineCache, IReadOnlyList<VkComputePipelineCreateInfo> createInfos, VkAllocationCallbacks allocator)
         {
             var unmanagedSize =
                 createInfos.SizeOfMarshalDirect() +
@@ -1355,14 +1393,17 @@ namespace VulkaNet
                 var _createInfoCount = createInfos?.Count ?? 0;
                 var _pCreateInfos = createInfos.MarshalDirect(ref unmanaged);
                 var _pAllocator = allocator.MarshalIndirect(ref unmanaged);
-                VkPipeline.HandleType _pPipelines;
-                var result = Direct.CreateComputePipelines(_device, _pipelineCache, _createInfoCount, _pCreateInfos, _pAllocator, &_pPipelines);
-                var instance = result == VkResult.Success ? new VkPipeline(this, _pPipelines, allocator) : null;
-                return new VkObjectResult<IVkPipeline>(result, instance);
+                var handleArray = new VkPipeline.HandleType[_createInfoCount];
+                fixed (VkPipeline.HandleType* _pPipelines = handleArray)
+                {
+                    var result = Direct.CreateComputePipelines(_device, _pipelineCache, _createInfoCount, _pCreateInfos, _pAllocator, _pPipelines);
+                    var instance = result == VkResult.Success ? Enumerable.Range(0, handleArray.Length).Select(i => (IVkPipeline)new VkPipeline(this, handleArray[i], allocator)).ToArray() : null;
+                    return new VkObjectResult<IReadOnlyList<IVkPipeline>>(result, instance);
+                }
             }
         }
 
-        public VkObjectResult<IVkPipeline> CreateGraphicsPipelines(IVkPipelineCache pipelineCache, IReadOnlyList<VkGraphicsPipelineCreateInfo> createInfos, VkAllocationCallbacks allocator)
+        public VkObjectResult<IReadOnlyList<IVkPipeline>> CreateGraphicsPipelines(IVkPipelineCache pipelineCache, IReadOnlyList<VkGraphicsPipelineCreateInfo> createInfos, VkAllocationCallbacks allocator)
         {
             var unmanagedSize =
                 createInfos.SizeOfMarshalDirect() +
@@ -1376,10 +1417,13 @@ namespace VulkaNet
                 var _createInfoCount = createInfos?.Count ?? 0;
                 var _pCreateInfos = createInfos.MarshalDirect(ref unmanaged);
                 var _pAllocator = allocator.MarshalIndirect(ref unmanaged);
-                VkPipeline.HandleType _pPipelines;
-                var result = Direct.CreateGraphicsPipelines(_device, _pipelineCache, _createInfoCount, _pCreateInfos, _pAllocator, &_pPipelines);
-                var instance = result == VkResult.Success ? new VkPipeline(this, _pPipelines, allocator) : null;
-                return new VkObjectResult<IVkPipeline>(result, instance);
+                var handleArray = new VkPipeline.HandleType[_createInfoCount];
+                fixed (VkPipeline.HandleType* _pPipelines = handleArray)
+                {
+                    var result = Direct.CreateGraphicsPipelines(_device, _pipelineCache, _createInfoCount, _pCreateInfos, _pAllocator, _pPipelines);
+                    var instance = result == VkResult.Success ? Enumerable.Range(0, handleArray.Length).Select(i => (IVkPipeline)new VkPipeline(this, handleArray[i], allocator)).ToArray() : null;
+                    return new VkObjectResult<IReadOnlyList<IVkPipeline>>(result, instance);
+                }
             }
         }
 
@@ -1729,6 +1773,34 @@ namespace VulkaNet
                     var instance = result == VkResult.Success ? Enumerable.Range(0, handleArray.Length).Select(i => (IVkSwapchainKHR)new VkSwapchainKHR(this, handleArray[i], allocator)).ToArray() : null;
                     return new VkObjectResult<IReadOnlyList<IVkSwapchainKHR>>(result, instance);
                 }
+            }
+        }
+
+        public VkResult DebugMarkerSetObjectNameEXT(VkDebugMarkerObjectNameInfoEXT nameInfo)
+        {
+            var unmanagedSize =
+                nameInfo.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _device = Handle;
+                var _pNameInfo = nameInfo.MarshalIndirect(ref unmanaged);
+                return Direct.DebugMarkerSetObjectNameEXT(_device, _pNameInfo);
+            }
+        }
+
+        public VkResult DebugMarkerSetObjectTagEXT(VkDebugMarkerObjectTagInfoEXT tagInfo)
+        {
+            var unmanagedSize =
+                tagInfo.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _device = Handle;
+                var _pTagInfo = tagInfo.MarshalIndirect(ref unmanaged);
+                return Direct.DebugMarkerSetObjectTagEXT(_device, _pTagInfo);
             }
         }
 

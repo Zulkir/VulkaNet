@@ -33,7 +33,7 @@ namespace VulkaNet
     {
         public IVkStructWrapper Next { get; set; }
         public VkPipelineShaderStageCreateFlags Flags { get; set; }
-        public VkShaderStageFlagBits Stage { get; set; }
+        public VkShaderStage Stage { get; set; }
         public IVkShaderModule Module { get; set; }
         public string Name { get; set; }
         public VkSpecializationInfo SpecializationInfo { get; set; }
@@ -44,7 +44,7 @@ namespace VulkaNet
             public VkStructureType sType;
             public void* pNext;
             public VkPipelineShaderStageCreateFlags flags;
-            public VkShaderStageFlagBits stage;
+            public VkShaderStage stage;
             public VkShaderModule.HandleType module;
             public byte* pName;
             public VkSpecializationInfo.Raw* pSpecializationInfo;

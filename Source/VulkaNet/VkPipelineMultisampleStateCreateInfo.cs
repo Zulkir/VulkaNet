@@ -33,7 +33,7 @@ namespace VulkaNet
     {
         public IVkStructWrapper Next { get; set; }
         public VkPipelineMultisampleStateCreateFlags Flags { get; set; }
-        public VkSampleCountFlagBits RasterizationSamples { get; set; }
+        public VkSampleCount RasterizationSamples { get; set; }
         public bool SampleShadingEnable { get; set; }
         public float MinSampleShading { get; set; }
         public IReadOnlyList<int> SampleMask { get; set; }
@@ -46,7 +46,7 @@ namespace VulkaNet
             public VkStructureType sType;
             public void* pNext;
             public VkPipelineMultisampleStateCreateFlags flags;
-            public VkSampleCountFlagBits rasterizationSamples;
+            public VkSampleCount rasterizationSamples;
             public VkBool32 sampleShadingEnable;
             public float minSampleShading;
             public int* pSampleMask;

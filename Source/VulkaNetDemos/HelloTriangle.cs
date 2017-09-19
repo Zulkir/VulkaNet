@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -42,6 +43,9 @@ namespace VulkaNetDemos
         private VkFormat swapchainImageFormat;
         private VkExtent2D swapChainExtent;
         private IReadOnlyList<IVkImageView> swapChainImageViews;
+        private IVkRenderPass renderPass;
+        private IVkPipelineLayout pipelineLayout;
+        private IVkPipeline graphicsPipeline;
 
         public HelloTriangle(IVkGlobal vkGlobal, Form form)
         {
@@ -58,6 +62,8 @@ namespace VulkaNetDemos
             CreateLogicalDevice();
             CreateSwapChain();
             CreateImageViews();
+            CreateRenderPass();
+            CreateGraphicsPipeline();
         }
 
         private void CreateInstance()
@@ -312,6 +318,176 @@ namespace VulkaNetDemos
             }).ToArray();
         }
 
+        private void CreateRenderPass()
+        {
+            var colorAttachment = new VkAttachmentDescription
+            {
+                Format = swapchainImageFormat,
+                Samples = VkSampleCount.B1,
+                LoadOp = VkAttachmentLoadOp.Clear,
+                StoreOp = VkAttachmentStoreOp.Store,
+                StencilLoadOp = VkAttachmentLoadOp.DontCare,
+                StencilStoreOp = VkAttachmentStoreOp.DontCare,
+                InitialLayout = VkImageLayout.Undefined,
+                FinalLayout = VkImageLayout.PresentSrcKHR
+            };
+            var colorAttachmentRef = new VkAttachmentReference
+            {
+                Attachment = 0,
+                Layout = VkImageLayout.ColorAttachmentOptimal
+            };
+            var subpass = new VkSubpassDescription
+            {
+                PipelineBindPoint = VkPipelineBindPoint.Graphics,
+                ColorAttachments = new [] {colorAttachmentRef},
+                DepthStencilAttachment = null
+            };
+            var renderPassInfo = new VkRenderPassCreateInfo
+            {
+                Attachments = new[] {colorAttachment},
+                Subpasses = new[] {subpass}
+            };
+            renderPass = device.CreateRenderPass(renderPassInfo, null).Object;
+        }
+
+        private void CreateGraphicsPipeline()
+        {
+            var vertShaderModule = CreateShaderModule(File.ReadAllBytes("../../Resources/Shaders/vert.spv"));
+            var fragShaderModule = CreateShaderModule(File.ReadAllBytes("../../Resources/Shaders/frag.spv"));
+
+            var vertShaderStageInfo = new VkPipelineShaderStageCreateInfo()
+            {
+                Stage = VkShaderStage.Vertex,
+                Module = vertShaderModule,
+                Name = "main"
+            };
+
+            var fragShaderStageInfo = new VkPipelineShaderStageCreateInfo()
+            {
+                Stage = VkShaderStage.Fragment,
+                Module = fragShaderModule,
+                Name = "main"
+            };
+
+            var shaderStages = new[] {vertShaderStageInfo, fragShaderStageInfo};
+            var vertexInputInfo = new VkPipelineVertexInputStateCreateInfo
+            {
+                
+            };
+            var inputAssemblyInfo = new VkPipelineInputAssemblyStateCreateInfo
+            {
+                Topology = VkPrimitiveTopology.TriangleList,
+                PrimitiveRestartEnable = false
+            };
+            var viewport = new VkViewport
+            {
+                X = 0,
+                Y = 0,
+                Width = swapChainExtent.Width,
+                Height = swapChainExtent.Height,
+                MinDepth = 0,
+                MaxDepth = 1
+            };
+            var scissor = new VkRect2D(new VkOffset2D(0, 0), swapChainExtent);
+            var viewportStateInfo = new VkPipelineViewportStateCreateInfo
+            {
+                Viewports = new [] {viewport},
+                Scissors = new [] {scissor}
+            };
+            var rasterizerInfo = new VkPipelineRasterizationStateCreateInfo
+            {
+                DepthClampEnable = false,
+                RasterizerDiscardEnable = false,
+                PolygonMode = VkPolygonMode.Fill,
+                LineWidth = 1f,
+                CullMode = VkCullMode.Back,
+                FrontFace = VkFrontFace.Clockwise,
+                DepthBiasEnable = false,
+                DepthBiasConstantFactor = 0f,
+                DepthBiasClamp = 0f,
+                DepthBiasSlopeFactor = 0f
+            };
+            var multisamplingInfo = new VkPipelineMultisampleStateCreateInfo
+            {
+                SampleShadingEnable = false,
+                RasterizationSamples = VkSampleCount.B1,
+                MinSampleShading = 1f,
+                SampleMask = null,
+                AlphaToCoverageEnable = false,
+                AlphaToOneEnable = false
+            };
+            var colorBlendAttachment = new VkPipelineColorBlendAttachmentState
+            {
+                ColorWriteMask = VkColorComponent.R | VkColorComponent.G | VkColorComponent.B | VkColorComponent.A,
+                BlendEnable = (VkBool32)false,
+                SrcColorBlendFactor = VkBlendFactor.One,
+                SrcAlphaBlendFactor = VkBlendFactor.One,
+                ColorBlendOp = VkBlendOp.Add,
+                AlphaBlendOp = VkBlendOp.Add,
+                DstColorBlendFactor = VkBlendFactor.Zero,
+                DstAlphaBlendFactor = VkBlendFactor.Zero
+            };
+            var colorBlendingInfo = new VkPipelineColorBlendStateCreateInfo
+            {
+                LogicOpEnable = false,
+                LogicOp = VkLogicOp.Copy,
+                Attachments = new[] {colorBlendAttachment},
+                BlendConstants = new VkColor4(0, 0, 0, 0)
+            };
+            var dynamicStates = new[]
+            {
+                VkDynamicState.Viewport,
+                VkDynamicState.LineWidth,
+            };
+            var dynamicStateInfo = new VkPipelineDynamicStateCreateInfo
+            {
+                DynamicStates = dynamicStates
+            };
+            var pipelineLayoutInfo = new VkPipelineLayoutCreateInfo
+            {
+                SetLayouts = null,
+                PushConstantRanges = null
+            };
+            pipelineLayout = device.CreatePipelineLayout(pipelineLayoutInfo, null).Object;
+
+            var pipelineInfo = new VkGraphicsPipelineCreateInfo
+            {
+                Stages = shaderStages,
+                VertexInputState = vertexInputInfo,
+                InputAssemblyState = inputAssemblyInfo,
+                TessellationState = null,
+                ViewportState = viewportStateInfo,
+                RasterizationState = rasterizerInfo,
+                MultisampleState = multisamplingInfo,
+                DepthStencilState = null,
+                ColorBlendState = colorBlendingInfo,
+                DynamicState = null,
+                Layout = pipelineLayout,
+                RenderPass = renderPass,
+                Subpass = 0,
+                BasePipelineHandle = null,
+                BasePipelineIndex = -1,
+                Flags = VkPipelineCreateFlags.None
+            };
+
+            graphicsPipeline = device.CreateGraphicsPipelines(null, new[] {pipelineInfo}, null).Object.Single();
+
+            // todo: delete shader modules
+        }
+
+        private unsafe IVkShaderModule CreateShaderModule(byte[] code)
+        {
+            fixed (byte* pCode = code)
+            {
+                var createinfo = new VkShaderModuleCreateInfo
+                {
+                    Code = (IntPtr)pCode,
+                    CodeSize = (IntPtr)code.Length
+                };
+                return device.CreateShaderModule(createinfo, null).Object;
+            }
+        }
+
         public void MainLop()
         {
             
@@ -319,6 +495,9 @@ namespace VulkaNetDemos
         
         public void Dispose()
         {
+            graphicsPipeline?.Dispose();
+            pipelineLayout?.Dispose();
+            renderPass?.Dispose();
             foreach (var view in swapChainImageViews)
                 view.Dispose();
             swapChain?.Dispose();

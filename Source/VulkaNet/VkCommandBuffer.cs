@@ -50,7 +50,7 @@ namespace VulkaNet
         void CmdWriteTimestamp(VkPipelineStageFlags pipelineStage, IVkQueryPool queryPool, int query);
         void CmdClearColorImage(IVkImage image, VkImageLayout imageLayout, VkClearColorValue color, IReadOnlyList<VkImageSubresourceRange> ranges);
         void CmdClearDepthStencilImage(IVkImage image, VkImageLayout imageLayout, VkClearDepthStencilValue depthStencil, IReadOnlyList<VkImageSubresourceRange> ranges);
-        void CmdClearAttachments(int attachmentCount, VkClearAttachment attachments, int rectCount, VkClearRect rects);
+        void CmdClearAttachments(IReadOnlyList<VkClearAttachment> attachments, IReadOnlyList<VkClearRect> rects);
         void CmdFillBuffer(IVkBuffer dstBuffer, ulong dstOffset, ulong size, int data);
         void CmdUpdateBuffer(IVkBuffer dstBuffer, ulong dstOffset, ulong dataSize, IntPtr data);
         void CmdCopyBuffer(IVkBuffer srcBuffer, IVkBuffer dstBuffer, IReadOnlyList<VkBufferCopy> regions);
@@ -76,6 +76,9 @@ namespace VulkaNet
         void CmdSetBlendConstants(VkColor4 blendConstants);
         void CmdDispatch(int x, int y, int z);
         void CmdDispatchIndirect(IVkBuffer buffer, ulong offset);
+        void CmdDebugMarkerBeginEXT(VkDebugMarkerMarkerInfoEXT markerInfo);
+        void CmdDebugMarkerEndEXT();
+        void CmdDebugMarkerInsertEXT(VkDebugMarkerMarkerInfoEXT markerInfo);
     }
 
     public unsafe class VkCommandBuffer : IVkCommandBuffer
@@ -356,14 +359,22 @@ namespace VulkaNet
             }
         }
 
-        public void CmdClearAttachments(int attachmentCount, VkClearAttachment attachments, int rectCount, VkClearRect rects)
+        public void CmdClearAttachments(IReadOnlyList<VkClearAttachment> attachments, IReadOnlyList<VkClearRect> rects)
         {
-            var _commandBuffer = Handle;
-            var _attachmentCount = attachmentCount;
-            var _pAttachments = &attachments;
-            var _rectCount = rectCount;
-            var _pRects = &rects;
-            Direct.CmdClearAttachments(_commandBuffer, _attachmentCount, _pAttachments, _rectCount, _pRects);
+            var unmanagedSize =
+                attachments.SizeOfMarshalDirect() +
+                rects.SizeOfMarshalDirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _commandBuffer = Handle;
+                var _attachmentCount = attachments?.Count ?? 0;
+                var _pAttachments = attachments.MarshalDirect(ref unmanaged);
+                var _rectCount = rects?.Count ?? 0;
+                var _pRects = rects.MarshalDirect(ref unmanaged);
+                Direct.CmdClearAttachments(_commandBuffer, _attachmentCount, _pAttachments, _rectCount, _pRects);
+            }
         }
 
         public void CmdFillBuffer(IVkBuffer dstBuffer, ulong dstOffset, ulong size, int data)
@@ -667,6 +678,40 @@ namespace VulkaNet
             var _buffer = buffer?.Handle ?? VkBuffer.HandleType.Null;
             var _offset = offset;
             Direct.CmdDispatchIndirect(_commandBuffer, _buffer, _offset);
+        }
+
+        public void CmdDebugMarkerBeginEXT(VkDebugMarkerMarkerInfoEXT markerInfo)
+        {
+            var unmanagedSize =
+                markerInfo.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _commandBuffer = Handle;
+                var _pMarkerInfo = markerInfo.MarshalIndirect(ref unmanaged);
+                Direct.CmdDebugMarkerBeginEXT(_commandBuffer, _pMarkerInfo);
+            }
+        }
+
+        public void CmdDebugMarkerEndEXT()
+        {
+            var _commandBuffer = Handle;
+            Direct.CmdDebugMarkerEndEXT(_commandBuffer);
+        }
+
+        public void CmdDebugMarkerInsertEXT(VkDebugMarkerMarkerInfoEXT markerInfo)
+        {
+            var unmanagedSize =
+                markerInfo.SizeOfMarshalIndirect();
+            var unmanagedArray = new byte[unmanagedSize];
+            fixed (byte* unmanagedStart = unmanagedArray)
+            {
+                var unmanaged = unmanagedStart;
+                var _commandBuffer = Handle;
+                var _pMarkerInfo = markerInfo.MarshalIndirect(ref unmanaged);
+                Direct.CmdDebugMarkerInsertEXT(_commandBuffer, _pMarkerInfo);
+            }
         }
 
     }

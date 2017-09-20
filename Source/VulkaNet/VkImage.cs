@@ -104,6 +104,7 @@ namespace VulkaNet
             var _memoryOffset = memoryOffset;
             return Direct.BindImageMemory(_device, _image, _memory, _memoryOffset);
         }
+
     }
 
     public static unsafe class VkImageExtensions

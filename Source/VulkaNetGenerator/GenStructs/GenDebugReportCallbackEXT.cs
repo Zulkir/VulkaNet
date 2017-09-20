@@ -8,8 +8,8 @@ namespace VulkaNetGenerator.GenStructs
         [MethodName("Dispose")]
         public void DestroyDebugReportCallbackEXT(
             [FromProperty("Instance.Handle")] VkInstance instance,
-            [FromProperty("Allocator")] GenAllocationCallbacks* pAllocator,
-            [FromProperty("this")] GenDebugReportCallbackEXT callback)
+            [FromProperty("this")] GenDebugReportCallbackEXT callback,
+            [FromProperty("Allocator")] GenAllocationCallbacks* pAllocator)
         { }
     }
 }

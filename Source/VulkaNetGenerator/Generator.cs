@@ -186,6 +186,9 @@ namespace VulkaNetGenerator
                                     writer.WriteLine($"var {prop.Raw.Name} = s.{prop.Name}.{prop.MarshalMethod}(ref unmanaged);");
                                 writer.WriteLine();
 
+                                //foreach (var prop in wrapperProperties.Where(x => x.Raw.IsNullable))
+                                //    writer.WriteLine($"var val_{prop.Raw.Name} = s.{prop.Name} ?? default({prop.Raw.GenType.GetElementType().Name});");
+
                                 //var byteArrayFields = rawFields.Where(x => x.IsByteArray).ToArray();
                                 //foreach (var byteArrayField in byteArrayFields)
                                 //{
@@ -225,6 +228,15 @@ namespace VulkaNetGenerator
                             writer.UnTab();
                             writer.WriteLine();
 
+                            if (isActuallyStruct)
+                            {
+                                writer.WriteLine($"public static int SizeOfMarshalIndirect(this Vk{name}? s) =>");
+                                writer.Tab();
+                                writer.WriteLine($"s?.SizeOfMarshalIndirect() ?? 0;");
+                                writer.UnTab();
+                                writer.WriteLine();
+                            }
+
                             writer.WriteLine($"public static Vk{name}.Raw* MarshalIndirect(this Vk{name} s, ref byte* unmanaged)");
                             using (writer.Curly())
                             {
@@ -241,6 +253,15 @@ namespace VulkaNetGenerator
                                 writer.WriteLine("return result;");
                             }
                             writer.WriteLine();
+
+                            if (isActuallyStruct)
+                            {
+                                writer.WriteLine($"public static Vk{name}.Raw* MarshalIndirect(this Vk{name}? s, ref byte* unmanaged) =>");
+                                writer.Tab();
+                                writer.WriteLine($"s.HasValue ? s.Value.MarshalIndirect(ref unmanaged) : null;");
+                                writer.UnTab();
+                                writer.WriteLine();
+                            }
 
                             writer.WriteLine($"public static int SizeOfMarshalDirect(this IReadOnlyList<Vk{name}> list) => ");
                             writer.Tab();

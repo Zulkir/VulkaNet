@@ -42,6 +42,6 @@ namespace VulkaNetGenerator.GenStructs
         [CountFor("EnabledExtensionNames")]
         public int enabledExtensionCount;
         public StrByte** ppEnabledExtensionNames;
-        public GenPhysicalDeviceFeatures* pEnabledFeatures;
+        [Nullable] public GenPhysicalDeviceFeatures* pEnabledFeatures;
     }
 }

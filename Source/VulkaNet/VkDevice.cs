@@ -775,8 +775,8 @@ namespace VulkaNet
             public DestroyDebugReportCallbackEXTDelegate DestroyDebugReportCallbackEXT { get; }
             public delegate void DestroyDebugReportCallbackEXTDelegate(
                 VkInstance instance,
-                VkAllocationCallbacks.Raw* pAllocator,
-                VkDebugReportCallbackEXT.HandleType callback);
+                VkDebugReportCallbackEXT.HandleType callback,
+                VkAllocationCallbacks.Raw* pAllocator);
 
             public DestroyDeviceDelegate DestroyDevice { get; }
             public delegate void DestroyDeviceDelegate(

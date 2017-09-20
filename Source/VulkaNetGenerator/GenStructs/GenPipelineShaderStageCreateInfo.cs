@@ -1,4 +1,5 @@
-﻿using VulkaNetGenerator.Dummies;
+﻿using VulkaNetGenerator.Attributes;
+using VulkaNetGenerator.Dummies;
 
 namespace VulkaNetGenerator.GenStructs
 {
@@ -7,9 +8,9 @@ namespace VulkaNetGenerator.GenStructs
         public VkStructureType sType;
         public void* pNext;
         public VkPipelineShaderStageCreateFlags flags;
-        public VkShaderStageFlagBits stage;
+        public VkShaderStage stage;
         public GenShaderModule module;
         public StrByte* pName;
-        public GenSpecializationInfo* pSpecializationInfo;
+        [Nullable] public GenSpecializationInfo* pSpecializationInfo;
     }
 }

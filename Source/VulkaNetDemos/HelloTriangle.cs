@@ -340,7 +340,7 @@ namespace VulkaNetDemos
             {
                 PipelineBindPoint = VkPipelineBindPoint.Graphics,
                 ColorAttachments = new [] {colorAttachmentRef},
-                DepthStencilAttachment = null
+                //DepthStencilAttachment = null
             };
             var renderPassInfo = new VkRenderPassCreateInfo
             {
@@ -472,7 +472,8 @@ namespace VulkaNetDemos
 
             graphicsPipeline = device.CreateGraphicsPipelines(null, new[] {pipelineInfo}, null).Object.Single();
 
-            // todo: delete shader modules
+            vertShaderModule.Dispose();
+            fragShaderModule.Dispose();
         }
 
         private unsafe IVkShaderModule CreateShaderModule(byte[] code)

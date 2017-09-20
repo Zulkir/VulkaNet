@@ -22,6 +22,7 @@ THE SOFTWARE.
 */
 #endregion
 
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace VulkaNet
@@ -32,5 +33,31 @@ namespace VulkaNet
         public VkImageAspectFlags AspectMask;
         public int ColorAttachment;
         public VkClearValue ClearValue;
+    }
+
+    public static unsafe class VkClearAttachmentExstensions
+    {
+        public static int SizeOfMarshalIndirect(this VkClearAttachment s) =>
+            sizeof(VkClearAttachment);
+
+        public static int SizeOfMarshalIndirect(this VkClearAttachment? s) =>
+            s?.SizeOfMarshalIndirect() ?? 0;
+
+        public static VkClearAttachment* MarshalIndirect(this VkClearAttachment s, ref byte* unmanaged)
+        {
+            var result = (VkClearAttachment*)unmanaged;
+            unmanaged += sizeof(VkClearAttachment);
+            *result = s;
+            return result;
+        }
+
+        public static VkClearAttachment* MarshalIndirect(this VkClearAttachment? s, ref byte* unmanaged) =>
+            s.HasValue ? s.Value.MarshalIndirect(ref unmanaged) : null;
+
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkClearAttachment> list) =>
+            list.SizeOfMarshalDirect(sizeof(VkClearAttachment), x => 0);
+
+        public static VkClearAttachment* MarshalDirect(this IReadOnlyList<VkClearAttachment> list, ref byte* unmanaged) =>
+            (VkClearAttachment*)list.MarshalDirect(ref unmanaged, (elem, dst) => { *(VkClearAttachment*)dst = elem; }, sizeof(VkClearAttachment));
     }
 }

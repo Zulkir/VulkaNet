@@ -10,7 +10,7 @@ namespace VulkaNetGenerator.GenStructs
         public VkBool32 depthClampEnable;
         public VkBool32 rasterizerDiscardEnable;
         public VkPolygonMode polygonMode;
-        public VkCullModeFlagBits cullMode;
+        public VkCullMode cullMode;
         public VkFrontFace frontFace;
         public VkBool32 depthBiasEnable;
         public float depthBiasConstantFactor;

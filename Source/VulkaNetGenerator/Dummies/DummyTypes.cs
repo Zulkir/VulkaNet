@@ -90,7 +90,7 @@ namespace VulkaNetGenerator.Dummies
     public enum VkImageAspectFlags { }
     public enum VkRenderPassCreateFlags { }
     public enum VkAttachmentDescriptionFlags { }
-    public enum VkSampleCountFlagBits { }
+    public enum VkSampleCount { }
     public enum VkAttachmentLoadOp { }
     public enum VkAttachmentStoreOp { }
     public enum VkSubpassDescriptionFlags { }
@@ -101,7 +101,7 @@ namespace VulkaNetGenerator.Dummies
     public enum VkShaderModuleCreateFlags { }
     public enum VkPipelineCreateFlags { }
     public enum VkPipelineShaderStageCreateFlags { }
-    public enum VkShaderStageFlagBits { }
+    public enum VkShaderStage { }
     public enum VkPipelineVertexInputStateCreateFlags { }
     public enum VkPipelineInputAssemblyStateCreateFlags { }
     public enum VkPrimitiveTopology { }
@@ -109,7 +109,7 @@ namespace VulkaNetGenerator.Dummies
     public enum VkPipelineViewportStateCreateFlags { }
     public enum VkPipelineRasterizationStateCreateFlags { }
     public enum VkPolygonMode { }
-    public enum VkCullModeFlagBits { }
+    public enum VkCullMode { }
     public enum VkFrontFace { }
     public enum VkPipelineMultisampleStateCreateFlags { }
     public enum VkPipelineDepthStencilStateCreateFlags { }

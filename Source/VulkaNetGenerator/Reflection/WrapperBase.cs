@@ -41,13 +41,13 @@ namespace VulkaNetGenerator.Reflection
                 return "byte[]";
             if (raw.IsArray)
             {
-                var elemTypeStr = DeriveTypeInternal(raw.TypeStr.Substring(0, raw.TypeStr.Length - 1), false);
+                var elemTypeStr = DeriveTypeInternal(raw.TypeStr.Substring(0, raw.TypeStr.Length - 1), false, raw.IsNullable);
                 return $"IReadOnlyList<{elemTypeStr}>";
             }
-            return DeriveTypeInternal(raw.TypeStr, raw.IsActuallyStruct);
+            return DeriveTypeInternal(raw.TypeStr, raw.IsActuallyStruct, raw.IsNullable);
         }
 
-        private static string DeriveTypeInternal(string rawTypeStr, bool isActuallyStruct)
+        private static string DeriveTypeInternal(string rawTypeStr, bool isActuallyStruct, bool isNullable)
         {
             if (rawTypeStr.EndsWith(".Raw*"))
                 if (isActuallyStruct)
@@ -63,7 +63,10 @@ namespace VulkaNetGenerator.Reflection
             if (rawTypeStr == "VkBool32")
                 return "bool";
             if (rawTypeStr.EndsWith("*"))
-                return rawTypeStr.Substring(0, rawTypeStr.Length - 1);
+                if (isNullable)
+                    return rawTypeStr.Substring(0, rawTypeStr.Length - 1) + "?";
+                else
+                    return rawTypeStr.Substring(0, rawTypeStr.Length - 1);
             return rawTypeStr;
         }
 

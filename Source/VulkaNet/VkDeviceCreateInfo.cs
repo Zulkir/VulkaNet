@@ -36,7 +36,7 @@ namespace VulkaNet
         public IReadOnlyList<VkDeviceQueueCreateInfo> QueueCreateInfos { get; set; }
         public IReadOnlyList<string> EnabledLayerNames { get; set; }
         public IReadOnlyList<string> EnabledExtensionNames { get; set; }
-        public VkPhysicalDeviceFeatures EnabledFeatures { get; set; }
+        public VkPhysicalDeviceFeatures? EnabledFeatures { get; set; }
 
         [StructLayout(LayoutKind.Sequential)]
         public struct Raw

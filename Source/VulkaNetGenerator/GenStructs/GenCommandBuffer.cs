@@ -99,7 +99,7 @@ namespace VulkaNetGenerator.GenStructs
         public void CmdPushConstants(
             [FromProperty("this")] GenCommandBuffer commandBuffer,
             GenPipelineLayout layout,
-            VkShaderStageFlagBits stageFlags,
+            VkShaderStage stageFlags,
             int offset,
             int size,
             IntPtr pValues)
@@ -163,10 +163,10 @@ namespace VulkaNetGenerator.GenStructs
 
         public void CmdClearAttachments(
             [FromProperty("this")] GenCommandBuffer commandBuffer,
-            int attachmentCount,
-            VkClearAttachment* pAttachments,
-            int rectCount,
-            VkClearRect* pRects)
+            [CountFor("attachments")] int attachmentCount,
+            [IsArray] VkClearAttachment* pAttachments,
+            [CountFor("rects")] int rectCount,
+            [IsArray] VkClearRect* pRects)
         { }
 
         public void CmdFillBuffer(

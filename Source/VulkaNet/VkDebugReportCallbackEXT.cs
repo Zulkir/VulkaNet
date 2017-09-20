@@ -68,8 +68,8 @@ namespace VulkaNet
             {
                 var unmanaged = unmanagedStart;
                 var _instance = Instance.Handle;
-                var _pAllocator = Allocator.MarshalIndirect(ref unmanaged);
                 var _callback = Handle;
+                var _pAllocator = Allocator.MarshalIndirect(ref unmanaged);
                 Direct.DestroyDebugReportCallbackEXT(_instance, _callback, _pAllocator);
             }
         }

@@ -22,6 +22,7 @@ THE SOFTWARE.
 */
 #endregion
 
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace VulkaNet
@@ -32,5 +33,31 @@ namespace VulkaNet
         public VkRect2D Rect;
         public int BaseArrayLayer;
         public int LayerCount;
+    }
+
+    public static unsafe class VkClearRectExstensions
+    {
+        public static int SizeOfMarshalIndirect(this VkClearRect s) =>
+            sizeof(VkClearRect);
+
+        public static int SizeOfMarshalIndirect(this VkClearRect? s) =>
+            s?.SizeOfMarshalIndirect() ?? 0;
+
+        public static VkClearRect* MarshalIndirect(this VkClearRect s, ref byte* unmanaged)
+        {
+            var result = (VkClearRect*)unmanaged;
+            unmanaged += sizeof(VkClearRect);
+            *result = s;
+            return result;
+        }
+
+        public static VkClearRect* MarshalIndirect(this VkClearRect? s, ref byte* unmanaged) =>
+            s.HasValue ? s.Value.MarshalIndirect(ref unmanaged) : null;
+
+        public static int SizeOfMarshalDirect(this IReadOnlyList<VkClearRect> list) =>
+            list.SizeOfMarshalDirect(sizeof(VkClearRect), x => 0);
+
+        public static VkClearRect* MarshalDirect(this IReadOnlyList<VkClearRect> list, ref byte* unmanaged) =>
+            (VkClearRect*)list.MarshalDirect(ref unmanaged, (elem, dst) => { *(VkClearRect*)dst = elem; }, sizeof(VkClearRect));
     }
 }

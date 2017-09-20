@@ -9,7 +9,7 @@ namespace VulkaNetGenerator.GenStructs
         public int binding;
         public VkDescriptorType descriptorType;
         public int descriptorCount;
-        public VkShaderStageFlagBits stageFlags;
+        public VkShaderStage stageFlags;
         [IsArray] public GenSampler* pImmutableSamplers;
     }
 }

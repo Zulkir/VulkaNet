@@ -35,7 +35,7 @@ namespace VulkaNet
         public IReadOnlyList<VkAttachmentReference> InputAttachments { get; set; }
         public IReadOnlyList<VkAttachmentReference> ColorAttachments { get; set; }
         public IReadOnlyList<VkAttachmentReference> ResolveAttachments { get; set; }
-        public VkAttachmentReference DepthStencilAttachment { get; set; }
+        public VkAttachmentReference? DepthStencilAttachment { get; set; }
         public IReadOnlyList<int> PreserveAttachments { get; set; }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -93,6 +93,9 @@ namespace VulkaNet
         public static int SizeOfMarshalIndirect(this VkSubpassDescription s) =>
             s.SizeOfMarshalDirect() + VkSubpassDescription.Raw.SizeInBytes;
 
+        public static int SizeOfMarshalIndirect(this VkSubpassDescription? s) =>
+            s?.SizeOfMarshalIndirect() ?? 0;
+
         public static VkSubpassDescription.Raw* MarshalIndirect(this VkSubpassDescription s, ref byte* unmanaged)
         {
             var result = (VkSubpassDescription.Raw*)unmanaged;
@@ -100,6 +103,9 @@ namespace VulkaNet
             *result = s.MarshalDirect(ref unmanaged);
             return result;
         }
+
+        public static VkSubpassDescription.Raw* MarshalIndirect(this VkSubpassDescription? s, ref byte* unmanaged) =>
+            s.HasValue ? s.Value.MarshalIndirect(ref unmanaged) : null;
 
         public static int SizeOfMarshalDirect(this IReadOnlyList<VkSubpassDescription> list) => 
             list == null || list.Count == 0 

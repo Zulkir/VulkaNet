@@ -50,6 +50,7 @@
     <Compile Include="Attributes\AsTypeAttribute.cs" />
     <Compile Include="Attributes\ByteArrayAttribute.cs" />
     <Compile Include="Attributes\ByteArraySizeAttribute.cs" />
+    <Compile Include="Attributes\NullableAttribute.cs" />
     <Compile Include="Attributes\ReturnCountAttribute.cs" />
     <Compile Include="Attributes\FromPropertyAttribute.cs" />
     <Compile Include="Attributes\ReturnSizeAttribute.cs" />

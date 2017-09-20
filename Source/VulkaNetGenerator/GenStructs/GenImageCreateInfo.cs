@@ -13,7 +13,7 @@ namespace VulkaNetGenerator.GenStructs
         public VkExtent3D extent;
         public int mipLevels;
         public int arrayLayers;
-        public VkSampleCountFlagBits samples;
+        public VkSampleCount samples;
         public VkImageTiling tiling;
         public VkImageUsageFlags usage;
         public VkSharingMode sharingMode;

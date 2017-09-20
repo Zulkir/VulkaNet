@@ -48,6 +48,7 @@ namespace VulkaNetGenerator.Reflection
         public bool IsActuallyStruct { get; }
         public bool IsByteArray { get; }
         public string IsByteArraySizeFor { get; }
+        public bool IsNullable { get; }
 
         protected readonly Type genType;
         protected readonly CustomAttributeData[] attributes;
@@ -71,6 +72,7 @@ namespace VulkaNetGenerator.Reflection
             IsActuallyStruct = DeriveIsActuallyStruct(genType);
             IsByteArray = HasAttribute<ByteArrayAttribute>(attributes);
             IsByteArraySizeFor = GetAttrValue<ByteArraySizeAttribute>(attributes);
+            IsNullable = HasAttribute<NullableAttribute>(attributes);
             IgnoreInWrapper = Name == "sType" || IsCountFor != null || IsByteArraySizeFor != null || HasAttribute<ReturnSizeAttribute>(attributes);
         }
         
@@ -164,10 +166,13 @@ namespace VulkaNetGenerator.Reflection
 
         private static bool DeriveIsActuallyStruct(Type genType)
         {
+            var cleanType = genType.IsPointer ? genType.GetElementType() : genType;
             return
-                !typeof(IGenHandledObject).IsAssignableFrom(genType) &&
-                !typeof(IGenNonDispatchableHandledObject).IsAssignableFrom(genType) &&
-                genType.GetFields().Any(x => x.FieldType == typeof(VkStructureType));
+                cleanType.IsValueType &&
+                !typeof(IGenHandledObject).IsAssignableFrom(cleanType) &&
+                !typeof(IGenNonDispatchableHandledObject).IsAssignableFrom(cleanType) &&
+                cleanType.GetFields().All(x => x.FieldType != typeof(VkStructureType)) &&
+                cleanType.Name != "GenAllocationCallbacks";
         }
 
         protected static bool HasAttribute<T>(CustomAttributeData[] attributes) =>

@@ -36,7 +36,7 @@ namespace VulkaNet
         public VkShaderStage Stage { get; set; }
         public IVkShaderModule Module { get; set; }
         public string Name { get; set; }
-        public VkSpecializationInfo SpecializationInfo { get; set; }
+        public VkSpecializationInfo? SpecializationInfo { get; set; }
 
         [StructLayout(LayoutKind.Sequential)]
         public struct Raw

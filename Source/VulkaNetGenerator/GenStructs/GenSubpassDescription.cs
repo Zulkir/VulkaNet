@@ -12,7 +12,7 @@ namespace VulkaNetGenerator.GenStructs
         [CountFor("ColorAttachments")] public int colorAttachmentCount;
         [IsArray] public VkAttachmentReference* pColorAttachments;
         [IsArray] public VkAttachmentReference* pResolveAttachments;
-        public VkAttachmentReference* pDepthStencilAttachment;
+        [Nullable] public VkAttachmentReference* pDepthStencilAttachment;
         [CountFor("PreserveAttachments")] public int preserveAttachmentCount;
         [IsArray] public int* pPreserveAttachments;
     }

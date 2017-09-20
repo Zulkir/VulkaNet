@@ -8,7 +8,7 @@ namespace VulkaNetGenerator.GenStructs
         public VkStructureType sType;
         public void* pNext;
         public VkPipelineMultisampleStateCreateFlags flags;
-        public VkSampleCountFlagBits rasterizationSamples;
+        public VkSampleCount rasterizationSamples;
         public VkBool32 sampleShadingEnable;
         public float minSampleShading;
         [IsArray] public int* pSampleMask;

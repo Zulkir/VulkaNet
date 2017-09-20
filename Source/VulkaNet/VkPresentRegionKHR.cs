@@ -63,6 +63,9 @@ namespace VulkaNet
         public static int SizeOfMarshalIndirect(this VkPresentRegionKHR s) =>
             s.SizeOfMarshalDirect() + VkPresentRegionKHR.Raw.SizeInBytes;
 
+        public static int SizeOfMarshalIndirect(this VkPresentRegionKHR? s) =>
+            s?.SizeOfMarshalIndirect() ?? 0;
+
         public static VkPresentRegionKHR.Raw* MarshalIndirect(this VkPresentRegionKHR s, ref byte* unmanaged)
         {
             var result = (VkPresentRegionKHR.Raw*)unmanaged;
@@ -70,6 +73,9 @@ namespace VulkaNet
             *result = s.MarshalDirect(ref unmanaged);
             return result;
         }
+
+        public static VkPresentRegionKHR.Raw* MarshalIndirect(this VkPresentRegionKHR? s, ref byte* unmanaged) =>
+            s.HasValue ? s.Value.MarshalIndirect(ref unmanaged) : null;
 
         public static int SizeOfMarshalDirect(this IReadOnlyList<VkPresentRegionKHR> list) => 
             list == null || list.Count == 0 

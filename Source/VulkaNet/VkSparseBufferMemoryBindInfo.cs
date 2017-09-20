@@ -66,6 +66,9 @@ namespace VulkaNet
         public static int SizeOfMarshalIndirect(this VkSparseBufferMemoryBindInfo s) =>
             s.SizeOfMarshalDirect() + VkSparseBufferMemoryBindInfo.Raw.SizeInBytes;
 
+        public static int SizeOfMarshalIndirect(this VkSparseBufferMemoryBindInfo? s) =>
+            s?.SizeOfMarshalIndirect() ?? 0;
+
         public static VkSparseBufferMemoryBindInfo.Raw* MarshalIndirect(this VkSparseBufferMemoryBindInfo s, ref byte* unmanaged)
         {
             var result = (VkSparseBufferMemoryBindInfo.Raw*)unmanaged;
@@ -73,6 +76,9 @@ namespace VulkaNet
             *result = s.MarshalDirect(ref unmanaged);
             return result;
         }
+
+        public static VkSparseBufferMemoryBindInfo.Raw* MarshalIndirect(this VkSparseBufferMemoryBindInfo? s, ref byte* unmanaged) =>
+            s.HasValue ? s.Value.MarshalIndirect(ref unmanaged) : null;
 
         public static int SizeOfMarshalDirect(this IReadOnlyList<VkSparseBufferMemoryBindInfo> list) => 
             list == null || list.Count == 0 

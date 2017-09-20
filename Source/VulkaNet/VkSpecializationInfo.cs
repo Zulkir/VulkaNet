@@ -70,6 +70,9 @@ namespace VulkaNet
         public static int SizeOfMarshalIndirect(this VkSpecializationInfo s) =>
             s.SizeOfMarshalDirect() + VkSpecializationInfo.Raw.SizeInBytes;
 
+        public static int SizeOfMarshalIndirect(this VkSpecializationInfo? s) =>
+            s?.SizeOfMarshalIndirect() ?? 0;
+
         public static VkSpecializationInfo.Raw* MarshalIndirect(this VkSpecializationInfo s, ref byte* unmanaged)
         {
             var result = (VkSpecializationInfo.Raw*)unmanaged;
@@ -77,6 +80,9 @@ namespace VulkaNet
             *result = s.MarshalDirect(ref unmanaged);
             return result;
         }
+
+        public static VkSpecializationInfo.Raw* MarshalIndirect(this VkSpecializationInfo? s, ref byte* unmanaged) =>
+            s.HasValue ? s.Value.MarshalIndirect(ref unmanaged) : null;
 
         public static int SizeOfMarshalDirect(this IReadOnlyList<VkSpecializationInfo> list) => 
             list == null || list.Count == 0 

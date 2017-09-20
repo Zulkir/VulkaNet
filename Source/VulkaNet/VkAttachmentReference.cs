@@ -39,6 +39,9 @@ namespace VulkaNet
         public static int SizeOfMarshalIndirect(this VkAttachmentReference s) => 
             sizeof(VkAttachmentReference);
 
+        public static int SizeOfMarshalIndirect(this VkAttachmentReference? s) =>
+            s?.SizeOfMarshalIndirect() ?? 0;
+
         public static VkAttachmentReference* MarshalIndirect(this VkAttachmentReference s, ref byte* unmanaged)
         {
             var result = (VkAttachmentReference*)unmanaged;
@@ -46,6 +49,9 @@ namespace VulkaNet
             *result = s;
             return result;
         }
+
+        public static VkAttachmentReference* MarshalIndirect(this VkAttachmentReference? s, ref byte* unmanaged) =>
+            s.HasValue ? s.Value.MarshalIndirect(ref unmanaged) : null;
 
         public static int SizeOfMarshalDirect(this IReadOnlyList<VkAttachmentReference> list) =>
             list.SizeOfMarshalDirect(sizeof(VkAttachmentReference), x => 0);

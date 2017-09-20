@@ -65,6 +65,9 @@ namespace VulkaNet
         public static int SizeOfMarshalIndirect(this VkDescriptorImageInfo s) =>
             s.SizeOfMarshalDirect() + VkDescriptorImageInfo.Raw.SizeInBytes;
 
+        public static int SizeOfMarshalIndirect(this VkDescriptorImageInfo? s) =>
+            s?.SizeOfMarshalIndirect() ?? 0;
+
         public static VkDescriptorImageInfo.Raw* MarshalIndirect(this VkDescriptorImageInfo s, ref byte* unmanaged)
         {
             var result = (VkDescriptorImageInfo.Raw*)unmanaged;
@@ -72,6 +75,9 @@ namespace VulkaNet
             *result = s.MarshalDirect(ref unmanaged);
             return result;
         }
+
+        public static VkDescriptorImageInfo.Raw* MarshalIndirect(this VkDescriptorImageInfo? s, ref byte* unmanaged) =>
+            s.HasValue ? s.Value.MarshalIndirect(ref unmanaged) : null;
 
         public static int SizeOfMarshalDirect(this IReadOnlyList<VkDescriptorImageInfo> list) => 
             list == null || list.Count == 0 

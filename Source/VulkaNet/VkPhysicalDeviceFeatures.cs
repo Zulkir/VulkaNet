@@ -280,6 +280,9 @@ namespace VulkaNet
         public static int SizeOfMarshalIndirect(this VkPhysicalDeviceFeatures s) =>
             s.SizeOfMarshalDirect() + VkPhysicalDeviceFeatures.Raw.SizeInBytes;
 
+        public static int SizeOfMarshalIndirect(this VkPhysicalDeviceFeatures? s) =>
+            s?.SizeOfMarshalIndirect() ?? 0;
+
         public static VkPhysicalDeviceFeatures.Raw* MarshalIndirect(this VkPhysicalDeviceFeatures s, ref byte* unmanaged)
         {
             var result = (VkPhysicalDeviceFeatures.Raw*)unmanaged;
@@ -287,6 +290,9 @@ namespace VulkaNet
             *result = s.MarshalDirect(ref unmanaged);
             return result;
         }
+
+        public static VkPhysicalDeviceFeatures.Raw* MarshalIndirect(this VkPhysicalDeviceFeatures? s, ref byte* unmanaged) =>
+            s.HasValue ? s.Value.MarshalIndirect(ref unmanaged) : null;
 
         public static int SizeOfMarshalDirect(this IReadOnlyList<VkPhysicalDeviceFeatures> list) => 
             list == null || list.Count == 0 

@@ -228,6 +228,10 @@ namespace VulkaNet
                 VkRenderPassBeginInfo.Raw* pRenderPassBegin,
                 VkSubpassContents contents);
 
+            public CmdEndRenderPassDelegate CmdEndRenderPass { get; }
+            public delegate void CmdEndRenderPassDelegate(
+                VkCommandBuffer.HandleType commandBuffer);
+
             public CmdNextSubpassDelegate CmdNextSubpass { get; }
             public delegate void CmdNextSubpassDelegate(
                 VkCommandBuffer.HandleType commandBuffer,
@@ -1038,6 +1042,7 @@ namespace VulkaNet
                 CmdWaitEvents = GetDeviceDelegate<CmdWaitEventsDelegate>("vkCmdWaitEvents");
                 CmdPipelineBarrier = GetDeviceDelegate<CmdPipelineBarrierDelegate>("vkCmdPipelineBarrier");
                 CmdBeginRenderPass = GetDeviceDelegate<CmdBeginRenderPassDelegate>("vkCmdBeginRenderPass");
+                CmdEndRenderPass = GetDeviceDelegate<CmdEndRenderPassDelegate>("vkCmdEndRenderPass");
                 CmdNextSubpass = GetDeviceDelegate<CmdNextSubpassDelegate>("vkCmdNextSubpass");
                 CmdBindPipeline = GetDeviceDelegate<CmdBindPipelineDelegate>("vkCmdBindPipeline");
                 CmdBindDescriptorSets = GetDeviceDelegate<CmdBindDescriptorSetsDelegate>("vkCmdBindDescriptorSets");

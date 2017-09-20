@@ -23,6 +23,8 @@ THE SOFTWARE.
 #endregion
 
 using System;
+using System.Runtime.InteropServices;
+using System.Security;
 using System.Windows.Forms;
 using VulkaNet;
 
@@ -30,6 +32,9 @@ namespace VulkaNetDemos
 {
     static class Program
     {
+        private static Form form;
+        private static HelloTriangle demo;
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -44,66 +49,47 @@ namespace VulkaNetDemos
         public static void Run()
         {
             var global = new VkGlobal();
-            using (var form = new Form1())
-            using (var demo = new HelloTriangle(global, form))
+            using (form = new Form1())
+            using (demo = new HelloTriangle(global, form))
             {
                 demo.Init();
+                Application.Idle += OnIdle;
                 Application.Run(form);
             }
-
-
-            /*
-            var instanceCreateInfo = new VkInstanceCreateInfo
-            {
-                ApplicationInfo = new VkApplicationInfo
-                {
-                    ApplicationName = "VulkaNetDemos",
-                    EngineName = "VulkaNetDemosEngine",
-                },
-                EnabledExtensionNames = new[]
-                {
-                    "VK_KHR_surface",
-                    "VK_KHR_win32_surface",
-                    "VK_EXT_debug_report"
-                }
-            };
-            using (var instance = global.CreateInstance(instanceCreateInfo, null).Object)
-            {
-                var physicalDevices = instance.PhysicalDevices;
-                var deviceCreateInfo = new VkDeviceCreateInfo
-                {
-                    QueueCreateInfos = new[]
-                    {
-                        new VkDeviceQueueCreateInfo
-                        {
-                            QueueFamilyIndex = 0,
-                            QueuePriorities = new[]{ 1.0f }
-                        }
-                    }
-                };
-                using (var device = physicalDevices[0].CreateDevice(deviceCreateInfo, null).Object)
-                {
-                    device.WaitIdle();
-                    var commandPool = device.CreateCommandPool(new VkCommandPoolCreateInfo
-                    {
-                        Flags = VkCommandPoolCreateFlags.Transient | VkCommandPoolCreateFlags.ResetCommandBuffer,
-                        QueueFamilyIndex = 0
-                    }, null).Object;
-
-                    var commandBuffer = device.AllocateCommandBuffers(new VkCommandBufferAllocateInfo
-                    {
-                        CommandPool = commandPool,
-                        Level = VkCommandBufferLevel.Primary,
-                        CommandBufferCount = 1
-                    }).Object.Single();
-                    
-
-                    commandPool.Dispose();
-                }
-            }
-            
-            Application.Run(new Form1());
-             */
         }
+
+        static bool AppStillIdle()
+        {
+            return !PeekMessage(out _, IntPtr.Zero, 0, 0, 0);
+        }
+
+        static void OnIdle(object sender, EventArgs e)
+        {
+            while (AppStillIdle())
+                demo.DrawFrame();
+        }
+
+        [SuppressUnmanagedCodeSecurity]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        public static extern bool PeekMessage(out MSG message, IntPtr handle, uint filterMin, uint filterMax, uint flags);
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MSG
+    {
+        public IntPtr HWnd;
+        public uint Message;
+        public IntPtr WParam;
+        public IntPtr LParam;
+        public uint Time;
+        public POINT Point;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct POINT
+    {
+        public int X;
+        public int Y;
     }
 }

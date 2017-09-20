@@ -74,6 +74,10 @@ namespace VulkaNetGenerator.GenStructs
             VkSubpassContents contents)
         { }
 
+        public void CmdEndRenderPass(
+            [FromProperty("this")] GenCommandBuffer commandBuffer)
+        { }
+
         public void CmdNextSubpass(
             [FromProperty("this")] GenCommandBuffer commandBuffer,
             VkSubpassContents contents)

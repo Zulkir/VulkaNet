@@ -33,7 +33,7 @@ namespace VulkaNet
         VkResult Submit(IReadOnlyList<VkSubmitInfo> submits, IVkFence fence);
         VkResult WaitIdle();
         VkResult BindSparse(IReadOnlyList<VkBindSparseInfo> bindInfo, IVkFence fence);
-        VkResult QueuePresentKHR(VkPresentInfoKHR presentInfo);
+        VkResult PresentKHR(VkPresentInfoKHR presentInfo);
     }
 
     public unsafe class VkQueue : IVkQueue
@@ -98,7 +98,7 @@ namespace VulkaNet
             }
         }
 
-        public VkResult QueuePresentKHR(VkPresentInfoKHR presentInfo)
+        public VkResult PresentKHR(VkPresentInfoKHR presentInfo)
         {
             var unmanagedSize =
                 presentInfo.SizeOfMarshalIndirect();

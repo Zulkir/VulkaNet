@@ -39,6 +39,7 @@ namespace VulkaNet
         void CmdWaitEvents(IReadOnlyList<IVkEvent> events, VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, IReadOnlyList<VkMemoryBarrier> memoryBarriers, IReadOnlyList<VkBufferMemoryBarrier> bufferMemoryBarriers, IReadOnlyList<VkImageMemoryBarrier> imageMemoryBarriers);
         void CmdPipelineBarrier(VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags, IReadOnlyList<VkMemoryBarrier> memoryBarriers, IReadOnlyList<VkBufferMemoryBarrier> bufferMemoryBarriers, IReadOnlyList<VkImageMemoryBarrier> imageMemoryBarriers);
         void CmdBeginRenderPass(VkRenderPassBeginInfo renderPassBegin, VkSubpassContents contents);
+        void CmdEndRenderPass();
         void CmdNextSubpass(VkSubpassContents contents);
         void CmdBindPipeline(VkPipelineBindPoint pipelineBindPoint, IVkPipeline pipeline);
         void CmdBindDescriptorSets(VkPipelineBindPoint pipelineBindPoint, IVkPipelineLayout layout, int firstSet, IReadOnlyList<IVkDescriptorSet> descriptorSets, IReadOnlyList<int> dynamicOffsets);
@@ -226,6 +227,12 @@ namespace VulkaNet
                 var _contents = contents;
                 Direct.CmdBeginRenderPass(_commandBuffer, _pRenderPassBegin, _contents);
             }
+        }
+
+        public void CmdEndRenderPass()
+        {
+            var _commandBuffer = Handle;
+            Direct.CmdEndRenderPass(_commandBuffer);
         }
 
         public void CmdNextSubpass(VkSubpassContents contents)

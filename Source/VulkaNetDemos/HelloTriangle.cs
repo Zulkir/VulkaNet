@@ -32,7 +32,7 @@ namespace VulkaNetDemos
         private IVkGlobal vkGlobal;
         private Form form;
         private IVkInstance instance;
-        private IVkDebugReportCallbackEXT callback;
+        private static IVkDebugReportCallbackEXT callback;
         private IVkSurfaceKHR surface;
         private IVkPhysicalDevice physicalDevice;
         private IVkDevice device;
@@ -46,6 +46,11 @@ namespace VulkaNetDemos
         private IVkRenderPass renderPass;
         private IVkPipelineLayout pipelineLayout;
         private IVkPipeline graphicsPipeline;
+        private IVkFramebuffer[] swapChainFramebuffers;
+        private IVkCommandPool commandPool;
+        private IReadOnlyList<IVkCommandBuffer> commandBuffers;
+        private IVkSemaphore imageAvailableSemaphore;
+        private IVkSemaphore renderFinishedSemaphore;
 
         public HelloTriangle(IVkGlobal vkGlobal, Form form)
         {
@@ -64,6 +69,10 @@ namespace VulkaNetDemos
             CreateImageViews();
             CreateRenderPass();
             CreateGraphicsPipeline();
+            CreateFramebuffers();
+            CreateCommandPool();
+            CreateCommandBuffers();
+            CreateSemaphores();
         }
 
         private void CreateInstance()
@@ -342,10 +351,20 @@ namespace VulkaNetDemos
                 ColorAttachments = new [] {colorAttachmentRef},
                 //DepthStencilAttachment = null
             };
+            var dependency = new VkSubpassDependency
+            {
+                SrcSubpass = VkDefines.VK_SUBPASS_EXTERNAL,
+                SrcStageMask = VkPipelineStageFlags.ColorAttachmentOutput,
+                SrcAccessMask = VkAccessFlags.None,
+                DstSubpass = 0,
+                DstStageMask = VkPipelineStageFlags.ColorAttachmentOutput,
+                DstAccessMask = VkAccessFlags.ColorAttachmentRead | VkAccessFlags.ColorAttachmentWrite
+            };
             var renderPassInfo = new VkRenderPassCreateInfo
             {
                 Attachments = new[] {colorAttachment},
-                Subpasses = new[] {subpass}
+                Subpasses = new[] {subpass},
+                Dependencies = new[] {dependency}
             };
             renderPass = device.CreateRenderPass(renderPassInfo, null).Object;
         }
@@ -489,13 +508,109 @@ namespace VulkaNetDemos
             }
         }
 
-        public void MainLop()
+        private void CreateFramebuffers()
         {
-            
+            swapChainFramebuffers = swapChainImageViews.Select((v, i) =>
+            {
+                var createInfo = new VkFramebufferCreateInfo
+                {
+                    RenderPass = renderPass,
+                    Attachments = new[] {v},
+                    Width = swapChainExtent.Width,
+                    Height = swapChainExtent.Height,
+                    Layers = 1
+                };
+                return device.CreateFramebuffer(createInfo, null).Object;
+            }).ToArray();
         }
-        
+
+        private void CreateCommandPool()
+        {
+            var queueFamilyIndices = FindQueueFamilies(physicalDevice, surface).Value;
+            var poolInfo = new VkCommandPoolCreateInfo
+            {
+                QueueFamilyIndex = queueFamilyIndices.GraphicsFamily,
+                Flags = VkCommandPoolCreateFlags.None
+            };
+            commandPool = device.CreateCommandPool(poolInfo, null).Object;
+        }
+
+        private void CreateCommandBuffers()
+        {
+            var allocInfo = new VkCommandBufferAllocateInfo
+            {
+                CommandPool = commandPool,
+                Level = VkCommandBufferLevel.Primary,
+                CommandBufferCount = swapChainImages.Count
+            };
+            commandBuffers = device.AllocateCommandBuffers(allocInfo).Object;
+
+            for (int i = 0; i < commandBuffers.Count; i++)
+            {
+                var buffer = commandBuffers[i];
+                var framebuffer = swapChainFramebuffers[i];
+
+                var beginInfo = new VkCommandBufferBeginInfo
+                {
+                    Flags = VkCommandBufferUsageFlags.SimultaneousUse,
+                    InheritanceInfo = null
+                };
+                buffer.Begin(beginInfo);
+                var renderPassInfo = new VkRenderPassBeginInfo
+                {
+                    RenderPass = renderPass,
+                    Framebuffer = framebuffer,
+                    RenderArea = new VkRect2D(new VkOffset2D(0, 0), swapChainExtent),
+                    ClearValues = new[]
+                    {
+                        new VkClearValue(new VkClearColorValue(new VkColor4(0, 0, 0, 1)))
+                    }
+                };
+                buffer.CmdBeginRenderPass(renderPassInfo, VkSubpassContents.Inline);
+                buffer.CmdBindPipeline(VkPipelineBindPoint.Graphics, graphicsPipeline);
+                buffer.CmdDraw(3, 1, 0, 0);
+                buffer.CmdEndRenderPass();
+                buffer.End().CheckSuccess();
+            }
+        }
+
+        private void CreateSemaphores()
+        {
+            var semaphoreInfo = new VkSemaphoreCreateInfo();
+            imageAvailableSemaphore = device.CreateSemaphore(semaphoreInfo, null).Object;
+            renderFinishedSemaphore = device.CreateSemaphore(semaphoreInfo, null).Object;
+        }
+
+
+        public void DrawFrame()
+        {
+            var imageIndex =  swapChain.AcquireNextImageKHR(ulong.MaxValue, imageAvailableSemaphore, null).Object;
+            var submitInfo = new VkSubmitInfo
+            {
+                WaitSemaphores = new[] {imageAvailableSemaphore},
+                WaitDstStageMask = new[] {VkPipelineStageFlags.ColorAttachmentOutput},
+                CommandBuffers = new[] {commandBuffers[imageIndex]},
+                SignalSemaphores = new[] {renderFinishedSemaphore}
+            };
+            graphicsQueue.Submit(new [] {submitInfo}, null).CheckSuccess();
+            var presentInfo = new VkPresentInfoKHR
+            {
+                WaitSemaphores = new[] {renderFinishedSemaphore},
+                Swapchains = new[] {swapChain},
+                ImageIndices = new[] {imageIndex},
+                Results = null
+            };
+            presentQueue.PresentKHR(presentInfo).CheckSuccess();
+        }
+
         public void Dispose()
         {
+            device.WaitIdle();
+            imageAvailableSemaphore?.Dispose();
+            renderFinishedSemaphore?.Dispose();
+            commandPool?.Dispose();
+            foreach (var framebuffer in swapChainFramebuffers)
+                framebuffer?.Dispose();
             graphicsPipeline?.Dispose();
             pipelineLayout?.Dispose();
             renderPass?.Dispose();

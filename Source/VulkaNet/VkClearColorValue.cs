@@ -61,5 +61,23 @@ namespace VulkaNet
             }
             set { raw = *(VkBlob16*)&value; }
         }
+
+        public VkClearColorValue(VkColor4 float32Color)
+        {
+            raw = default(VkBlob16);
+            Float32 = float32Color;
+        }
+
+        public VkClearColorValue(VkIntColor4 int32Color)
+        {
+            raw = default(VkBlob16);
+            Int32 = int32Color;
+        }
+
+        public VkClearColorValue(VkUintColor4 uint32Color)
+        {
+            raw = default(VkBlob16);
+            Uint32 = uint32Color;
+        }
     }
 }

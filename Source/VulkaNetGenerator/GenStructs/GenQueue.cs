@@ -26,6 +26,7 @@ namespace VulkaNetGenerator.GenStructs
             GenFence fence)
             => default(VkResult);
 
+        [MethodName("PresentKHR")]
         public VkResult QueuePresentKHR(
             [FromProperty("this")] GenQueue queue,
             GenPresentInfoKHR* pPresentInfo)

@@ -57,6 +57,18 @@ namespace VulkaNet
                 raw = rawLoc;
             }
         }
+
+        public VkClearValue(VkClearColorValue color)
+        {
+            raw = default(VkBlob16);
+            Color = color;
+        }
+
+        public VkClearValue(VkClearDepthStencilValue depthStencil)
+        {
+            raw = default(VkBlob16);
+            DepthStencil = depthStencil;
+        }
     }
 
     public static unsafe class VkClearValueExtensions

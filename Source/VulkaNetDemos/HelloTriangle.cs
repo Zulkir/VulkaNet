@@ -11,6 +11,52 @@ namespace VulkaNetDemos
 {
     public class HelloTriangle : IDisposable
     {
+        private unsafe struct Vertex
+        {
+            public float X, Y;
+            public float R, G, B;
+
+            public Vertex(float x, float y, float r, float g, float b)
+            {
+                X = x;
+                Y = y;
+                R = r;
+                G = g;
+                B = b;
+            }
+
+            public static VkVertexInputBindingDescription GetBindingDescription(int binding)
+            {
+                return new VkVertexInputBindingDescription
+                {
+                    Binding = binding,
+                    Stride = sizeof(Vertex),
+                    InputRate = VkVertexInputRate.Vertex
+                };
+            }
+
+            public static VkVertexInputAttributeDescription[] GetAttributeDescriptions(int binding)
+            {
+                return new[]
+                {
+                    new VkVertexInputAttributeDescription
+                    {
+                        Binding = binding,
+                        Location = 0,
+                        Format = VkFormat.R32G32_SFLOAT,
+                        Offset = 0
+                    },
+                    new VkVertexInputAttributeDescription
+                    {
+                        Binding = binding,
+                        Location = 1,
+                        Format = VkFormat.R32G32B32_SFLOAT,
+                        Offset = 2 * sizeof(float)
+                    },
+                };
+            }
+        }
+
         private struct QueueFamilyIndices
         {
             public int GraphicsFamily;
@@ -28,6 +74,18 @@ namespace VulkaNetDemos
 
         private static readonly string[] LayerNames = {"VK_LAYER_LUNARG_standard_validation"};
         private static readonly string[] DeviceExtensions = {"VK_KHR_swapchain"};
+
+        private static readonly Vertex[] Vertices = {
+            new Vertex(-0.5f, -0.5f, 1, 0, 0),
+            new Vertex(0.5f, -0.5f, 0, 1, 0),
+            new Vertex(0.5f, 0.5f, 0, 0, 1),
+            new Vertex(-0.5f, 0.5f, 1, 1, 1)
+        };
+
+        private static readonly ushort[] Indices =
+        {
+            0, 1, 2, 2, 3, 0
+        };
 
         private IVkGlobal vkGlobal;
         private Form form;
@@ -51,6 +109,10 @@ namespace VulkaNetDemos
         private IReadOnlyList<IVkCommandBuffer> commandBuffers;
         private IVkSemaphore imageAvailableSemaphore;
         private IVkSemaphore renderFinishedSemaphore;
+        private IVkBuffer vertexBuffer;
+        private IVkDeviceMemory vertexBufferMemory;
+        private IVkBuffer indexBuffer;
+        private IVkDeviceMemory indexBufferMemory;
 
         public HelloTriangle(IVkGlobal vkGlobal, Form form)
         {
@@ -68,12 +130,13 @@ namespace VulkaNetDemos
             CreateLogicalDevice();
             CreateCommandPool();
             CreateSemaphores();
+            CreateVertexBuffer();
+            CreateIndexBuffer();
             RecreateSwapChain();
         }
 
         private void RecreateSwapChain()
         {
-            device.WaitIdle();
             CreateSwapChain();
             CreateImageViews();
             CreateRenderPass();
@@ -85,6 +148,10 @@ namespace VulkaNetDemos
         public void Dispose()
         {
             CleanupSwapChain();
+            indexBuffer.Dispose();
+            indexBufferMemory.Dispose();
+            vertexBuffer.Dispose();
+            vertexBufferMemory.Dispose();
             imageAvailableSemaphore.Dispose();
             renderFinishedSemaphore.Dispose();
             commandPool.Dispose();
@@ -431,7 +498,8 @@ namespace VulkaNetDemos
             var shaderStages = new[] {vertShaderStageInfo, fragShaderStageInfo};
             var vertexInputInfo = new VkPipelineVertexInputStateCreateInfo
             {
-                
+                VertexBindingDescriptions = new[] {Vertex.GetBindingDescription(0)},
+                VertexAttributeDescriptions = Vertex.GetAttributeDescriptions(0)
             };
             var inputAssemblyInfo = new VkPipelineInputAssemblyStateCreateInfo
             {
@@ -608,7 +676,9 @@ namespace VulkaNetDemos
                 };
                 buffer.CmdBeginRenderPass(renderPassInfo, VkSubpassContents.Inline);
                 buffer.CmdBindPipeline(VkPipelineBindPoint.Graphics, graphicsPipeline);
-                buffer.CmdDraw(3, 1, 0, 0);
+                buffer.CmdBindVertexBuffers(0, new []{vertexBuffer}, new ulong[]{0});
+                buffer.CmdBindIndexBuffer(indexBuffer, 0, VkIndexType.Uint16);
+                buffer.CmdDrawIndexed(Indices.Length, 1, 0, 0, 0);
                 buffer.CmdEndRenderPass();
                 buffer.End().CheckSuccess();
             }
@@ -621,6 +691,95 @@ namespace VulkaNetDemos
             renderFinishedSemaphore = device.CreateSemaphore(semaphoreInfo, null).Object;
         }
 
+        private void CreateBuffer(ulong size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, out IVkBuffer buffer, out IVkDeviceMemory bufferMemory)
+        {
+            buffer = device.CreateBuffer(new VkBufferCreateInfo
+            {
+                Size = size,
+                Usage = usage,
+                SharingMode = VkSharingMode.Exclusive
+            }, null).Object;
+
+            var memRequirements = buffer.GetMemoryRequirements();
+            bufferMemory = device.AllocateMemory(new VkMemoryAllocateInfo
+            {
+                AllocationSize = memRequirements.Size,
+                MemoryTypeIndex = FindMemoryType(memRequirements.MemoryTypeBits, properties)
+            }, null).Object;
+
+            buffer.BindMemory(bufferMemory, 0).CheckSuccess();
+        }
+
+        private int FindMemoryType(int typeFilter, VkMemoryPropertyFlags properties)
+        {
+            return physicalDevice.MemoryProperties.MemoryTypes
+                .Select((p, i) => new { p, i })
+                .First(x => (typeFilter & (1 << x.i)) != 0 && (x.p.PropertyFlags & properties) == properties).i;
+        }
+
+        private void CopyBuffer(IVkBuffer srcBuffer, IVkBuffer dstBuffer, ulong size)
+        {
+            var buffer = device.AllocateCommandBuffers(new VkCommandBufferAllocateInfo
+            {
+                Level = VkCommandBufferLevel.Primary,
+                CommandPool = commandPool,
+                CommandBufferCount = 1
+            }).Object.Single();
+
+            buffer.Begin(new VkCommandBufferBeginInfo
+            {
+                Flags = VkCommandBufferUsageFlags.OneTimeSubmit
+            });
+
+            buffer.CmdCopyBuffer(srcBuffer, dstBuffer, new []{new VkBufferCopy
+            {
+                SrcOffset = 0,
+                DstOffset = 0,
+                Size = size
+            }});
+
+            buffer.End();
+
+            graphicsQueue.Submit(new[]{new VkSubmitInfo
+            {
+                CommandBuffers = new[]{buffer}
+            }}, null);
+
+            graphicsQueue.WaitIdle();
+            commandPool.FreeCommandBuffers(new []{buffer});
+        }
+
+        private unsafe void CreateVertexBuffer()
+        {
+            var size = (ulong)(sizeof(Vertex) * Vertices.Length);
+            CreateBuffer(size, VkBufferUsageFlags.TransferSrc, VkMemoryPropertyFlags.HostVisible | VkMemoryPropertyFlags.HostCoherent, 
+                out var stagingBuffer, out var stagingBufferMemory);
+            var data = (Vertex*)stagingBufferMemory.Map(0, size, VkMemoryMapFlags.None).Object;
+            for (int i = 0; i < Vertices.Length; i++)
+                data[i] = Vertices[i];
+            stagingBufferMemory.Unmap();
+            CreateBuffer(size, VkBufferUsageFlags.TransferDst | VkBufferUsageFlags.VertexBuffer, VkMemoryPropertyFlags.DeviceLocal,
+                out vertexBuffer, out vertexBufferMemory);
+            CopyBuffer(stagingBuffer, vertexBuffer, size);
+            stagingBuffer.Dispose();
+            stagingBufferMemory.Dispose();
+        }
+
+        private unsafe void CreateIndexBuffer()
+        {
+            var size = (ulong)(sizeof(ushort) * Indices.Length);
+            CreateBuffer(size, VkBufferUsageFlags.TransferSrc, VkMemoryPropertyFlags.HostVisible | VkMemoryPropertyFlags.HostCoherent,
+                out var stagingBuffer, out var stagingBufferMemory);
+            var data = (ushort*)stagingBufferMemory.Map(0, size, VkMemoryMapFlags.None).Object;
+            for (int i = 0; i < Indices.Length; i++)
+                data[i] = Indices[i];
+            stagingBufferMemory.Unmap();
+            CreateBuffer(size, VkBufferUsageFlags.TransferDst | VkBufferUsageFlags.IndexBuffer, VkMemoryPropertyFlags.DeviceLocal,
+                out indexBuffer, out indexBufferMemory);
+            CopyBuffer(stagingBuffer, indexBuffer, size);
+            stagingBuffer.Dispose();
+            stagingBufferMemory.Dispose();
+        }
 
         public void DrawFrame()
         {

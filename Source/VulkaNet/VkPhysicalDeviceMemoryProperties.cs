@@ -30,17 +30,13 @@ namespace VulkaNet
 {
     public interface IVkPhysicalDeviceMemoryProperties
     {
-        int MemoryTypeCount { get; }
         IReadOnlyList<VkMemoryType> MemoryTypes { get; }
-        int MemoryHeapCount { get; }
         IReadOnlyList<VkMemoryHeap> MemoryHeaps { get; }
     }
 
     public unsafe class VkPhysicalDeviceMemoryProperties : IVkPhysicalDeviceMemoryProperties
     {
-        public int MemoryTypeCount { get; set; }
         public IReadOnlyList<VkMemoryType> MemoryTypes { get; set; }
-        public int MemoryHeapCount { get; set; }
         public IReadOnlyList<VkMemoryHeap> MemoryHeaps { get; set; }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -56,10 +52,8 @@ namespace VulkaNet
 
         public VkPhysicalDeviceMemoryProperties(Raw* raw)
         {
-            MemoryTypeCount = raw->memoryTypeCount;
-            MemoryTypes = Enumerable.Range(0, MemoryTypeCount).Select(i => ((VkMemoryType*)raw->memoryTypes)[i]).ToArray();
-            MemoryHeapCount = raw->memoryHeapCount;
-            MemoryHeaps = Enumerable.Range(0, MemoryHeapCount).Select(i => ((VkMemoryHeap*)raw->memoryHeaps)[i]).ToArray();
+            MemoryTypes = Enumerable.Range(0, raw->memoryTypeCount).Select(i => ((VkMemoryType*)raw->memoryTypes)[i]).ToArray();
+            MemoryHeaps = Enumerable.Range(0, raw->memoryHeapCount).Select(i => ((VkMemoryHeap*)raw->memoryHeaps)[i]).ToArray();
         }
     }
 }

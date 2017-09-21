@@ -6,10 +6,10 @@ namespace VulkaNet
     [StructLayout(LayoutKind.Sequential)]
     public struct VkVertexInputAttributeDescription
     {
-        int Location;
-        int Binding;
-        VkFormat Format;
-        int Offset;
+        public int Location;
+        public int Binding;
+        public VkFormat Format;
+        public int Offset;
     }
 
     public static unsafe class VkVertexInputAttributeDescriptionExtensions

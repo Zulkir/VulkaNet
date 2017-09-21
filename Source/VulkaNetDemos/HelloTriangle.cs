@@ -56,6 +56,7 @@ namespace VulkaNetDemos
         {
             this.vkGlobal = vkGlobal;
             this.form = form;
+            form.Resize += OnResize;
         }
 
         public void Init()
@@ -65,14 +66,53 @@ namespace VulkaNetDemos
             CreateSurface();
             PickPhysicalDevice();
             CreateLogicalDevice();
+            CreateCommandPool();
+            CreateSemaphores();
+            RecreateSwapChain();
+        }
+
+        private void RecreateSwapChain()
+        {
+            device.WaitIdle();
             CreateSwapChain();
             CreateImageViews();
             CreateRenderPass();
             CreateGraphicsPipeline();
             CreateFramebuffers();
-            CreateCommandPool();
             CreateCommandBuffers();
-            CreateSemaphores();
+        }
+
+        public void Dispose()
+        {
+            CleanupSwapChain();
+            imageAvailableSemaphore.Dispose();
+            renderFinishedSemaphore.Dispose();
+            commandPool.Dispose();
+            device.Dispose();
+            callback.Dispose();
+            surface.Dispose();
+            instance.Dispose();
+        }
+
+        private void CleanupSwapChain()
+        {
+            device.WaitIdle();
+            foreach (var framebuffer in swapChainFramebuffers)
+                framebuffer.Dispose();
+            commandPool.FreeCommandBuffers(commandBuffers);
+            graphicsPipeline.Dispose();
+            pipelineLayout.Dispose();
+            renderPass.Dispose();
+            foreach (var view in swapChainImageViews)
+                view.Dispose();
+            swapChain.Dispose();
+        }
+
+        private void OnResize(object sender, EventArgs eventArgs)
+        {
+            device.WaitIdle();
+            CleanupSwapChain();
+            RecreateSwapChain();
         }
 
         private void CreateInstance()
@@ -601,26 +641,6 @@ namespace VulkaNetDemos
                 Results = null
             };
             presentQueue.PresentKHR(presentInfo).CheckSuccess();
-        }
-
-        public void Dispose()
-        {
-            device.WaitIdle();
-            imageAvailableSemaphore?.Dispose();
-            renderFinishedSemaphore?.Dispose();
-            commandPool?.Dispose();
-            foreach (var framebuffer in swapChainFramebuffers)
-                framebuffer?.Dispose();
-            graphicsPipeline?.Dispose();
-            pipelineLayout?.Dispose();
-            renderPass?.Dispose();
-            foreach (var view in swapChainImageViews)
-                view.Dispose();
-            swapChain?.Dispose();
-            device?.Dispose();
-            callback?.Dispose();
-            surface?.Dispose();
-            instance?.Dispose();
         }
     }
 }
